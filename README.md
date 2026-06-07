@@ -6,8 +6,13 @@ own-image apps on slick KasmVNC web desktops, plus clean wrappers for upstream i
 If something can be self-hosted instead of rented, I'll probably try to containerise it.
 
 <p align="left">
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=junkerderprovinz&show_icons=true&hide_border=true&bg_color=161616&title_color=ffffff&text_color=c6c6c6&icon_color=8d8d8d" alt="junkerderprovinz's GitHub stats">
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=junkerderprovinz&layout=compact&hide_border=true&bg_color=161616&title_color=ffffff&text_color=c6c6c6" alt="Top languages">
+  <img src="https://img.shields.io/badge/Docker-161616?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Unraid-161616?style=for-the-badge&logo=unraid&logoColor=white" alt="Unraid">
+  <img src="https://img.shields.io/badge/KasmVNC-161616?style=for-the-badge&logo=kde&logoColor=white" alt="KasmVNC">
+  <img src="https://img.shields.io/badge/Matrix-161616?style=for-the-badge&logo=matrix&logoColor=white" alt="Matrix">
+  <img src="https://img.shields.io/badge/TypeScript-161616?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Python-161616?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/github/followers/junkerderprovinz?style=for-the-badge&logo=github&logoColor=white&label=Followers&labelColor=161616&color=393939" alt="Followers">
 </p>
 
 ## Main projects
