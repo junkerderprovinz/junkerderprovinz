@@ -22,7 +22,7 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 - **matrix** — plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
 - **jdownloader** — JDownloader 2 on a KasmVNC web desktop with a complete dark UI out of the box.
 - **featherdrop** — a clean, login-free self-hosted file sharer: drop a file, set an expiry, share a link.
-- **repo-watch** — weekly scan of my Unraid container repos → a Matrix digest.
+- **repo-watch** *(private)* — internal job that scans my Unraid container repos every 3 days → a Matrix digest.
 - **jd-plain-dark** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
 
 ## Focus
