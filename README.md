@@ -1,4 +1,4 @@
-# junkerderprovinz 👋
+# Junker der Provinz 👋
 
 I build Docker containers and Unraid **Community Applications** templates for self-hosters —
 own-image apps on slick KasmVNC web desktops, plus clean wrappers for upstream images.
