@@ -41,6 +41,7 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
+- **[mm-flat-monkey-dark](https://github.com/junkerderprovinz/mm-flat-monkey-dark)** — a dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, with a free accent-colour picker.
 
 ## 🎯 Focus
 
