@@ -41,7 +41,6 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
-- **repo-watch** *(private)* — internal job that scans my container repos every few days → a Matrix digest.
 
 ## 🎯 Focus
 
