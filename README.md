@@ -20,16 +20,16 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 
 ## 📦 Own-image apps
 
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/krusader/main/.github/assets/icon.png" height="22"/> **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast KasmVNC web desktop, native dark theme, Kate + krename + RAR.
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/jdownloader/main/.github/assets/icon.png" height="22"/> **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a KasmVNC web desktop with a complete dark UI out of the box.
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/matrix/main/.github/assets/icon.png" height="22"/> **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/featherdrop/main/.github/assets/icon.png" height="22"/> **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing: drop a file, set an expiry, share a link.
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/bombvault/main/.github/assets/icon.png" height="22"/> **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for Docker containers, KVM/libvirt VMs and the Unraid flash — one-click backup and automatic re-install, powered by restic.
+- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast KasmVNC web desktop, native dark theme, Kate + krename + RAR.
+- **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a KasmVNC web desktop with a complete dark UI out of the box.
+- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
+- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing: drop a file, set an expiry, share a link.
+- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for Docker containers, KVM/libvirt VMs and the Unraid flash — one-click backup and automatic re-install, powered by restic.
 
 ## 🔌 Unraid plugins
 
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/shiplog/main/.github/assets/icon.png" height="22"/> **[shiplog](https://github.com/junkerderprovinz/shiplog)** — read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/smokesignal/main/.github/assets/icon.png" height="22"/> **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
+- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
+- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
 
 ## 🧩 Upstream wrappers
 
@@ -40,7 +40,7 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 ## 🛠️ Feed & extras
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
-- <img src="https://raw.githubusercontent.com/junkerderprovinz/jd-plain-dark/main/.github/assets/icon.png" height="22"/> **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
+- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
 - **repo-watch** *(private)* — internal job that scans my container repos every few days → a Matrix digest.
 
 ## 🎯 Focus
