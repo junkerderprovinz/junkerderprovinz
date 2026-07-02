@@ -1,4 +1,4 @@
-# Junker der Provinz 👋
+﻿# Junker der Provinz ðŸ‘‹
 
 I build self-hosting tools for **Unraid** and Docker: own-image containers on slick
 KasmVNC web desktops, clean wrappers for upstream images, and native **Unraid plugins**.
@@ -18,35 +18,35 @@ If something can be self-hosted instead of rented, I'll probably try to containe
   <img src="https://img.shields.io/github/followers/junkerderprovinz?style=for-the-badge&logo=github&logoColor=white&label=Followers&labelColor=161616&color=393939" alt="Followers">
 </p>
 
-## 📦 Containers
+## ðŸ“¦ Containers
 
-- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast KasmVNC web desktop, native dark theme, Kate + krename + RAR.
-- **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a KasmVNC web desktop with a complete dark UI out of the box.
-- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
-- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing: drop a file, set an expiry, share a link.
-- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for Docker containers, KVM/libvirt VMs and the Unraid flash — one-click backup and automatic re-install, powered by restic.
+- **[krusader](https://github.com/junkerderprovinz/krusader)** â€” twin-pane KDE file manager on a fast KasmVNC web desktop, native dark theme, Kate + krename + RAR.
+- **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** â€” JDownloader 2 on a KasmVNC web desktop with a complete dark UI out of the box.
+- **[matrix](https://github.com/junkerderprovinz/matrix)** â€” plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
+- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** â€” feather-light, login-free, end-to-end encrypted file sharing: drop a file, set an expiry, share a link.
+- **[bombvault](https://github.com/junkerderprovinz/bombvault)** â€” backup & full disaster recovery for Docker containers, KVM/libvirt VMs and the Unraid flash â€” one-click backup and automatic re-install, powered by restic.
 
-## 🧩 Templates
+## ðŸ§© Templates
 
-- **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model.
-- **standard notes** ([server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) · [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)) — self-hosted Standard Notes sync server + official web client.
-- **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation, every option exposed in the template form.
+- **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** â€” open-source AI software-development agent, pre-wired for a local Ollama model.
+- **standard notes** ([server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) Â· [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)) â€” self-hosted Standard Notes sync server + official web client.
+- **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** â€” workflow automation, every option exposed in the template form.
 
-## 🔌 Plugins
+## ðŸ”Œ Plugins
 
-- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
-- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
+- **[shiplog](https://github.com/junkerderprovinz/shiplog)** â€” read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
+- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** â€” pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
 
-## 🛠️ Feed & extras
+## ðŸ› ï¸ Feed & extras
 
-- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
-- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
-- **[mm-flat-monkey-dark](https://github.com/junkerderprovinz/mm-flat-monkey-dark)** — a dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, with a free accent-colour picker.
+- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** â€” one Community Applications feed for all of the above (apps + plugins).
+- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** â€” a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
+- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** â€” a dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, with a free accent-colour picker.
 
-## 🎯 Focus
+## ðŸŽ¯ Focus
 
-Unraid Community Applications · Docker · Go & Next.js services · KasmVNC web desktops · Matrix · GHCR / Docker Hub · CI/CD · self-hosting UX.
+Unraid Community Applications Â· Docker Â· Go & Next.js services Â· KasmVNC web desktops Â· Matrix Â· GHCR / Docker Hub Â· CI/CD Â· self-hosting UX.
 
-## ☕ Support
+## â˜• Support
 
 Issues, ideas and PRs are welcome. If something here saves you time, you can [buy me a coffee](https://buymeacoffee.com/junkerderprovinz).
