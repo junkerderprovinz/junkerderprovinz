@@ -35,6 +35,7 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 ## 🔌 Plugins
 
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** — read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — container command post in the Docker tab: dependency-aware start orchestration, live CPU/RAM/bandwidth limits with proof diagnostics, actions column, themeable badges.
 - **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
 
 ## 🛠️ Feed & extras
