@@ -1,10 +1,13 @@
 # Junker der Provinz 👋
 
-I build self-hosting tools for **Unraid** and Docker: own-image containers on slick
+I build the free, open-source self-hosting tools for **Unraid** and Docker that I always
+wished existed, so I stopped waiting and made them myself: own-image containers on slick
 KasmVNC web desktops, clean wrappers for upstream images, and native **Unraid plugins**.
-Everything ships through one Community Applications feed.
+They are the tools I actually run on my own server, which is the only quality bar I trust.
 
-If something can be self-hosted instead of rented, I'll probably try to containerise it.
+Everything is self-hosted and private by design — no accounts, no telemetry, nothing ever
+leaves your box. It started as a hobby and got happily out of hand. If something can be
+self-hosted instead of rented, I'll probably try to containerise it.
 
 <p align="left">
   <img src="https://img.shields.io/badge/Unraid-161616?style=for-the-badge&logo=unraid&logoColor=white" alt="Unraid">
@@ -34,8 +37,8 @@ If something can be self-hosted instead of rented, I'll probably try to containe
 
 ## 🔌 Plugins
 
-- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — read-only Docker update advisor right inside Unraid's Docker tab: the changelog, a risk badge and the real version jump before you press update.
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — container command post in the Docker tab: dependency-aware start orchestration, live CPU/RAM/bandwidth limits with proof diagnostics, actions column, themeable badges.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — firepower and finish for your whole Unraid dashboard: dependency-aware, health-gated start orchestration, live CPU/RAM/bandwidth limits with built-in proof, and clean themeable badges across the Docker, Plugins and VM tabs. Fire when ready.
+- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — update advisor in Unraid's Docker tab: a per-container changelog bubble showing what changes and how risky before you update, with optional SemVer-gated scheduled auto-update (off by default).
 - **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: a single **GO / CAUTION / NO-GO** verdict so you never reboot into a known landmine.
 
 ## 🛠️ Feed & extras
@@ -50,4 +53,7 @@ Unraid Community Applications · Docker · Go & Next.js services · KasmVNC web 
 
 ## ☕ Support
 
-Issues, ideas and PRs are welcome. If something here saves you time, you can [buy me a coffee](https://buymeacoffee.com/junkerderprovinz).
+Issues, ideas and PRs are always welcome. None of this pays my server bill or the hours that
+go into it, so if one of these tools has saved you time, money, or a headache, a coffee genuinely
+helps keep it all going — and keeps me fixing the next bug report at midnight instead of tomorrow.
+Thanks for stopping by, and thank you even more if you decide to [buy me a coffee](https://buymeacoffee.com/junkerderprovinz).
