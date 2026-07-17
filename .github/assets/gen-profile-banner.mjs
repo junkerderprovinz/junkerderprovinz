@@ -1,12 +1,14 @@
 /**
- * Generates the GitHub profile header banner (dark, 1600x420):
- *   profile-banner.svg / .png  —  "Junker der Provinz" + tagline on Carbon #161616.
+ * Generates the GitHub profile banners as theme-flipping pairs so they blend into
+ * BOTH GitHub themes (light `#ffffff`, dark `#0d1117`) with no visible edge:
  *
- * Clean + modern: name in Bree Serif, tagline in Lato, a thin accent rule between
- * them; the whole text block is vertically centred on H/2 (house banner rule).
- * Text is rendered to SVG paths (opentype.js) so the SVG needs NO font. Dark hero
- * reads on both GitHub themes. Deps (global): opentype.js, @resvg/resvg-js.
- * Run: node .github/assets/gen-profile-banner.mjs
+ *   profile-banner.{svg,png} / profile-banner-dark.{svg,png}   hero: name + tagline
+ *   section-<slug>.{svg,png} / section-<slug>-dark.{svg,png}    slim section headers
+ *
+ * The README serves each via <picture> (dark srcset + light default). Text is
+ * rendered to SVG paths (opentype.js) so the SVG needs NO font. Text blocks are
+ * vertically centred on H/2 (house banner rule). Deps (global): opentype.js,
+ * @resvg/resvg-js. Run: node .github/assets/gen-profile-banner.mjs
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -21,16 +23,23 @@ const opentype = require(`${groot}/opentype.js`);
 const { Resvg } = require(`${groot}/@resvg/resvg-js`);
 const __dir = dirname(fileURLToPath(import.meta.url));
 
-// ---- content + styling -----------------------------------------------------
+// ---- content --------------------------------------------------------------
 const NAME = "Junker der Provinz";
 const TAG = "Free, private, self-hosted tools for Unraid & Docker.";
-const W = 1600, H = 420;
-const BG = "#161616";          // IBM Carbon (house dark)
-const NAME_FILL = "#f4f4f4";
-const TAG_FILL = "#9a9a9a";
-const RULE_FILL = "#525252";   // monochrome accent (house palette)
-const maxNameW = 1120, maxTagW = 1000;
-const gapNameRule = 34, gapRuleTag = 34, ruleW = 132, ruleH = 3;
+const SECTIONS = [
+  { slug: "containers", title: "Containers" },
+  { slug: "templates", title: "Templates" },
+  { slug: "plugins", title: "Plugins" },
+  { slug: "extras", title: "Feed & extras" },
+  { slug: "focus", title: "Focus" },
+  { slug: "support", title: "Support" },
+];
+
+// One entry per GitHub theme; bg matches the GitHub canvas so the banner blends in.
+const THEMES = [
+  { suffix: "", bg: "#ffffff", fg: "#1f2328", sub: "#59636e", rule: "#d0d7de", accent: "#8b949e" },
+  { suffix: "-dark", bg: "#0d1117", fg: "#f0f6fc", sub: "#9198a1", rule: "#30363d", accent: "#6e7681" },
+];
 // ---------------------------------------------------------------------------
 
 async function font(file, url) {
@@ -46,42 +55,73 @@ async function font(file, url) {
 const bree = await font("jdp-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
 const lato = await font("jdp-Lato-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf");
 
-// NaN-safe size fit (some Lato glyphs emit NaN at certain sizes — step down)
+// NaN-safe size fit (some Lato glyphs emit NaN at certain sizes — step down).
 function fitSize(fnt, text, maxW, cap) {
-  let size = Math.min(cap, Math.floor(100 * maxW / fnt.getAdvanceWidth(text, 100)));
+  let size = Math.min(cap, Math.floor((100 * maxW) / fnt.getAdvanceWidth(text, 100)));
   for (; size > 10; size--) {
     if (!fnt.getPath(text, 0, 0, size).toPathData(2).includes("NaN")) return size;
   }
   throw new Error("no NaN-free size");
 }
-const nameSize = fitSize(bree, NAME, maxNameW, 132);
-const tagSize = fitSize(lato, TAG, maxTagW, 46);
-
-// vertically centre the block { name + rule + tagline } on H/2
 const sc = (fnt, s) => s / fnt.unitsPerEm;
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+function emit(name, svg, bg) {
+  writeFileSync(join(__dir, `${name}.svg`), svg);
+  const png = new Resvg(svg, { background: bg, fitTo: { mode: "original" } }).render().asPng();
+  writeFileSync(join(__dir, `${name}.png`), png);
+}
+
+// ---- hero (name + rule + tagline, centred) --------------------------------
+const HW = 1600, HH = 420;
+const nameSize = fitSize(bree, NAME, 1120, 132);
+const tagSize = fitSize(lato, TAG, 1000, 46);
+const gapNameRule = 34, gapRuleTag = 34, ruleW = 132, ruleH = 3;
 const nameAsc = bree.ascender * sc(bree, nameSize);
 const tagAsc = lato.ascender * sc(lato, tagSize);
 const tagDesc = -lato.descender * sc(lato, tagSize);
-const blockH = nameAsc + gapNameRule + ruleH + gapRuleTag + tagAsc + tagDesc;
-const top = H / 2 - blockH / 2;
-const nameBaseline = Math.round(top + nameAsc);
-const ruleY = Math.round(nameBaseline + gapNameRule);
-const tagBaseline = Math.round(ruleY + ruleH + gapRuleTag + tagAsc);
-
-const nameX = (W - bree.getAdvanceWidth(NAME, nameSize)) / 2;
-const tagX = (W - lato.getAdvanceWidth(TAG, tagSize)) / 2;
+const heroBlockH = nameAsc + gapNameRule + ruleH + gapRuleTag + tagAsc + tagDesc;
+const heroTop = HH / 2 - heroBlockH / 2;
+const nameBaseline = Math.round(heroTop + nameAsc);
+const ruleYHero = Math.round(nameBaseline + gapNameRule);
+const tagBaseline = Math.round(ruleYHero + ruleH + gapRuleTag + tagAsc);
+const nameX = (HW - bree.getAdvanceWidth(NAME, nameSize)) / 2;
+const tagX = (HW - lato.getAdvanceWidth(TAG, tagSize)) / 2;
 const namePath = bree.getPath(NAME, nameX, nameBaseline, nameSize).toPathData(2);
 const tagPath = lato.getPath(TAG, tagX, tagBaseline, tagSize).toPathData(2);
 
-const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Junker der Provinz">
-  <rect width="${W}" height="${H}" fill="${BG}"/>
-  <path d="${namePath}" fill="${NAME_FILL}"/>
-  <rect x="${(W - ruleW) / 2}" y="${ruleY}" width="${ruleW}" height="${ruleH}" rx="1.5" fill="${RULE_FILL}"/>
-  <path d="${tagPath}" fill="${TAG_FILL}"/>
+for (const t of THEMES) {
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${HW} ${HH}" width="${HW}" height="${HH}" role="img" aria-label="Junker der Provinz">
+  <rect width="${HW}" height="${HH}" fill="${t.bg}"/>
+  <path d="${namePath}" fill="${t.fg}"/>
+  <rect x="${(HW - ruleW) / 2}" y="${ruleYHero}" width="${ruleW}" height="${ruleH}" rx="1.5" fill="${t.accent}"/>
+  <path d="${tagPath}" fill="${t.sub}"/>
 </svg>
 `;
-writeFileSync(join(__dir, "profile-banner.svg"), svg);
-const png = new Resvg(svg, { fitTo: { mode: "width", value: W } }).render().asPng();
-writeFileSync(join(__dir, "profile-banner.png"), png);
-console.log(`profile banner ok: ${W}x${H}, name ${nameSize}px, tag ${tagSize}px, png ${png.length} bytes`);
+  emit(`profile-banner${t.suffix}`, svg, t.bg);
+}
+
+// ---- slim section headers (title left of an accent bar) --------------------
+const SW = 1600, SH = 132, barX = 40, barW = 8, titleX = 76, titleSize = 62;
+const sAsc = bree.ascender * sc(bree, titleSize);
+const sDesc = -bree.descender * sc(bree, titleSize);
+const sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
+const barTop = Math.round(SH / 2 - (sAsc + sDesc) / 2);
+const barH = Math.round(sAsc + sDesc);
+
+for (const s of SECTIONS) {
+  const titlePath = bree.getPath(s.title, titleX, sBaseline, titleSize).toPathData(2);
+  for (const t of THEMES) {
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}" role="img" aria-label="${esc(s.title)}">
+  <rect width="${SW}" height="${SH}" fill="${t.bg}"/>
+  <rect x="${barX}" y="${barTop}" width="${barW}" height="${barH}" rx="4" fill="${t.accent}"/>
+  <path d="${titlePath}" fill="${t.fg}"/>
+</svg>
+`;
+    emit(`section-${s.slug}${t.suffix}`, svg, t.bg);
+  }
+}
+
+console.log(`profile banners ok: hero (${HW}x${HH}) + ${SECTIONS.length} sections (${SW}x${SH}), light+dark`);
