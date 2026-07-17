@@ -23,7 +23,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers.png" alt="Containers" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers.png" alt="Containers" width="480">
 </picture>
 
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + krename + RAR.
@@ -34,7 +34,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates.png" alt="Templates" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates.png" alt="Templates" width="480">
 </picture>
 
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model.
@@ -43,7 +43,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins.png" alt="Plugins" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins.png" alt="Plugins" width="480">
 </picture>
 
 - **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — firepower and finish for your whole Unraid dashboard: dependency-aware, health-gated start orchestration, live CPU/RAM/bandwidth limits with built-in proof, and clean themeable badges across the Docker, Plugins and VM tabs. Fire when ready.
@@ -52,7 +52,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras.png" alt="Feed & extras" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras.png" alt="Feed & extras" width="480">
 </picture>
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
@@ -61,14 +61,14 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus.png" alt="Focus" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus.png" alt="Focus" width="480">
 </picture>
 
 Unraid Community Applications · Docker · Go & Next.js services · Selkies web desktops · Matrix · GHCR / Docker Hub · CI/CD · self-hosting UX.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support.png" alt="Support" width="100%">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support.png" alt="Support" width="480">
 </picture>
 
 Issues, ideas and PRs are always welcome. None of this pays my server bill or the hours that go into it, so if one of these tools has saved you time, money, or a headache, a coffee genuinely helps keep it all going — and keeps me fixing the next bug report at midnight instead of tomorrow. Thanks for stopping by, and thank you even more if you decide to [buy me a coffee](https://buymeacoffee.com/junkerderprovinz).

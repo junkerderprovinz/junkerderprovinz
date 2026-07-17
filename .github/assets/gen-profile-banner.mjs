@@ -81,7 +81,7 @@ const ornRaw = readFileSync(join(__dir, "hero-rule-ornament.svg"), "utf8");
 const ornM = ornRaw.match(/viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/);
 const ornVW = parseFloat(ornM[1]), ornVH = parseFloat(ornM[2]);
 const ornGeom = [...ornRaw.matchAll(/<(?:path|polygon)\b[^>]*\/>/g)].map((m) => m[0].replace(/\s*class="[^"]*"/, "")).join("");
-const ornWidth = 230, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
+const ornWidth = 340, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
 const ornX = (HW - ornWidth) / 2;
 const gapNameRule = 30, gapRuleTag = 30;
 const nameAsc = bree.ascender * sc(bree, nameSize);
@@ -110,9 +110,13 @@ for (const t of THEMES) {
 }
 
 // ---- slim section headers (title left of an accent bar) --------------------
-// titleX targets GitHub's list-text indent (ul padding-left: 2em) at the profile
-// column width, so the section title lines up flush with the list below it.
-const SW = 1600, SH = 132, barX = 37, barW = 6, titleX = 66, titleSize = 62;
+// Section banners render at a FIXED display width (SECTION_W), not width=100%, so
+// the title's pixel position is independent of GitHub's column width. Coords are 2x
+// (SW = 2 * SECTION_W) for crispness; displayed at half scale the title lands at 32px
+// = GitHub's list-text indent (ul padding-left: 2em), flush with the list below, and
+// the accent bar lands in the bullet gutter. The README sets <img width="480">.
+const SECTION_W = 480;
+const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8, titleX = 64, titleSize = 60;
 const sAsc = bree.ascender * sc(bree, titleSize);
 const sDesc = -bree.descender * sc(bree, titleSize);
 const sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
