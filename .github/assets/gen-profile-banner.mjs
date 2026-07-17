@@ -63,6 +63,15 @@ function fitSize(fnt, text, maxW, cap) {
   }
   throw new Error("no NaN-free size");
 }
+// Largest single size <= cap at which NONE of the texts emit a NaN glyph path.
+// (Bree Serif's 'n' emits NaN at size 60, which silently truncated "Containers"
+// -> "Conta" and "Plugins" -> "Plugi"; a shared safe size keeps them uniform.)
+function safeSize(fnt, texts, cap) {
+  for (let size = cap; size > 10; size--) {
+    if (texts.every((t) => !fnt.getPath(t, 0, 0, size).toPathData(2).includes("NaN"))) return size;
+  }
+  throw new Error("no NaN-free size");
+}
 const sc = (fnt, s) => s / fnt.unitsPerEm;
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -81,7 +90,7 @@ const ornRaw = readFileSync(join(__dir, "hero-rule-ornament.svg"), "utf8");
 const ornM = ornRaw.match(/viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/);
 const ornVW = parseFloat(ornM[1]), ornVH = parseFloat(ornM[2]);
 const ornGeom = [...ornRaw.matchAll(/<(?:path|polygon)\b[^>]*\/>/g)].map((m) => m[0].replace(/\s*class="[^"]*"/, "")).join("");
-const ornWidth = 340, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
+const ornWidth = 520, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
 const ornX = (HW - ornWidth) / 2;
 const gapNameRule = 30, gapRuleTag = 30;
 const nameAsc = bree.ascender * sc(bree, nameSize);
@@ -102,7 +111,7 @@ for (const t of THEMES) {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${HW} ${HH}" width="${HW}" height="${HH}" role="img" aria-label="Junker der Provinz">
   <rect width="${HW}" height="${HH}" fill="${t.bg}"/>
   <path d="${namePath}" fill="${t.fg}"/>
-  <g transform="translate(${ornX},${ornY}) scale(${ornScale.toFixed(4)})" fill="${t.accent}">${ornGeom}</g>
+  <g transform="translate(${ornX},${ornY}) scale(${ornScale.toFixed(4)})" fill="${t.fg}">${ornGeom}</g>
   <path d="${tagPath}" fill="${t.sub}"/>
 </svg>
 `;
@@ -116,7 +125,8 @@ for (const t of THEMES) {
 // = GitHub's list-text indent (ul padding-left: 2em), flush with the list below, and
 // the accent bar lands in the bullet gutter. The README sets <img width="480">.
 const SECTION_W = 480;
-const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8, titleX = 64, titleSize = 60;
+const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8, titleX = 64;
+const titleSize = safeSize(bree, SECTIONS.map((s) => s.title), 60);
 const sAsc = bree.ascender * sc(bree, titleSize);
 const sDesc = -bree.descender * sc(bree, titleSize);
 const sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
