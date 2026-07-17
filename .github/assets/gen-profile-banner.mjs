@@ -63,15 +63,6 @@ function fitSize(fnt, text, maxW, cap) {
   }
   throw new Error("no NaN-free size");
 }
-// Largest single size <= cap at which NONE of the texts emit a NaN glyph path.
-// (Bree Serif's 'n' emits NaN at size 60, which silently truncated "Containers"
-// -> "Conta" and "Plugins" -> "Plugi"; a shared safe size keeps them uniform.)
-function safeSize(fnt, texts, cap) {
-  for (let size = cap; size > 10; size--) {
-    if (texts.every((t) => !fnt.getPath(t, 0, 0, size).toPathData(2).includes("NaN"))) return size;
-  }
-  throw new Error("no NaN-free size");
-}
 const sc = (fnt, s) => s / fnt.unitsPerEm;
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -125,16 +116,35 @@ for (const t of THEMES) {
 // = GitHub's list-text indent (ul padding-left: 2em), flush with the list below, and
 // the accent bar lands in the bullet gutter. The README sets <img width="480">.
 const SECTION_W = 480;
-const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8, titleX = 64;
-const titleSize = safeSize(bree, SECTIONS.map((s) => s.title), 60);
-const sAsc = bree.ascender * sc(bree, titleSize);
-const sDesc = -bree.descender * sc(bree, titleSize);
-const sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
+const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8;
+// The title's VISIBLE ink must start on the list-text indent (2em = 32px = 64 in
+// these 2x coords) so it lines up flush with the markdown list below. We place the
+// pen at TITLE_X - glyph-left-bearing (via the path bounding box), NOT the pen
+// itself at TITLE_X, otherwise the serif's left side bearing pushes the visible
+// text a few px to the right of the list text (the misalignment jdp kept seeing).
+const TITLE_X = 64;
+const penFor = (fnt, text, y, size) => TITLE_X - fnt.getPath(text, 0, y, size).getBoundingBox().x1;
+// Largest size <= 60 at which every section title renders NaN-free at its real
+// (bbox-aligned) pen position; opentype.js can emit a NaN at the render coords
+// even when (0,0) is clean (that silently truncated "Templates" -> "T"), and the
+// baseline depends on the size, so pick both together.
+let titleSize, sAsc, sDesc, sBaseline;
+for (let size = 60; size > 10; size--) {
+  sAsc = bree.ascender * sc(bree, size);
+  sDesc = -bree.descender * sc(bree, size);
+  sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
+  if (SECTIONS.every((s) => !bree.getPath(s.title, penFor(bree, s.title, sBaseline, size), sBaseline, size).toPathData(2).includes("NaN"))) {
+    titleSize = size;
+    break;
+  }
+}
+if (!titleSize) throw new Error("no NaN-free section title size");
 const barTop = Math.round(SH / 2 - (sAsc + sDesc) / 2);
 const barH = Math.round(sAsc + sDesc);
 
 for (const s of SECTIONS) {
-  const titlePath = bree.getPath(s.title, titleX, sBaseline, titleSize).toPathData(2);
+  // Align each title's visible ink left edge to TITLE_X (the list-text indent).
+  const titlePath = bree.getPath(s.title, penFor(bree, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
   for (const t of THEMES) {
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}" role="img" aria-label="${esc(s.title)}">
