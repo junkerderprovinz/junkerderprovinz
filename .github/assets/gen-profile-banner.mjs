@@ -76,15 +76,22 @@ function emit(name, svg, bg) {
 const HW = 1600, HH = 420;
 const nameSize = fitSize(bree, NAME, 1120, 132);
 const tagSize = fitSize(lato, TAG, 1000, 46);
-const gapNameRule = 34, gapRuleTag = 34, ruleW = 132, ruleH = 3;
+// decorative hero rule: the user's flourish SVG, embedded 1:1 and recoloured per theme
+const ornRaw = readFileSync(join(__dir, "hero-rule-ornament.svg"), "utf8");
+const ornM = ornRaw.match(/viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/);
+const ornVW = parseFloat(ornM[1]), ornVH = parseFloat(ornM[2]);
+const ornGeom = [...ornRaw.matchAll(/<(?:path|polygon)\b[^>]*\/>/g)].map((m) => m[0].replace(/\s*class="[^"]*"/, "")).join("");
+const ornWidth = 230, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
+const ornX = (HW - ornWidth) / 2;
+const gapNameRule = 30, gapRuleTag = 30;
 const nameAsc = bree.ascender * sc(bree, nameSize);
 const tagAsc = lato.ascender * sc(lato, tagSize);
 const tagDesc = -lato.descender * sc(lato, tagSize);
-const heroBlockH = nameAsc + gapNameRule + ruleH + gapRuleTag + tagAsc + tagDesc;
+const heroBlockH = nameAsc + gapNameRule + ornHeight + gapRuleTag + tagAsc + tagDesc;
 const heroTop = HH / 2 - heroBlockH / 2;
 const nameBaseline = Math.round(heroTop + nameAsc);
-const ruleYHero = Math.round(nameBaseline + gapNameRule);
-const tagBaseline = Math.round(ruleYHero + ruleH + gapRuleTag + tagAsc);
+const ornY = Math.round(nameBaseline + gapNameRule);
+const tagBaseline = Math.round(ornY + ornHeight + gapRuleTag + tagAsc);
 const nameX = (HW - bree.getAdvanceWidth(NAME, nameSize)) / 2;
 const tagX = (HW - lato.getAdvanceWidth(TAG, tagSize)) / 2;
 const namePath = bree.getPath(NAME, nameX, nameBaseline, nameSize).toPathData(2);
@@ -95,7 +102,7 @@ for (const t of THEMES) {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${HW} ${HH}" width="${HW}" height="${HH}" role="img" aria-label="Junker der Provinz">
   <rect width="${HW}" height="${HH}" fill="${t.bg}"/>
   <path d="${namePath}" fill="${t.fg}"/>
-  <rect x="${(HW - ruleW) / 2}" y="${ruleYHero}" width="${ruleW}" height="${ruleH}" rx="1.5" fill="${t.accent}"/>
+  <g transform="translate(${ornX},${ornY}) scale(${ornScale.toFixed(4)})" fill="${t.accent}">${ornGeom}</g>
   <path d="${tagPath}" fill="${t.sub}"/>
 </svg>
 `;
@@ -103,7 +110,9 @@ for (const t of THEMES) {
 }
 
 // ---- slim section headers (title left of an accent bar) --------------------
-const SW = 1600, SH = 132, barX = 40, barW = 8, titleX = 76, titleSize = 62;
+// titleX targets GitHub's list-text indent (ul padding-left: 2em) at the profile
+// column width, so the section title lines up flush with the list below it.
+const SW = 1600, SH = 132, barX = 37, barW = 6, titleX = 66, titleSize = 62;
 const sAsc = bree.ascender * sc(bree, titleSize);
 const sDesc = -bree.descender * sc(bree, titleSize);
 const sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
