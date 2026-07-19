@@ -25,7 +25,7 @@ const __dir = dirname(fileURLToPath(import.meta.url));
 
 // ---- content --------------------------------------------------------------
 const NAME = "Junker der Provinz";
-const TAG = "Free, private, self-hosted tools for Unraid & Docker.";
+const TAG = "Free, private, nice-looking self-hosted tools for Unraid & Docker.";
 const SECTIONS = [
   { slug: "containers", title: "Containers" },
   { slug: "templates", title: "Templates" },
