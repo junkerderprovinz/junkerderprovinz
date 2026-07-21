@@ -29,6 +29,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + krename + RAR.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop with a complete dark UI out of the box.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer on a Selkies web desktop: the 3D-printing slicer in your browser, no VNC client, amd64 + arm64.
+- **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium on a Selkies web desktop: the open-source planetarium in your browser, pan/zoom/time-scrub the sky, amd64 + arm64.
 - **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse + coturn + Element Web + Synapse-Admin in one container.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing: drop a file, set an expiry, share a link.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for Docker containers, KVM/libvirt VMs and the Unraid flash — one-click backup and automatic re-install, powered by restic.
