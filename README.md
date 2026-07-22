@@ -48,7 +48,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins.png" alt="Plugins" width="480">
 </picture>
 
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration, live resource limits, themeable Unraid badges.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration + live limits + themeable badges.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** — update advisor in Unraid's Docker tab: changelog, risk, optional auto-update.
 - **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict before you reboot.
 
@@ -59,7 +59,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all of the above (apps + plugins).
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2 (no jar patch, no agent).
-- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free accent picker.
+- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark reshell of MediaMonkey 5's Flat Monkey skin, free accent picker.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus-dark.png">
