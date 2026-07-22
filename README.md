@@ -26,13 +26,13 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers.png" alt="Containers" width="480">
 </picture>
 
-- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR built in.
-- **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client needed.
-- **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client needed.
-- **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client needed.
+- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
+- **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
+- **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
+- **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
 - **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring share links.
-- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for Docker containers, VMs and the Unraid flash, powered by restic.
+- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, powered by restic.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates-dark.png">
@@ -48,9 +48,9 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins.png" alt="Plugins" width="480">
 </picture>
 
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration + live CPU/RAM/bandwidth limits + themeable Unraid badges.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration + live CPU/RAM/bandwidth limits + themeable badges.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** — per-container update advisor in Unraid's Docker tab: changelog, risk level, optional auto-update.
-- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot into a landmine.
+- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot blind.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras-dark.png">
@@ -59,7 +59,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for every app and plugin above, add it once in Unraid.
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, no jar patch and no background agent.
-- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, with a free accent-colour picker.
+- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free accent-colour picker.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus-dark.png">
