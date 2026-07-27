@@ -33,6 +33,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 - **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring share links.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, powered by restic.
+- **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: a thin wrapper that auto-inits, heals appdata permissions and honours PUID/PGID, S3-capable.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates-dark.png">
