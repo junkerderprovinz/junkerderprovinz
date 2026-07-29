@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/Python-393939?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Selkies-393939?style=for-the-badge&logo=kde&logoColor=white" alt="Selkies">
   <img src="https://img.shields.io/badge/Matrix-393939?style=for-the-badge&logo=matrix&logoColor=white" alt="Matrix">
+  <img src="https://img.shields.io/badge/License-AGPL--3.0-393939?style=for-the-badge&logo=gnu&logoColor=white" alt="License: AGPL-3.0">
   <img src="https://img.shields.io/github/followers/junkerderprovinz?style=for-the-badge&logo=github&logoColor=white&label=Followers&labelColor=393939&color=6e7681" alt="Followers">
 </p>
 
