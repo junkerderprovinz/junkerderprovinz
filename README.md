@@ -42,7 +42,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 </picture>
 
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud needed.
-- **([standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [standardnotes web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui))** — self-hosted Standard Notes sync server plus the official encrypted web client.
+- **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [standardnotes web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the official encrypted web client.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 
 <picture>
