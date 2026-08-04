@@ -31,7 +31,8 @@ const SECTIONS = [
   { slug: "images", title: "Images" },
   { slug: "wrappers", title: "Wrappers" },
   { slug: "plugins", title: "Plugins" },
-  { slug: "extras", title: "Feed & extras" },
+  { slug: "themes", title: "Themes" },
+  { slug: "feed", title: "Feed" },
   { slug: "focus", title: "Focus" },
   { slug: "support", title: "Support" },
 ];

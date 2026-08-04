@@ -27,8 +27,8 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-apps.png" alt="Apps" width="480">
 </picture>
 
-- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, powered by restic.
-- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring share links.
+- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, via restic.
+- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring links.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images-dark.png">
@@ -45,12 +45,12 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers.png" alt="Wrappers" width="480">
 </picture>
 
-- **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign European document server (OnlyOffice-compatible), browser office editing wired into OpenCloud over WOPI.
+- **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
-- **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud needed.
-- **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [standardnotes web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the official encrypted web client.
+- **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
+- **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the encrypted web client.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins-dark.png">
@@ -58,18 +58,24 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 </picture>
 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** — puts BombVault's live activity log on Unraid's dashboard as a real, native tile.
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration + live CPU/RAM/bandwidth limits + themeable badges.
-- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — per-container update advisor in Unraid's Docker tab: changelog, risk level, optional auto-update.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration, live CPU/RAM/bandwidth limits, themeable badges.
+- **[shiplog](https://github.com/junkerderprovinz/shiplog)** — per-container update advisor in Unraid's Docker tab: changelog, risk level, auto-update.
 - **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot blind.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-extras.png" alt="Feed & extras" width="480">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes-dark.png">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes.png" alt="Themes" width="480">
 </picture>
 
-- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for every app and plugin above, add it once in Unraid.
-- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, no jar patch and no background agent.
-- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free accent-colour picker.
+- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, with no jar patch and no background agent needed.
+- **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free colour picker.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-feed-dark.png">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-feed.png" alt="Feed" width="480">
+</picture>
+
+- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for every app, plugin and theme above, added once in Unraid.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus-dark.png">
