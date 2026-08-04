@@ -58,7 +58,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 </picture>
 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** — puts BombVault's live activity log on Unraid's dashboard as a real, native tile.
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated start orchestration, live CPU/RAM/bandwidth limits, themeable badges.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated startup order, live CPU/RAM/network limits, themeable badges.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** — per-container update advisor in Unraid's Docker tab: changelog, risk level, auto-update.
 - **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot blind.
 
@@ -67,7 +67,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes.png" alt="Themes" width="480">
 </picture>
 
-- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, with no jar patch and no background agent needed.
+- **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, no jar patch, no background agent.
 - **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free colour picker.
 
 <picture>
@@ -75,7 +75,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-feed.png" alt="Feed" width="480">
 </picture>
 
-- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for every app, plugin and theme above, added once in Unraid.
+- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** — one Community Applications feed for all my apps, plugins and themes, added once.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-focus-dark.png">
