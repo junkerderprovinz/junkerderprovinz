@@ -37,7 +37,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
-- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
+- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and the Ketesa admin UI in one box, with opt-in QR code device linking.
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
