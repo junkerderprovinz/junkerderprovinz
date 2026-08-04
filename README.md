@@ -23,27 +23,32 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-containers.png" alt="Containers" width="480">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images-dark.png">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
-- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
+<sub>Apps I build and ship as my own container image.</sub>
+
+- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, powered by restic.
+- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring share links.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
+- **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
+- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
+- **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
-- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
-- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring share links.
-- **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, powered by restic.
-- **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates-dark.png">
-  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-templates.png" alt="Templates" width="480">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers-dark.png">
+  <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers.png" alt="Wrappers" width="480">
 </picture>
 
+<sub>Unraid templates that wrap an upstream image, packaged for one-click install.</sub>
+
+- **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign European document server (OnlyOffice-compatible), browser office editing wired into OpenCloud over WOPI.
+- **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud needed.
 - **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [standardnotes web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the official encrypted web client.
-- **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins-dark.png">
