@@ -37,6 +37,8 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
+- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
+- **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
 
@@ -46,9 +48,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
 </picture>
 
 - **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
-- **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Synapse-Admin in one box.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
-- **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
 - **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the encrypted web client.
 
