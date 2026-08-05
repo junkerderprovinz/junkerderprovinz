@@ -47,6 +47,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker th
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers.png" alt="Wrappers" width="480">
 </picture>
 
+- **[couchdb](https://github.com/junkerderprovinz/unraid-apps/tree/main/couchdb)** — the HTTP/JSON database behind Obsidian LiveSync, 3.x with persistent data, config and CORS.
 - **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
