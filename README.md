@@ -61,7 +61,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** — puts BombVault's live activity log on Unraid's dashboard as a real, native tile.
 - **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** — health-gated startup order, live CPU/RAM/network limits, themeable badges.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** — per-container update advisor in Unraid's Docker tab: changelog, risk level, auto-update.
-- **[smokesignal](https://github.com/junkerderprovinz/smokesignal)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot blind.
+- **[firesquire](https://github.com/junkerderprovinz/firesquire)** — pre-reboot health check: one **GO / CAUTION / NO-GO** verdict so you never reboot blind.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes-dark.png">
