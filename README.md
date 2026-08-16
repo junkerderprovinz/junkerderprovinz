@@ -35,7 +35,6 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
-- **[garage](https://github.com/junkerderprovinz/garage)** — Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup.
 - **[handbrake](https://github.com/junkerderprovinz/handbrake)** — HandBrake's full transcoder GUI in your browser on a Selkies web desktop, dark by default, with an automated watch-folder converter.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
@@ -43,6 +42,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** — one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** — PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** — Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
+- **[garage](https://github.com/junkerderprovinz/garage)** — Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers-dark.png">
