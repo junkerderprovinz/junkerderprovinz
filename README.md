@@ -35,7 +35,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
-- **[handbrake](https://github.com/junkerderprovinz/handbrake)** — HandBrake's full transcoder GUI in your browser on a Selkies web desktop, dark by default, with an automated watch-folder converter.
+- **[handbrake](https://github.com/junkerderprovinz/handbrake)** — HandBrake's full GUI in your browser via Selkies, GPU-accelerated and dark by default.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
 - **[matrix](https://github.com/junkerderprovinz/matrix)** — plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Ketesa admin in one box.
