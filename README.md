@@ -51,6 +51,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
 - **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** — sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** — workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** — open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
+- **[seaweedfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/seaweedfs)** — S3-compatible object storage, the maintained alternative now that MinIO's open edition is done.
 - **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** — self-hosted Standard Notes sync server plus the encrypted web client.
 
 <picture>
