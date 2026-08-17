@@ -74,6 +74,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
 
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** — a fully dark JD Plain theme for JDownloader 2, no jar patch, no background agent.
 - **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** — dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, free colour picker.
+- **[glimstone](https://github.com/junkerderprovinz/glimstone)** — the shared design language behind my apps: palette, rules and reference tokens to copy.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-feed-dark.png">
