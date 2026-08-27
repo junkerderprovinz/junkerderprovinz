@@ -29,6 +29,7 @@ I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I 
 
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** — backup & full disaster recovery for containers, VMs and the Unraid flash, via restic.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** — feather-light, login-free, end-to-end encrypted file sharing with self-expiring links.
+- **[knightloader](https://github.com/junkerderprovinz/knightloader)** — self-hosted download manager with a clean UI, a phone app and a browser extension. *Still under development, not ready to install.*
 - **[trickwork](https://github.com/junkerderprovinz/trickwork)** — turns images into proportional-font-aware ASCII art, live preview, TXT/XHTML/RTF/PNG export.
 
 <picture>
