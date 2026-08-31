@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/profile-banner-dark.png">
-    <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/profile-banner.png" alt="Junker der Provinz" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/profile-banner-dark.svg">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/profile-banner.svg" alt="Junker der Provinz" width="100%">
   </picture>
 </p>
 
