@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-I build the free, open-source self-hosting tools for <b>Unraid</b> and Docker I always wished existed — so I stopped waiting and forged them myself. Private by design: no accounts, no telemetry, nothing ever leaves your own walls. It started as a hobby and got happily out of hand — turns out a one-knight crusade doesn't know when to stop.
+I build the free, open-source tools I always wished existed, so I stopped waiting and forged them myself: self-hosted servers, a phone app, browser extensions. Private by design: no accounts, no telemetry, nothing ever leaves your own walls. It started as a hobby and got happily out of hand, and it turns out a one-knight crusade doesn't know when to stop.
 </p>
 
 <picture>
