@@ -37,6 +37,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
+- **[excalidraw](https://github.com/junkerderprovinz/excalidraw)** — the hand-drawn whiteboard, self-hosted so links, collaboration and even the fonts stay on your server.
 - **[handbrake](https://github.com/junkerderprovinz/handbrake)** — HandBrake's full GUI in your browser via Selkies, GPU-accelerated and dark by default.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** — JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** — twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
