@@ -94,6 +94,38 @@ for (const marker of ["<!--QRPANELS-->", "<!--CHAINROWS-->", "<!--COINTILES-->"]
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, "index.html"), out, "utf8");
+
+// --- A second door, whose only job is to be readable -------------------------
+// GitHub's Sponsor button can carry a `custom` entry, and it prints that entry
+// as the BARE URL: measured on syncthing/syncthing, whose menu reads
+// "https://syncthing.net/donations/". There is no label field - the docs allow
+// a URL and nothing else. So the only way to say something in that menu is to
+// say it in the path, and this is the path.
+//
+// It is a redirect rather than a copy. A second copy of the page would be a
+// second place for the addresses to live, which is the one thing this whole
+// repository is arranged to avoid. The meta refresh does the work with no
+// script, and the link under it is what somebody sees if it is disabled.
+const DOOR = "more-ways-to-support";
+mkdirSync(join(OUT, DOOR), { recursive: true });
+writeFileSync(
+  join(OUT, DOOR, "index.html"),
+  `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Support the tools</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://junkerderprovinz.github.io/junkerderprovinz/">
+<meta http-equiv="refresh" content="0; url=../">
+</head>
+<body>
+<p>Taking you to <a href="../">the donation page</a>.</p>
+</body>
+</html>
+`,
+  "utf8"
+);
 console.log(
   `docs/index.html gebaut: ${COINS.length} Muenzen, ` +
     `${COINS.reduce((n, c) => n + c.networks.length, 0)} Netzwerke, ${addresses.length} Adressen`
