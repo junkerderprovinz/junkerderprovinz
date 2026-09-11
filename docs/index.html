@@ -507,8 +507,22 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    * for the one visitor who typed the address or came from a sponsor link, and
    * that is exactly who `document.referrer` tells apart.
    */
+  /** Kam der Besucher von einer FREMDEN Seite? Die eigene zaehlt nicht. */
+  function vonAussen() {
+    if (!document.referrer || history.length <= 1) return false;
+    try {
+      return new URL(document.referrer).origin !== location.origin;
+    } catch {
+      return false;
+    }
+  }
+
   function close() {
-    if (document.referrer && history.length > 1) {
+    // Zurueck nur zu einer fremden Seite. Die Weiterleitung unter
+    // /more-ways-to-support/ liegt auf DIESEM Ursprung und leitet sofort wieder
+    // hierher - ein `history.back()` dorthin waere eine Schleife, aus der man
+    // nur mit Gewalt herauskommt.
+    if (vonAussen()) {
       history.back();
       return;
     }
@@ -524,7 +538,12 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   });
 
   showCoin(tiles[0]);
-  open();
+  // Offen beim Ankommen, WEIL fast jeder von einem Krypto-Knopf kommt und das
+  // Fenster der ganze Auftrag ist. Die eine Ausnahme ist `#ways`: dorthin
+  // schickt der Sponsor-Eintrag, und der meint ausdruecklich die Uebersicht mit
+  // allen drei Wegen. Ein Krypto-Fenster als Antwort auf "weitere
+  // Moeglichkeiten" ist genau eine Moeglichkeit zu wenig.
+  if (location.hash !== "#ways") open();
 })();
 </script>
 </body>

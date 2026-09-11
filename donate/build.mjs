@@ -104,8 +104,13 @@ writeFileSync(join(OUT, "index.html"), out, "utf8");
 //
 // It is a redirect rather than a copy. A second copy of the page would be a
 // second place for the addresses to live, which is the one thing this whole
-// repository is arranged to avoid. The meta refresh does the work with no
-// script, and the link under it is what somebody sees if it is disabled.
+// repository is arranged to avoid.
+//
+// IT LANDS ON `#ways`, NOT ON THE BARE PAGE. The page opens the crypto window
+// on arrival, because almost everybody arrives from a Crypto button and the
+// window is the whole errand - but this door says "more ways to support", and
+// answering that with the crypto window is exactly one way too few. The page
+// skips the auto-open for this one fragment and shows the card with all three.
 const DOOR = "more-ways-to-support";
 mkdirSync(join(OUT, DOOR), { recursive: true });
 writeFileSync(
@@ -117,10 +122,17 @@ writeFileSync(
 <title>Support the tools</title>
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://junkerderprovinz.github.io/junkerderprovinz/">
-<meta http-equiv="refresh" content="0; url=../">
+<meta http-equiv="refresh" content="0; url=../#ways">
 </head>
 <body>
-<p>Taking you to <a href="../">the donation page</a>.</p>
+<p>Taking you to <a href="../#ways">the donation page</a>.</p>
+<script>
+// location.replace rather than letting the meta refresh do it: replace leaves
+// NO history entry, so pressing Back from the donation page skips this hop
+// instead of landing here and being forwarded straight back. The meta refresh
+// above stays as the fallback for a browser with script disabled.
+location.replace("../#ways");
+</script>
 </body>
 </html>
 `,
