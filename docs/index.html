@@ -134,7 +134,17 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   position: fixed; inset: 0; z-index: 50;
   display: flex; align-items: center; justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, .7);
+  /* DECKEND, nicht abgedunkelt (jdp, 2026-09-11: "kann man diese zwischenseite
+     ganz ausblenden?"). Vorher schienen Titel, Knoepfe und Kleingedrucktes
+     durch 70 Prozent Schwarz hindurch, und das las sich als "eine Seite mit
+     einem Dialog darauf". Wer von einem Krypto-Knopf kommt, will das Fenster
+     und keine Seite dahinter.
+
+     Die Karte bleibt trotzdem im Dokument. Sie ist der Rueckfall fuer den
+     einen Besucher OHNE Referrer - wer ueber GitHubs Sponsor-Knopf kommt, den
+     FUNDING.yml hierher schickt, braucht auch Kaffee und PayPal und nicht nur
+     Krypto. Gesehen wird sie nur von dem, fuer den sie da ist. */
+  background: var(--bg);
 }
 .window {
   display: flex; flex-direction: column;
@@ -146,6 +156,14 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
      zeichnet bei 70 Prozent Abdunklung nur eine graue Kante auf die Kante. */
   animation: window-in 220ms cubic-bezier(.2, .6, .2, 1) both;
 }
+/* Das Fenster nimmt beim Oeffnen den Fokus, damit ein Screenreader darin
+   landet. Chrome zaehlt das als :focus-visible und zeichnet seinen eigenen
+   Ring, gemessen `outline-style: auto` - das war der blaue Rahmen (jdp,
+   2026-09-11). Ein Ring gehoert an ein Bedienelement, und dieses Fenster ist
+   nur ein Behaelter mit tabindex="-1". Die echten Bedienelemente darin haben
+   ihre eigenen :focus-visible-Regeln und behalten sie. */
+.window:focus, .window:focus-visible { outline: none; }
+
 @keyframes window-in {
   from { opacity: 0; transform: translateY(10px) scale(.98); }
   to { opacity: 1; transform: none; }
