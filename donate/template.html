@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support the tools</title>
+<meta name="description" content="Ways to support the tools I build: a coffee, PayPal, or crypto.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23fcc419'/%3E%3Ccircle cx='16' cy='16' r='9.5' fill='none' stroke='%23161616' stroke-width='3'/%3E%3C/svg%3E">
+<style>
+/* ---------------------------------------------------------------------------
+   THIS PAGE IS BOMBVAULT'S OWN DONATION WINDOW, rebuilt in plain HTML.
+
+   jdp, 2026-09-11: "können wir das nicht so machen wie in BV mit dem Fenster
+   was aufploppt wen man auf Crypto klickt? Coins nicht nach chain aufteilen!
+   Mach es genauso wie in BV".
+
+   So the rules below are not new decisions, they are the app's, and the
+   comments say which ones, because the reason a rule exists is the only thing
+   that keeps somebody from undoing it later:
+
+     - THE ANSWER COMES FIRST and the picker sits under it. A window usually
+       asks before it answers; this one answers first, because the answer is
+       what it was opened for. Changing the coin changes the answer in place,
+       so the thing somebody came to scan never moves off the top.
+     - THE COINS ARE THE TILES, THE CHAINS ARE UNDERNEATH. A donor thinks "I
+       have USDT", not "I have Ethereum", so the first choice is the one they
+       can actually answer. The second is the dangerous one and stays a real,
+       separate choice.
+     - THE CHAIN ROW SHOWS even for a coin with only one chain. It is the line
+       that says WHICH network the address belongs to, and that fact may not
+       appear and disappear depending on which tile is lit.
+
+   The palette is Carbon, the same tokens the apps use. Light is the bare
+   :root block; dark redefines ONLY tokens. Nothing below reaches for a literal
+   colour except the brand marks, which is what a brand colour is for.
+   --------------------------------------------------------------------------- */
+:root {
+  --bg: #f4f4f4;
+  --surface: #ffffff;
+  --surface2: #e8e8e8;
+  --surface3: #d8d8d8;
+  --hover-raised: #cfcfcf;
+  --text: #161616;
+  --text-sub: #525252;
+  --text-muted: #6f6f6f;
+  --border: #d1d1d1;
+  --accent: #fcc419;
+  --accent-ink: #161616;
+  --warn: #8a6d00;
+  /* The one coin mark with no colour of its own: near-black, so it is a token
+     the theme moves rather than a literal. See the two state rules below. */
+  --coin-xrp: #23292f;
+  --radius-card: 16px;
+  --radius-control: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161616;
+    --surface: #262626;
+    --surface2: #393939;
+    --surface3: #525252;
+    --hover-raised: #606060;
+    --text: #f4f4f4;
+    --text-sub: #c6c6c6;
+    --text-muted: #8d8d8d;
+    --border: #393939;
+    --warn: #f1c21b;
+    --coin-xrp: #ffffff;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 3rem 1.25rem 4rem;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 40rem; margin: 0 auto; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .75rem; text-wrap: balance; }
+p { margin: 0 0 1rem; color: var(--text-sub); }
+.lede { font-size: 1.05rem; }
+[hidden] { display: none !important; }
+
+/* --- The three ways, as real buttons ---------------------------------------
+   This page can do what a README cannot: a button here reacts to the pointer,
+   because it is a page and not an image inside somebody else's sanitiser. At
+   rest the mark carries its brand colour; on hover the BUTTON becomes the
+   brand and everything on it flips to that colour's own ink. Same rule the
+   apps follow, and for the same reason: a fixed colour on a fill somebody else
+   chose is a contrast nobody can predict. */
+.ways { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.75rem 0 0; }
+.way {
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .7rem 1.15rem;
+  border-radius: var(--radius-control);
+  background: var(--surface2); color: var(--text);
+  text-decoration: none; font: inherit; font-weight: 600;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: background-color 140ms, color 140ms, border-color 140ms, transform 140ms;
+}
+.way svg { width: 20px; height: 20px; flex: none; transition: fill 140ms; }
+.way--coffee svg { fill: #b8860b; }
+.way--paypal svg { fill: #0070ba; }
+.way--crypto svg { fill: #f7931a; }
+@media (prefers-color-scheme: dark) {
+  .way--coffee svg { fill: #ffdd00; }
+  .way--paypal svg { fill: #4fb5f0; }
+}
+.way--coffee:hover { background: #ffdd00; color: #0d0c22; border-color: #ffdd00; }
+.way--paypal:hover { background: #003087; color: #fff; border-color: #003087; }
+.way--crypto:hover { background: #f7931a; color: #161616; border-color: #f7931a; }
+.way:hover svg { fill: currentColor; }
+.way:hover { transform: translateY(-1px); }
+.way:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.fineprint { margin-top: 2.5rem; font-size: .88rem; color: var(--text-muted); }
+.fineprint strong { color: var(--text-sub); }
+
+/* --- The window ------------------------------------------------------------
+   70 percent, which is the app's own figure (jdp, 2026-09-10: the backdrop was
+   not darkening the page enough at 50). Anything less and the window reads as
+   a panel lying on the page rather than as the thing in front. */
+.backdrop {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, .7);
+}
+.window {
+  display: flex; flex-direction: column;
+  width: 100%; max-width: 32rem; max-height: 88vh;
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .45);
+  animation: window-in 220ms cubic-bezier(.2, .6, .2, 1) both;
+}
+@keyframes window-in {
+  from { opacity: 0; transform: translateY(10px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .window { animation: none; }
+  .way:hover { transform: none; }
+}
+.window h2 {
+  margin: 0; padding: 1.15rem 1.25rem .25rem;
+  font-size: 1.05rem;
+}
+.body {
+  display: flex; flex-direction: column; gap: 1rem;
+  min-height: 0; flex: 1; overflow-y: auto;
+  padding: .75rem 1.25rem 1.25rem;
+}
+.body > p { margin: 0; font-size: .9rem; }
+
+/* The answer. */
+.answer {
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  background: var(--surface2);
+  border-radius: var(--radius-card);
+  padding: 1rem;
+}
+/* The code stays black on white in BOTH themes, which is the app's decision
+   and was asked about there: a code drawn light-on-dark is inverted, the
+   standard does not describe one, and the scanners that refuse it are exactly
+   the wallet apps a donor would be holding. What DOES change is the plate:
+   rounded, so the white square reads as a deliberate card rather than a slab.
+   Safe to clip, because the outermost modules are the quiet zone. */
+.qrwrap { background: #fff; padding: 0; border-radius: var(--radius-card); line-height: 0; overflow: hidden; }
+.qr { display: block; width: 224px; height: 224px; max-width: 100%; }
+/* Whole, in one piece, in a mono face, and NEVER shortened: an address is read
+   back by eye before somebody sends to it, so an ellipsis in the middle turns
+   the one string that has to be exact into a string nobody can check. */
+.addr {
+  margin: 0; width: 100%; text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .76rem; line-height: 1.5; word-break: break-all; color: var(--text);
+}
+/* The chain, switched HERE, directly under the address it changes. A picker
+   one box away from its own effect makes somebody look twice to see whether
+   the address moved; a row of chips under it changes the string in front of
+   their eyes. */
+.chains { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+.chain {
+  padding: .25rem .75rem; border: 0; cursor: pointer;
+  border-radius: 999px; font: inherit; font-size: .75rem; font-weight: 500;
+  background: var(--surface3); color: var(--text-sub);
+  transition: background-color 140ms, color 140ms;
+}
+.chain:hover { background: var(--hover-raised); color: var(--text); }
+.chain.is-on { background: var(--accent); color: var(--accent-ink); }
+.chain:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Warn-coloured, and it is not a warning: it is the line a donor would
+   otherwise go hunting for. Exchanges train people to look for a destination
+   tag or a memo, so the chain that wants neither has to say so where the
+   address is. */
+.note { margin: 0; font-size: .78rem; text-align: center; color: var(--warn); }
+.copy {
+  padding: .55rem 1.1rem; border: 0; cursor: pointer;
+  border-radius: var(--radius-control); font: inherit; font-weight: 600;
+  background: var(--accent); color: var(--accent-ink);
+  transition: filter 140ms;
+}
+.copy:hover { filter: brightness(1.08); }
+.copy:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+/* The picker, under the answer it changes. */
+.coins { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+.coin {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .5rem; aspect-ratio: 1; padding: 0 .5rem;
+  border: 0; cursor: pointer; font: inherit;
+  border-radius: var(--radius-control);
+  background: var(--surface2); color: var(--text-sub);
+  transition: background-color 140ms, color 140ms;
+}
+.coin svg { width: 44px; height: 44px; flex: none; }
+.coin span { font-size: .72rem; font-weight: 500; }
+.coin:hover { background: var(--surface3); color: var(--text); }
+.coin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Hovered on the dark theme the tile goes WHITE, which is KnightLoader's
+   browser-tile hover adopted by the app: a surface one step up is not a hover
+   anybody notices on a dark ground. The marks keep their own colours straight
+   through it, only the surface and the ticker change - except XRP, whose token
+   has to come back down to its dark value, because white is the one dark-theme
+   surface a white mark cannot sit on. */
+@media (prefers-color-scheme: dark) {
+  .coin:not(.is-on):hover { background: #ffffff; color: #161616; --coin-xrp: #23292f; }
+}
+/* Selected: the tile is FILLED with the accent, so EVERY mark drops its brand
+   colour and takes the ink that fill was paired with. The accent is a chosen
+   colour, and a fixed brand colour on it is a contrast nobody can predict -
+   measured in the app before this rule existed, Bitcoin's #F7931A on #FCC419
+   is 1.45:1, against the 3:1 a graphic needs. It read as an empty tile.
+   Nothing is lost: a brand colour earns its place while somebody is SCANNING
+   for their coin, and the selected tile is the one they have stopped scanning.
+   `fill` as a property beats the inline attribute build.mjs writes. */
+.coin.is-on { background: var(--accent); color: var(--accent-ink); }
+.coin.is-on svg { fill: currentColor !important; }
+
+.close { display: flex; justify-content: flex-end; padding: 0 1.25rem 1.25rem; }
+.close button {
+  padding: .55rem 1.1rem; border: 1px solid var(--border); cursor: pointer;
+  border-radius: var(--radius-control); font: inherit; font-weight: 600;
+  background: var(--surface2); color: var(--text);
+  transition: background-color 140ms;
+}
+.close button:hover { background: var(--surface3); }
+.close button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 26rem) {
+  .coins { grid-template-columns: repeat(3, 1fr); }
+  .qr { width: 180px; height: 180px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Support the tools</h1>
+  <p class="lede">Everything I build is free and stays free: no paid tier, no licence key, nothing
+  held back. It is a one-person workshop, so if something here has saved you an evening or a
+  server, this page is how you can say so.</p>
+
+  <div class="ways">
+    <a class="way way--coffee" href="https://buymeacoffee.com/junkerderprovinz">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364z"/></svg>
+      Buy me a coffee
+    </a>
+    <a class="way way--paypal" href="https://paypal.me/hallelujadesign">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z"/></svg>
+      PayPal
+    </a>
+    <button type="button" class="way way--crypto" id="open-crypto">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg>
+      Crypto
+    </button>
+  </div>
+
+  <p class="fineprint"><strong>Several chains really do share one address.</strong> Ethereum, Base,
+  Optimism and BNB Smart Chain are one account, because one key controls it on all of them. It
+  looks like a mistake and it is not.<br><br>
+  <strong>Only what is offered.</strong> A coin that has no tile here is not supported, and a chain
+  that is not listed under the coin you picked cannot receive it. ETH on BNB Smart Chain is the
+  trap worth naming: what trades there as ETH is a bridged token, not the real thing, and it is
+  deliberately not offered.<br><br>
+  None of this changes anything about the software. Everything stays free, with no paid tier and no
+  licence key, whether anybody uses this page or not.</p>
+</main>
+
+<!-- The window. Open on arrival, because a visitor got here by pressing a
+     Crypto button somewhere else and the answer is what they came for. Closing
+     it leaves the card behind, with all three ways on it. -->
+<div class="backdrop" id="crypto" role="dialog" aria-modal="true" aria-labelledby="crypto-title" hidden>
+  <div class="window" tabindex="-1" id="crypto-window">
+    <h2 id="crypto-title">Donate with crypto</h2>
+    <div class="body">
+      <p>Pick the coin you hold, then the network you are sending it on. Every network listed here
+      has its own address, so a chain that cannot receive is never offered.</p>
+
+      <div class="answer">
+<!--QRPANELS-->
+<!--CHAINROWS-->
+        <p class="note" id="chain-note" hidden></p>
+        <button type="button" class="copy" id="copy">Copy address</button>
+      </div>
+
+      <div class="coins" role="listbox" aria-label="Coin">
+<!--COINTILES-->
+      </div>
+    </div>
+    <div class="close"><button type="button" id="close-crypto">Close</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const backdrop = document.getElementById("crypto");
+  const win = document.getElementById("crypto-window");
+  const note = document.getElementById("chain-note");
+  const copyBtn = document.getElementById("copy");
+  const panels = [...document.querySelectorAll(".qrpanel")];
+  const rows = [...document.querySelectorAll(".chains")];
+  const tiles = [...document.querySelectorAll(".coin")];
+
+  /** The address currently on screen, read from the DOM rather than tracked in
+   *  a second variable: the panel that is visible IS the answer, so there is
+   *  no way for a copied string to drift from the one being shown. */
+  function shownAddress() {
+    const open = panels.find((p) => !p.hidden);
+    return open ? open.dataset.address : "";
+  }
+
+  function showChain(chip) {
+    const row = chip.parentElement;
+    [...row.children].forEach((c) => {
+      c.classList.toggle("is-on", c === chip);
+      c.setAttribute("aria-selected", c === chip ? "true" : "false");
+    });
+    panels.forEach((p) => { p.hidden = p.dataset.address !== chip.dataset.address; });
+    note.textContent = chip.dataset.note || "";
+    note.hidden = !chip.dataset.note;
+  }
+
+  // Picking a coin always lands on a network of THAT coin. Keeping the previous
+  // chain when it happens to also carry the new coin would be a convenience
+  // with one bad case: the chain somebody last looked at staying selected under
+  // a coin they never checked it against.
+  function showCoin(tile) {
+    tiles.forEach((t) => {
+      t.classList.toggle("is-on", t === tile);
+      t.setAttribute("aria-selected", t === tile ? "true" : "false");
+    });
+    rows.forEach((r) => { r.hidden = r.dataset.coin !== tile.dataset.coin; });
+    const row = rows.find((r) => r.dataset.coin === tile.dataset.coin);
+    showChain(row.firstElementChild);
+  }
+
+  tiles.forEach((t) => t.addEventListener("click", () => showCoin(t)));
+  rows.forEach((r) =>
+    [...r.children].forEach((c) => c.addEventListener("click", () => showChain(c)))
+  );
+
+  copyBtn.addEventListener("click", async () => {
+    const value = shownAddress();
+    const label = copyBtn.textContent;
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      // Clipboard access can be refused (no HTTPS, a locked-down browser).
+      // Selecting the text is the honest fallback: it still lets somebody copy
+      // by hand, and it never claims a copy that did not happen.
+      const open = panels.find((p) => !p.hidden);
+      const range = document.createRange();
+      range.selectNodeContents(open.querySelector(".addr"));
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      copyBtn.textContent = "Select and copy";
+      setTimeout(() => { copyBtn.textContent = label; }, 1800);
+      return;
+    }
+    copyBtn.textContent = "Copied";
+    setTimeout(() => { copyBtn.textContent = label; }, 1200);
+  });
+
+  function open() {
+    backdrop.hidden = false;
+    win.focus();
+  }
+  function close() {
+    backdrop.hidden = true;
+    document.getElementById("open-crypto").focus();
+  }
+
+  document.getElementById("open-crypto").addEventListener("click", open);
+  document.getElementById("close-crypto").addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !backdrop.hidden) close();
+  });
+
+  showCoin(tiles[0]);
+  open();
+})();
+</script>
+</body>
+</html>

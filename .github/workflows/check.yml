@@ -1,0 +1,38 @@
+name: Donation page
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install the QR library
+        run: npm install -g qrcode-generator
+
+      # The page is generated. If docs/index.html and the source disagree, somebody
+      # hand-edited the output, which is exactly how a wrong address gets in.
+      - name: The built page is the current build
+        run: |
+          node donate/build.mjs
+          git diff --exit-code -- docs/index.html
+
+      # Every QR code has to encode the address printed beside it. Nobody can
+      # proofread this by eye, which is why it is a gate rather than a habit.
+      - name: Every QR encodes its own address
+        run: node donate/check.mjs
+
+      # The five wallets also live in BombVault's own donation window. Two
+      # copies in two repositories cannot be held together by either repo's own
+      # tests, so this reads the other one over the wire and compares.
+      - name: The addresses match BombVault's own window
+        run: node donate/check-app.mjs
