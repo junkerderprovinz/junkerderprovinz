@@ -53,6 +53,14 @@
   --coin-xrp: #23292f;
   --radius-card: 16px;
   --radius-control: 10px;
+  /* Die vier Masse, die entscheiden, ob eine Adresse in EINE Zeile passt.
+     Als Token, damit check.mjs sie lesen kann und die Rechnung nicht an zwei
+     Orten steht. Siehe die Wache dort: sie rechnet die laengste Adresse gegen
+     diese Werte und faellt, bevor wieder ein Zeichen umbricht. */
+  --window-max: 38rem;
+  --body-pad: 1.25rem;
+  --answer-pad: 1rem;
+  --addr-size: 0.76rem;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -130,7 +138,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 }
 .window {
   display: flex; flex-direction: column;
-  width: 100%; max-width: 32rem; max-height: 88vh;
+  width: 100%; max-width: var(--window-max); max-height: 88vh;
   background: var(--surface);
   border-radius: var(--radius-card);
   /* Kein Rahmen und kein Schlagschatten (jdp, 2026-09-11). Der abgedunkelte
@@ -153,7 +161,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 .body {
   display: flex; flex-direction: column; gap: 1rem;
   min-height: 0; flex: 1; overflow-y: auto;
-  padding: .75rem 1.25rem 1.25rem;
+  padding: .75rem var(--body-pad) var(--body-pad);
 }
 .body > p { margin: 0; font-size: .9rem; }
 
@@ -162,7 +170,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   display: flex; flex-direction: column; align-items: center; gap: .75rem; width: 100%;
   background: var(--surface2);
   border-radius: var(--radius-card);
-  padding: 1rem;
+  padding: var(--answer-pad);
 }
 /* The code stays black on white in BOTH themes, which is the app's decision
    and was asked about there: a code drawn light-on-dark is inverted, the
@@ -185,11 +193,20 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 .qr { display: block; width: 216px; height: 216px; max-width: 100%; }
 /* Whole, in one piece, in a mono face, and NEVER shortened: an address is read
    back by eye before somebody sends to it, so an ellipsis in the middle turns
-   the one string that has to be exact into a string nobody can check. */
+   the one string that has to be exact into a string nobody can check.
+
+   AND ON ONE LINE, which is what sets the window's width (jdp, 2026-09-11:
+   "bitte mach das fenster so breit das alle adressen in einer zeile platz
+   haben. bei sui steht ein charakter in zweiter zeile"). It really was one
+   character: the Sui address measured 442px, the window offered 440px of room
+   for it, and it was two pixels short. The window is not two pixels wider now,
+   it has real slack - this face is 0.55em per character and the widest mono in
+   the fallback stack is 0.60em, so a viewer on another system needs about nine
+   percent more room for the same string. check.mjs holds the numbers. */
 .addr {
   margin: 0; width: 100%; text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: .76rem; line-height: 1.5; word-break: break-all; color: var(--text);
+  font-size: var(--addr-size); line-height: 1.5; word-break: break-all; color: var(--text);
 }
 /* The chain, switched HERE, directly under the address it changes. A picker
    one box away from its own effect makes somebody look twice to see whether

@@ -109,7 +109,50 @@ for (const m of html.matchAll(/<div class="chains" data-coin="([^"]+)"[^>]*>([\s
   if (want !== got) fail(`coin "${m[1]}" offers [${got}] on the page but [${want}] in the list`);
 }
 
-// --- 5: a mark on every tile, so nothing ships as a bare ticker --------------
+// --- 5: every address still fits on ONE line --------------------------------
+// An address is read back by eye before somebody sends to it, and a string
+// broken across two lines is one nobody can check at a glance. It broke once
+// already and by a single character: the Sui address wanted 442px in a window
+// that offered 440, two pixels short, and nothing in the build noticed.
+//
+// The four measurements come from the page's own CSS tokens, so this and the
+// stylesheet cannot drift apart: change --window-max there and this follows.
+//
+// PER_CHAR is deliberately pessimistic. The face this renders in measures 0.55em
+// per character; the widest monospace in the fallback stack is 0.60em, so a
+// viewer on another system needs about nine percent more room for the same
+// string, and the check has to pass for THEM, not for the machine it runs on.
+const PER_CHAR = 0.62;
+const rem = (name) => {
+  const m = html.match(new RegExp(`--${name}:\\s*([\\d.]+)rem`));
+  if (!m) {
+    fail(`the stylesheet has no --${name} token - the width check cannot run`);
+    return null;
+  }
+  return parseFloat(m[1]) * 16;
+};
+
+const windowMax = rem("window-max");
+const bodyPad = rem("body-pad");
+const answerPad = rem("answer-pad");
+const addrSize = rem("addr-size");
+
+if (windowMax && bodyPad && answerPad && addrSize) {
+  const room = windowMax - 2 * bodyPad - 2 * answerPad;
+  for (const address of new Set(COINS.flatMap((c) => c.networks.map((n) => n.address)))) {
+    const needs = address.length * addrSize * PER_CHAR;
+    if (needs > room) {
+      fail(
+        `${address} needs ${Math.ceil(needs)}px on one line but the window offers ` +
+          `${Math.floor(room)}px - widen --window-max past ${
+            Math.ceil((needs + 2 * bodyPad + 2 * answerPad) / 16 * 10) / 10
+          }rem`
+      );
+    }
+  }
+}
+
+// --- 6: a mark on every tile, so nothing ships as a bare ticker --------------
 for (const m of html.matchAll(
   /<button [^>]*class="coin[^"]*"[^>]*data-coin="([^"]+)"([\s\S]*?)<\/button>/g
 )) {
