@@ -133,7 +133,9 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   width: 100%; max-width: 32rem; max-height: 88vh;
   background: var(--surface);
   border-radius: var(--radius-card);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .45);
+  /* Kein Rahmen und kein Schlagschatten (jdp, 2026-09-11). Der abgedunkelte
+     Hintergrund trennt das Fenster schon von der Seite; ein Schatten obendrauf
+     zeichnet bei 70 Prozent Abdunklung nur eine graue Kante auf die Kante. */
   animation: window-in 220ms cubic-bezier(.2, .6, .2, 1) both;
 }
 @keyframes window-in {
@@ -157,7 +159,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 
 /* The answer. */
 .answer {
-  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  display: flex; flex-direction: column; align-items: center; gap: .75rem; width: 100%;
   background: var(--surface2);
   border-radius: var(--radius-card);
   padding: 1rem;
@@ -168,8 +170,19 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    the wallet apps a donor would be holding. What DOES change is the plate:
    rounded, so the white square reads as a deliberate card rather than a slab.
    Safe to clip, because the outermost modules are the quiet zone. */
-.qrwrap { background: #fff; padding: 0; border-radius: var(--radius-card); line-height: 0; overflow: hidden; }
-.qr { display: block; width: 224px; height: 224px; max-width: 100%; }
+/* Das Panel ist selbst eine zentrierte Spalte. OHNE das ist der weisse Teller
+   ein Block im Panel und damit so breit wie dessen breitester Inhalt, naemlich
+   die ADRESSE - also 440px bei Sui mit seinen 66 Zeichen und 232px bei XRP mit
+   34. Genau das war der Befund hinter "der weisse hintergrund ist bei den
+   meisten zu gross" (jdp, 2026-09-11): der Teller hat nie den Code umschlossen,
+   sondern die Textbreite darunter. */
+.qrpanel { display: flex; flex-direction: column; align-items: center; gap: .75rem; width: 100%; }
+/* Der helle Rand ist jetzt die Polsterung und NICHT im Bild eingebacken. In
+   Modulen gemessen faellt er bei einer kurzen Adresse breit und bei einer
+   langen schmal aus, weil alle Codes in dieselbe Pixelbox gerendert werden; in
+   Pixeln gemessen ist er auf jeder Muenze gleich. */
+.qrwrap { background: #fff; padding: 8px; border-radius: var(--radius-card); line-height: 0; }
+.qr { display: block; width: 216px; height: 216px; max-width: 100%; }
 /* Whole, in one piece, in a mono face, and NEVER shortened: an address is read
    back by eye before somebody sends to it, so an ellipsis in the middle turns
    the one string that has to be exact into a string nobody can check. */
@@ -184,8 +197,10 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    their eyes. */
 .chains { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
 .chain {
-  padding: .25rem .75rem; border: 0; cursor: pointer;
-  border-radius: 999px; font: inherit; font-size: .75rem; font-weight: 500;
+  padding: .3rem .75rem; border: 0; cursor: pointer;
+  /* Rechteck mit weichen Ecken, keine Pille (jdp, 2026-09-11). Dasselbe Mass
+     wie jeder andere Knopf im Fenster, damit die Reihe eine Familie ist. */
+  border-radius: 8px; font: inherit; font-size: .75rem; font-weight: 500;
   background: var(--surface3); color: var(--text-sub);
   transition: background-color 140ms, color 140ms;
 }
@@ -389,7 +404,22 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
     backdrop.hidden = false;
     win.focus();
   }
+  /**
+   * Closing goes BACK, not "reveal the page underneath" (jdp, 2026-09-11:
+   * "wenn man das cryptofenster schließt soll man wieder im repo readme landen
+   * und nicht diese zwischenseite sehen").
+   *
+   * Almost everybody here arrived by pressing a Crypto button in a README, so
+   * the window is the whole errand and closing it means going back to where
+   * they were. The card behind it is not a stop on the way, it is the fallback
+   * for the one visitor who typed the address or came from a sponsor link, and
+   * that is exactly who `document.referrer` tells apart.
+   */
   function close() {
+    if (document.referrer && history.length > 1) {
+      history.back();
+      return;
+    }
     backdrop.hidden = true;
     document.getElementById("open-crypto").focus();
   }

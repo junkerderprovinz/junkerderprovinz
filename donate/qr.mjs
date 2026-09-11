@@ -15,15 +15,25 @@ import { execSync } from "node:child_process";
 const require = createRequire(import.meta.url);
 const qrcode = require(`${execSync("npm root -g").toString().trim()}/qrcode-generator`);
 
-/** The path data and the viewBox edge, for one string. */
+/**
+ * The path data and the viewBox edge, for one string.
+ *
+ * NO QUIET ZONE INSIDE THE DRAWING (changed 2026-09-11, jdp: "der weiße
+ * hintergrund hinter dem QR code ist bei den meisten zu groß"). The clear
+ * margin a scanner needs is still there, but it is now the white plate's CSS
+ * padding rather than modules baked into the viewBox.
+ *
+ * The reason is the word "bei den meisten". With the margin measured in
+ * MODULES and every code rendered to the same pixel box, the margin is wide
+ * for a short address and narrow for a long one: a 29-module XRP code and a
+ * 45-module Sui code differ by half again. Measured in PIXELS by the plate, it
+ * is identical on every coin, which is what makes the grid look deliberate.
+ */
 export function qrPath(value) {
   const q = qrcode(0, "M");
   q.addData(value);
   q.make();
   const n = q.getModuleCount();
-  // The quiet zone is part of the standard, not padding: a scanner needs clear
-  // space around the symbol to find its edges.
-  const QUIET = 2;
   let d = "";
   for (let row = 0; row < n; row++) {
     let run = -1;
@@ -31,10 +41,10 @@ export function qrPath(value) {
       const dark = col < n && q.isDark(row, col);
       if (dark && run < 0) run = col;
       else if (!dark && run >= 0) {
-        d += `M${run + QUIET} ${row + QUIET}h${col - run}v1h-${col - run}z`;
+        d += `M${run} ${row}h${col - run}v1h-${col - run}z`;
         run = -1;
       }
     }
   }
-  return { d, size: n + QUIET * 2 };
+  return { d, size: n, modules: n };
 }
