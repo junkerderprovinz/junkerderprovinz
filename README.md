@@ -38,6 +38,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
+- **[euro-office](https://github.com/junkerderprovinz/euro-office)** - sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[excalidraw](https://github.com/junkerderprovinz/excalidraw)** - the hand-drawn whiteboard, self-hosted so links, collaboration and even the fonts stay on your server.
 - **[garage](https://github.com/junkerderprovinz/garage)** - Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup.
 - **[handbrake](https://github.com/junkerderprovinz/handbrake)** - HandBrake's full GUI in your browser via Selkies, GPU-accelerated and dark by default.
@@ -58,7 +59,6 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 
 - **[claper](https://github.com/junkerderprovinz/unraid-apps/tree/main/claper)** - open-source, self-hosted Mentimeter/Slido alternative: live polls, Q&A and quizzes alongside your slides.
 - **[couchdb](https://github.com/junkerderprovinz/unraid-apps/tree/main/couchdb)** - the HTTP/JSON database behind Obsidian LiveSync, 3.x with persistent data, config and CORS.
-- **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** - sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** - workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** - open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
 - **[rustfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/rustfs)** - an S3 object store written in Rust, which without this template does not start on Unraid at all. *Pre-release.*
@@ -90,7 +90,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-feed.png" alt="Feed" width="480">
 </picture>
 
-- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** - one Community Applications feed for all my apps, plugins and themes, added once.
+- **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** - one Community Applications feed for my apps and plugins, added once. The themes install from their own repositories.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support-dark.png">
