@@ -39,8 +39,10 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 </picture>
 
 - **[excalidraw](https://github.com/junkerderprovinz/excalidraw)** - the hand-drawn whiteboard, self-hosted so links, collaboration and even the fonts stay on your server.
+- **[garage](https://github.com/junkerderprovinz/garage)** - Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup.
 - **[handbrake](https://github.com/junkerderprovinz/handbrake)** - HandBrake's full GUI in your browser via Selkies, GPU-accelerated and dark by default.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** - JDownloader 2 on a Selkies web desktop, complete dark UI out of the box, no VNC client.
+- **[juicefs](https://github.com/junkerderprovinz/juicefs)** - the JuiceFS S3 gateway, with the file system created on first boot instead of by hand in a console.
 - **[krusader](https://github.com/junkerderprovinz/krusader)** - twin-pane KDE file manager on a fast Selkies web desktop, native dark theme, Kate + RAR.
 - **[matrix](https://github.com/junkerderprovinz/matrix)** - plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Ketesa admin in one box.
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** - one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
@@ -48,7 +50,6 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** - Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
 - **[strawknight](https://github.com/junkerderprovinz/strawknight)** - a real Android emulator on a Selkies desktop, driven over adb, no phone involved.
 - **[trialyard](https://github.com/junkerderprovinz/trialyard)** - a GPU-accelerated Selkies desktop with real browsers, kept standing for testing.
-- **[garage](https://github.com/junkerderprovinz/garage)** - Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-wrappers-dark.png">
@@ -62,6 +63,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** - open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
 - **[seaweedfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/seaweedfs)** - S3-compatible object storage, the maintained alternative now that MinIO's open edition is done.
 - **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** - self-hosted Standard Notes sync server plus the encrypted web client.
+- **[versitygw](https://github.com/junkerderprovinz/unraid-apps/tree/main/versitygw)** - an S3 API in front of a share you already have, with every file still readable over SMB and NFS.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-plugins-dark.png">
