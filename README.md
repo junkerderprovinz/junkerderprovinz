@@ -61,6 +61,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[euro-office](https://github.com/junkerderprovinz/unraid-apps/tree/main/euro-office)** - sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** - workflow automation with every option exposed in the Unraid template form, no compose editing.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** - open-source AI software-development agent, pre-wired for a local Ollama model, no cloud.
+- **[rustfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/rustfs)** - an S3 object store written in Rust, which without this template does not start on Unraid at all. *Pre-release.*
 - **[seaweedfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/seaweedfs)** - S3-compatible object storage, the maintained alternative now that MinIO's open edition is done.
 - **[standardnotes server](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-server) & [web](https://github.com/junkerderprovinz/unraid-apps/tree/main/standardnotes-webui)** - self-hosted Standard Notes sync server plus the encrypted web client.
 - **[versitygw](https://github.com/junkerderprovinz/unraid-apps/tree/main/versitygw)** - an S3 API in front of a share you already have, with every file still readable over SMB and NFS.
