@@ -49,7 +49,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** - one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** - PrusaSlicer 3D-printing slicer in your browser on a Selkies web desktop, no VNC client.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** - Stellarium planetarium in your browser: pan, zoom and time-scrub the sky, no VNC client.
-- **[strawknight](https://github.com/junkerderprovinz/strawknight)** - a real Android emulator on a Selkies desktop, driven over adb, no phone involved.
+- **[strawdroid](https://github.com/junkerderprovinz/strawdroid)** - a real Android emulator on a Selkies desktop, driven over adb, no phone involved.
 - **[trialyard](https://github.com/junkerderprovinz/trialyard)** - a GPU-accelerated Selkies desktop with real browsers, kept standing for testing.
 
 <picture>
