@@ -63,8 +63,9 @@ the band jumped between buttons and never caught up. The Worker in `worker/` rew
 delay against the wall clock as it answers, which puts every image on the same schedule however
 late it loads. It also serves every repository's `.github/assets/download-buttons/<name>.svg` at
 `buttons.halleluja.design/<repo>/<name>.svg`, so a new button in either place needs no change there.
-Deploy with `npx wrangler deploy` from `worker/`; the tests run with
-`node --test donate/worker/test/worker.test.mjs` and in CI.
+Deploy with `npx wrangler deploy` from `worker/`, with `CLOUDFLARE_API_TOKEN` set and
+`CLOUDFLARE_ACCOUNT_ID` taken from the `halleluja.design` zone, because the deploy token cannot
+list accounts. The tests run with `node --test donate/worker/test/worker.test.mjs` and in CI.
 
 The PayPal and Crypto buttons wear their brand colours flat, which is the opposite of what the apps
 do. In an app they are neutral and take the brand on hover. **A GitHub README cannot hover at all:**
