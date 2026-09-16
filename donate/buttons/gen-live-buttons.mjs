@@ -72,24 +72,55 @@ const BUTTONS = [
 ];
 
 /**
- * The timing, derived rather than picked.
+ * THE BAND IS DEFINED ON SCREEN, NOT ON THE CANVAS, and that sentence is the
+ * whole of this block.
  *
- * A README renders these at width 160 with a non-breaking space between them,
- * which measures 164px from one button's left edge to the next. In the canvas
- * the buttons share, that is 842 * (164/160) = 863 units of travel per step.
+ * Every button in this house is drawn on the vendor canvas it inherited - 841.9
+ * wide here, 720 for the download row in the app repositories - and each README
+ * then scales its row to a width of its own. A band described in canvas units
+ * therefore comes out a different size and a different speed in every row that
+ * uses it, which is exactly what happened: two rows on one page, one band 31px
+ * wide crossing at 249px per second and the other 38px at 304. They read as two
+ * effects rather than one house.
  *
- * PASS is how long the band needs to cross one canvas from fully outside the
- * left edge to fully outside the right. STEP follows from it by the ratio
- * above, so the seam lands where it should without anybody tuning a number by
- * eye.
+ * So the three numbers below are in SCREEN pixels and are the same for every
+ * row anywhere (see the GitHub style guide, "Der Schein"): a 33px band, 250px
+ * per second, a seven second loop. Everything else is derived from the width
+ * the row is rendered at.
+ *
+ * THE GAP IS MEASURED, not assumed. This row is `<img width="160">` with a
+ * newline, two spaces and a `&nbsp;` between the images, which HTML collapses
+ * to space-nbsp-space: 13.16px at GitHub's 16px body text, measured in a
+ * browser rather than guessed at. It used to be taken as 4px, which put the
+ * hand-off 5% early in this row and 17% late in the other.
+ *
+ * PASS is how long the band needs to cross one button from fully outside the
+ * left edge to fully outside the right, and STEP is how long it needs to travel
+ * from one button's left edge to the next one's. Because both come from one
+ * speed, the band leaves button n at the moment it enters button n+1 whatever
+ * the row is scaled to.
  */
-const BAND_W = 165;
-const FROM = -(BAND_W + 120);          // fully clear of the left edge
-const TO = W + 120;                    // fully clear of the right edge
-const TRAVEL = TO - FROM;              // canvas units one pass covers
+const BAND_PX = 33;                    // the band's width on screen
+const SPEED = 250;                     // screen pixels per second
+const GAP_PX = 13.16;                  // measured, see above
+const RENDER_PX = 160;                 // the width every README asks for
 const CYCLE = 7;                       // seconds, one full loop including the rest
-const PASS = 0.95;                     // seconds the band needs to cross one button
-const STEP = PASS * (863 / TRAVEL);    // seconds between one button and the next
+
+/** Canvas units per screen pixel, for this row's own rendered width. */
+const SCALE = W / RENDER_PX;
+const BAND_W = BAND_PX * SCALE;
+/**
+ * The band is skewed, so its horizontal extent is wider than the rect: skewX
+ * shifts every point by tan(16 degrees) times its own y, and the rect is taller
+ * than the canvas on both sides. Clearing the edge by the rect's width alone
+ * would leave the tilted corner showing.
+ */
+const BAND_H = H + 120;
+const CLEAR = BAND_W + Math.tan((16 * Math.PI) / 180) * BAND_H;
+const FROM = -CLEAR;                   // fully clear of the left edge
+const TO = W + CLEAR;                  // fully clear of the right edge
+const PASS = (TO - FROM) / SCALE / SPEED;
+const STEP = (RENDER_PX + GAP_PX) / SPEED;
 const PASS_PCT = ((PASS / CYCLE) * 100).toFixed(2);
 
 /** A picture as a data URI, rasterising an SVG source on the way if needed. */
@@ -126,13 +157,24 @@ function build({ name, from }, index) {
   </defs>
   <style>
     @keyframes pass {
-      0%             { transform: translateX(${FROM}px); }
-      ${PASS_PCT}%   { transform: translateX(${TO}px); }
-      100%           { transform: translateX(${TO}px); }
+      0%             { transform: translateX(${FROM.toFixed(1)}px); }
+      ${PASS_PCT}%   { transform: translateX(${TO.toFixed(1)}px); }
+      100%           { transform: translateX(${TO.toFixed(1)}px); }
     }
     /* linear, not eased: see the header. An eased pass hands off at the wrong
-       moment and the row stops reading as one band. */
-    .band { animation: pass ${CYCLE}s linear ${delay}s infinite; }
+       moment and the row stops reading as one band.
+
+       The fill mode is not decoration, it is the second half of the delay. An
+       animation that has not started yet leaves its element wherever the
+       document put it, which for this band is x=0 - INSIDE the button, against
+       its left edge. So the whole stagger that makes the row read as one band
+       was also parking a motionless band on every button but the first, for as
+       long as that button's delay, every single time the page loaded. It came
+       right on its own from the second cycle onwards, which is why it survived:
+       it is only ever wrong while somebody is looking at the row for the first
+       time. Holding the 0% state during the delay fixes it, and 0% is off the
+       left edge. */
+    .band { animation: pass ${CYCLE}s linear ${delay}s infinite backwards; }
     @media (prefers-reduced-motion: reduce) {
       .band { animation: none; opacity: 0; }
     }
@@ -143,7 +185,7 @@ function build({ name, from }, index) {
       <!-- Tilted and taller than the canvas, so the tilt never exposes a
            corner. skewX rather than rotate: the band stays axis-aligned for the
            translate, so the motion is one transform and not two. -->
-      <rect x="0" y="-60" width="${BAND_W}" height="${H + 120}"
+      <rect x="0" y="-60" width="${BAND_W.toFixed(1)}" height="${BAND_H}"
             fill="url(#sheen)" transform="skewX(-16)"/>
     </g>
   </g>
@@ -158,4 +200,7 @@ for (const [i, b] of BUTTONS.entries()) {
     `${b.name}-live.svg: Position ${i + 1}, Start nach ${(STEP * i).toFixed(3)}s, ${Math.round(svg.length / 1024)} KB`
   );
 }
-console.log(`Umlauf ${CYCLE}s, ein Durchgang ${PASS}s, Abstand ${STEP.toFixed(3)}s`);
+console.log(
+  `Umlauf ${CYCLE}s, ein Durchgang ${PASS.toFixed(3)}s, Abstand ${STEP.toFixed(3)}s, ` +
+    `Band ${BAND_PX}px bei ${SPEED}px/s`
+);
