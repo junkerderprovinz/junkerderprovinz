@@ -104,9 +104,9 @@ If one of these has earned a place on your server or computer, toss a coin to yo
 Problems, wishes or suggestions? Don't hesitate to open an issue.
 
 <p align="center">
-  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/button-buy-me-a-coffee-live.svg" alt="Buy me a coffee" width="160"></a>
+  <a href="https://buymeacoffee.com/junkerderprovinz"><img src="https://buttons.halleluja.design/give/buy-me-a-coffee.svg" alt="Buy me a coffee" width="160"></a>
   &nbsp;
-  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/button-paypal-live.svg" alt="PayPal" width="160"></a>
+  <a href="https://www.paypal.com/donate/?hosted_button_id=76FVV52TKXTUS"><img src="https://buttons.halleluja.design/give/paypal.svg" alt="PayPal" width="160"></a>
   &nbsp;
-  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/button-crypto-live.svg" alt="Donate with crypto" width="160"></a>
+  <a href="https://junkerderprovinz.github.io/junkerderprovinz/"><img src="https://buttons.halleluja.design/give/crypto.svg" alt="Donate with crypto" width="160"></a>
 </p>

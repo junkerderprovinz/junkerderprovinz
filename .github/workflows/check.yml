@@ -36,3 +36,9 @@ jobs:
       # tests, so this reads the other one over the wire and compares.
       - name: The addresses match BombVault's own window
         run: node donate/check-app.mjs
+
+      # Every README loads the donation buttons through the Worker in
+      # donate/worker/, which refuses a file whose animation it cannot read.
+      # A template change that breaks that wording fails here, not on the pages.
+      - name: The Worker can phase every donation button
+        run: node --test donate/worker/test/worker.test.mjs

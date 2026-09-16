@@ -54,7 +54,17 @@ the address belongs to, and that fact may not appear and disappear depending on 
 `buttons/` holds the three images every repository's README shows: Buy Me a Coffee (the vendor's own
 SVG), PayPal and Crypto. They are the same three files in every README, so a copy per repository
 would mean dozens of images that have to be regenerated in lockstep. Every README points at
-`raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/donate/buttons/...` instead.
+`buttons.halleluja.design/give/<name>.svg` instead, which serves `buttons/button-<name>-live.svg`
+from this repository's `main`.
+
+Not at the raw file directly, because of the moving shine. Each `<img>` starts its animation when
+that one image arrives, and on a first visit the images of one row arrived up to 1.2 s apart, so
+the band jumped between buttons and never caught up. The Worker in `worker/` rewrites each button's
+delay against the wall clock as it answers, which puts every image on the same schedule however
+late it loads. It also serves every repository's `.github/assets/download-buttons/<name>.svg` at
+`buttons.halleluja.design/<repo>/<name>.svg`, so a new button in either place needs no change there.
+Deploy with `npx wrangler deploy` from `worker/`; the tests run with
+`node --test donate/worker/test/worker.test.mjs` and in CI.
 
 The PayPal and Crypto buttons wear their brand colours flat, which is the opposite of what the apps
 do. In an app they are neutral and take the brand on hover. **A GitHub README cannot hover at all:**

@@ -1,0 +1,13 @@
+# The README buttons, phased to the wall clock. See src/index.js for why.
+#
+# Deployed as its own custom domain rather than a route under an existing site,
+# so nothing else on halleluja.design can shadow it or be shadowed by it, and
+# the Worker has no workers.dev address a README could accidentally link to.
+name = "readme-buttons"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+routes = [
+  { pattern = "buttons.halleluja.design", custom_domain = true },
+]
