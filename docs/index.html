@@ -61,6 +61,10 @@
   --body-pad: 1.25rem;
   --answer-pad: 1rem;
   --addr-size: 0.76rem;
+  /* GlimStone's own elevation, verbatim. Only the title badge uses it here:
+     the window itself deliberately carries no shadow, and the badge is the one
+     thing on this page that rides above a surface rather than sitting in it. */
+  --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -75,6 +79,7 @@
     --border: #393939;
     --warn: #f1c21b;
     --coin-xrp: #ffffff;
+    --elevation: 0 1px 2px rgba(0, 0, 0, .40), 0 18px 40px -24px rgba(0, 0, 0, .85);
   }
 }
 * { box-sizing: border-box; }
@@ -132,7 +137,13 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    a panel lying on the page rather than as the thing in front. */
 .backdrop {
   position: fixed; inset: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: center;
+  /* `align-items: flex-start` with `margin: auto` on the window, rather than
+     `align-items: center`: a centred flex item whose container scrolls has its
+     TOP clipped and unreachable once it grows past the viewport, and the auto
+     margins simply collapse to nothing in that case. This is the pair that
+     centres a short window and lets a tall one scroll. */
+  display: flex; align-items: flex-start; justify-content: center;
+  overflow-y: auto;
   padding: 1rem;
   /* DECKEND, nicht abgedunkelt (jdp, 2026-09-11: "kann man diese zwischenseite
      ganz ausblenden?"). Vorher schienen Titel, Knoepfe und Kleingedrucktes
@@ -147,8 +158,11 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   background: var(--bg);
 }
 .window {
+  position: relative;
   display: flex; flex-direction: column;
-  width: 100%; max-width: var(--window-max); max-height: 88vh;
+  width: 100%; max-width: var(--window-max);
+  /* See the backdrop: this is the half that does the centring. */
+  margin: auto;
   background: var(--surface);
   border-radius: var(--radius-card);
   /* Kein Rahmen und kein Schlagschatten (jdp, 2026-09-11). Der abgedunkelte
@@ -172,14 +186,38 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   .window { animation: none; }
   .way:hover { transform: none; }
 }
+/* THE TITLE IS A BADGE STRADDLING THE TOP EDGE, exactly as it is in the app's
+   own window (GlimStone rule 11, "every heading is a filled section badge, and
+   it is always coloured"). It was a bold line of text inside the window, which
+   is the one heading treatment the house does not have: every card in every app
+   wears this notch, and a window is a window no matter who renders it.
+
+   The numbers are the language's, not new ones: 22px tall, pill radius, the
+   accent fill with the ink it was paired with, 12px uppercase with wide
+   tracking. `position: absolute` with `top: 0` and a half-height lift is what
+   makes it sit ON the edge rather than under it; the window is the positioned
+   ancestor. Its lift stays even though the window itself carries no shadow -
+   the badge is what rides above the surface here. */
 .window h2 {
-  margin: 0; padding: 1.15rem 1.25rem .25rem;
-  font-size: 1.05rem;
+  position: absolute; top: 0; left: var(--body-pad); z-index: 10;
+  transform: translateY(-50%);
+  display: inline-flex; align-items: center; height: 22px;
+  margin: 0; padding: 0 .75rem;
+  border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  font-size: .75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  box-shadow: var(--elevation);
 }
+/* NO SCROLL AREA INSIDE THE WINDOW. It used to be capped at 88vh with the body
+   scrolling inside it, which put a scrollbar down the middle of a window whose
+   content fits on any ordinary screen and cut the coin tiles off at the bottom
+   of a short one. The window is as tall as what it holds now, and on a screen
+   too short for it the PAGE scrolls, which is the scrollbar a reader already
+   knows about. */
 .body {
   display: flex; flex-direction: column; gap: 1rem;
-  min-height: 0; flex: 1; overflow-y: auto;
-  padding: .75rem var(--body-pad) var(--body-pad);
+  padding: 1.35rem var(--body-pad) var(--body-pad);
 }
 .body > p { margin: 0; font-size: .9rem; }
 
@@ -258,6 +296,16 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    tag or a memo, so the chain that wants neither has to say so where the
    address is. */
 .note { margin: 0; font-size: .78rem; text-align: center; color: var(--warn); }
+/* EVERY BUTTON IN THIS WINDOW CARRIES ITS MARK, the same rule the About card
+   follows: the copy button a copy glyph, the close button an X. A row of
+   controls where some wear a symbol and some do not reads as a missing image
+   rather than as a plainer button. 16px beside 14px text is the house
+   proportion, and `flex: none` keeps the mark from being squeezed by a long
+   word in a translation. */
+.copy, .close button {
+  display: inline-flex; align-items: center; gap: .45rem;
+}
+.copy svg, .close button svg { width: 16px; height: 16px; flex: none; fill: currentColor; }
 .copy {
   padding: .55rem 1.1rem; border: 0; cursor: pointer;
   border-radius: var(--radius-control); font: inherit; font-weight: 600;
@@ -392,7 +440,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
         <div class="chains" data-coin="sui" role="listbox" aria-label="Network" hidden><button type="button" role="option" class="chain is-on" data-address="0xa76677f71d107c9a957c2d1814b68027cbd4ad9dbf28d911a97fad5d2fc3a414" data-chain="sui" aria-selected="true">Sui</button></div>
         <div class="chains" data-coin="xrp" role="listbox" aria-label="Network" hidden><button type="button" role="option" class="chain is-on" data-address="rwMK2nXqChT4JYWVypMypnpctDcM9jgWmG" data-chain="xrpl" data-note="No destination tag needed." aria-selected="true">XRP Ledger</button></div>
         <p class="note" id="chain-note" hidden></p>
-        <button type="button" class="copy" id="copy">Copy address</button>
+        <button type="button" class="copy" id="copy"><svg viewBox="2 2 20 20" aria-hidden="true"><path d="M20.926 7.074a3.67 3.67 0 0 1 1.074 2.593v8.666a3.667 3.667 0 0 1 -3.667 3.667h-8.666a3.667 3.667 0 0 1 -3.667 -3.667v-8.666q 0 -.053 .005 -.102a3.66 3.66 0 0 1 3.662 -3.565h8.666c.973 0 1.905 .386 2.593 1.074"/><path d="M17.374 3.514a1 1 0 1 1 -1.748 .972c-.221 -.398 -.342 -.486 -.626 -.486h-10c-.548 0 -1 .452 -1 1v9.998c0 .36 .194 .692 .507 .87a1 1 0 1 1 -.99 1.738a3 3 0 0 1 -1.517 -2.606v-10c0 -1.652 1.348 -3 3 -3h10c1.094 0 1.828 .533 2.374 1.514"/></svg><span>Copy address</span></button>
       </div>
 
       <div class="coins" role="listbox" aria-label="Coin">
@@ -430,7 +478,7 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
         </button>
       </div>
     </div>
-    <div class="close"><button type="button" id="close-crypto">Close</button></div>
+    <div class="close"><button type="button" id="close-crypto"><svg viewBox="2 2 10 10" aria-hidden="true"><g transform="rotate(45 7 7)"><rect x="2" y="5.9" width="10" height="2.2" rx="1.1"/><rect x="5.9" y="2" width="2.2" height="10" rx="1.1"/></g></svg>Close</button></div>
   </div>
 </div>
 
@@ -482,9 +530,14 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
     [...r.children].forEach((c) => c.addEventListener("click", () => showChain(c)))
   );
 
+  // The WORD, not the whole button. The button carries a glyph beside its
+  // label now, and `copyBtn.textContent = "Copied"` would throw that mark away
+  // the first time anybody pressed it - silently, and for good, because the
+  // restore puts back a string and not an element.
+  const copyLabel = copyBtn.querySelector("span");
   copyBtn.addEventListener("click", async () => {
     const value = shownAddress();
-    const label = copyBtn.textContent;
+    const label = copyLabel.textContent;
     try {
       await navigator.clipboard.writeText(value);
     } catch {
@@ -497,17 +550,23 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
       const sel = getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
-      copyBtn.textContent = "Select and copy";
-      setTimeout(() => { copyBtn.textContent = label; }, 1800);
+      copyLabel.textContent = "Select and copy";
+      setTimeout(() => { copyLabel.textContent = label; }, 1800);
       return;
     }
-    copyBtn.textContent = "Copied";
-    setTimeout(() => { copyBtn.textContent = label; }, 1200);
+    copyLabel.textContent = "Copied";
+    setTimeout(() => { copyLabel.textContent = label; }, 1200);
   });
 
   function open() {
     backdrop.hidden = false;
-    win.focus();
+    // WITHOUT SCROLLING. Focusing an element scrolls it into view, and this
+    // window is taller than a short screen: the browser answered by scrolling
+    // its bottom into view, which put the title badge and the QR code above the
+    // top edge before anybody had touched anything. The focus itself has to
+    // stay - it is what puts a screen reader inside the window.
+    win.focus({ preventScroll: true });
+    backdrop.scrollTop = 0;
   }
   /**
    * Closing goes BACK, not "reveal the page underneath" (jdp, 2026-09-11:
