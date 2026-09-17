@@ -46,6 +46,7 @@
  * Run: node donate/buttons/gen-live-buttons.mjs
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { sprite, view } from "./sprite.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -217,13 +218,23 @@ function build({ name, from }, index) {
 `;
 }
 
+const parts = [];
 for (const [i, b] of BUTTONS.entries()) {
   const svg = build(b, i);
   writeFileSync(join(__dir, `${b.name}-live.svg`), svg, "utf8");
+  parts.push({ svg, width: W, height: H });
   console.log(
     `${b.name}-live.svg: Position ${i + 1}, Start bei ${(ROW_OFFSET + STEP * i).toFixed(3)}s, ${Math.round(svg.length / 1024)} KB`
   );
 }
+
+// give.svg is what every README links: the three buttons as one file, see
+// sprite.mjs for why. The single files stay, because the repositories with a
+// download row build their own sprite from them (download and donation buttons
+// in one file, so both rows run on one clock).
+const give = sprite(parts);
+writeFileSync(join(__dir, "give.svg"), give.svg, "utf8");
+console.log(`give.svg: ${Math.round(give.svg.length / 1024)} KB, Ausschnitte ${give.views.map(view).join(" ")}`);
 console.log(
   `Umlauf ${CYCLE}s, ein Durchgang ${PASS.toFixed(3)}s, Abstand ${STEP.toFixed(3)}s, ` +
     `Band ${BAND_PX}px bei ${SPEED}px/s`
