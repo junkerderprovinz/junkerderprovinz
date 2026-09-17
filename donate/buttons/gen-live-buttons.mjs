@@ -117,14 +117,20 @@ const CYCLE = 7;                       // seconds, one full loop including the r
  *
  * THIS FILE CANNOT KNOW WHAT IS ABOVE IT. These three buttons are one shared
  * asset, referenced by raw URL from twenty-six repositories, and their phase is
- * baked into the file. So the schedule is fixed rather than derived per page,
- * and it can be: the give row is the LAST row in every README the house has,
- * and no README has three rows.
+ * baked into the file. So the schedule is fixed rather than derived per page:
+ * after one download row of at most four buttons.
  *
- * 3.8s is when the longest download row in the house is finished - ArrowLoop's
- * four buttons, whose last one starts at 2.498s and needs 1.271s to cross. A
- * README with no download row shows nothing for the first 3.8s of the loop
- * instead, which nobody can tell from a longer rest.
+ * 3.8s is when the longest single download row in the house is finished - four
+ * buttons, whose last one starts at 2.498s and needs 1.271s to cross. A README
+ * with no download row shows nothing for the first 3.8s of the loop instead,
+ * which nobody can tell from a longer rest.
+ *
+ * A page that does not fit this retimes the copies in its own sprite. ArrowLoop
+ * and KnightLoader put the give row ABOVE two download rows, and their
+ * scripts/gen_download_buttons.py moves these three to the start of a longer
+ * loop there (three rows need 7.07s of travel). So the animation line and the
+ * one keyframe stop between 0% and 100% have to keep their shape: that
+ * generator rewrites them and refuses a file where it cannot find them.
  */
 const ROW_OFFSET = 3.8;
 
