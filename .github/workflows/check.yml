@@ -37,8 +37,8 @@ jobs:
       - name: The addresses match BombVault's own window
         run: node donate/check-app.mjs
 
-      # Every README loads the donation buttons through the Worker in
-      # donate/worker/, which refuses a file whose animation it cannot read.
-      # A template change that breaks that wording fails here, not on the pages.
-      - name: The Worker can phase every donation button
-        run: node --test donate/worker/test/worker.test.mjs
+      # Most READMEs show give.svg, four repositories copy the single files into
+      # their own sprite. Both have to be the same buttons, so give.svg has to be
+      # exactly what the single files build.
+      - name: give.svg is built from the three buttons
+        run: node donate/buttons/check-sprite.mjs

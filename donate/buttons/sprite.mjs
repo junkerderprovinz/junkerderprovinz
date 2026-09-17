@@ -26,6 +26,14 @@
  */
 
 /**
+ * The names a button document defines. Every one is prefixed per button, and a
+ * sprite is refused if any is left without a prefix, so a template that starts
+ * using another name fails here instead of quietly handing one button's delay or
+ * clip to all of them.
+ */
+const UNPREFIXED = /id="(?!b\d+-)|url\(#(?!b\d+-)|href="#(?!b\d+-)|class="(?!b\d+-)|@keyframes (?!b\d+-)|animation: (?!b\d+-|none)/;
+
+/**
  * parts: [{ svg, width, height }], in the order they are laid out.
  * Returns the sprite and, per part, the viewBox a README points at.
  */
@@ -44,6 +52,8 @@ export function sprite(parts) {
       .replace(/@keyframes pass\b/g, `@keyframes ${pre}pass`)
       .replace(/animation: pass /g, `animation: ${pre}pass `)
       .replace(/<svg\b/, `<svg x="${x}" y="0"`);
+    const left = inner.match(UNPREFIXED);
+    if (left) throw new Error(`button ${i} still has an unprefixed name near ${JSON.stringify(inner.slice(left.index, left.index + 40))}`);
     views.push({ x, width, height });
     x = Math.round((x + width) * 1000) / 1000;
     return inner.trim();

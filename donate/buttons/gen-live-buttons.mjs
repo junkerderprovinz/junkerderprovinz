@@ -27,10 +27,8 @@
  *     share a period, so whatever offset they start with they keep. Measured
  *     over the real network, the images of one row arrived up to 1.2 s apart on
  *     a first visit, more than a whole STEP. So no README links these files
- *     directly. They are served through buttons.halleluja.design/give/<name>.svg
- *     (the file name without "button-" and "-live"), a Worker that rewrites each
- *     delay against the wall clock as it answers; see donate/worker/. A button
- *     added to BUTTONS below is served there without any change to the Worker.
+ *     one by one: they all show give.svg, the three as one file, each through
+ *     its own view; see sprite.mjs. One file arrives once for all three.
  *
  * WHY THE ARTWORK IS AN EMBEDDED RASTER rather than redrawn as vector: the
  * buttons carry WORDS, and an <img>-loaded SVG with a <text> element falls back

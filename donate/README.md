@@ -54,18 +54,20 @@ the address belongs to, and that fact may not appear and disappear depending on 
 `buttons/` holds the three images every repository's README shows: Buy Me a Coffee (the vendor's own
 SVG), PayPal and Crypto. They are the same three files in every README, so a copy per repository
 would mean dozens of images that have to be regenerated in lockstep. Every README points at
-`buttons.halleluja.design/give/<name>.svg` instead, which serves `buttons/button-<name>-live.svg`
-from this repository's `main`.
+`buttons/give.svg` on this repository's `main` instead: the three buttons as one file, each shown
+through its own `#svgView(viewBox(...))` inside its own link, with `width` and `height` set.
 
-Not at the raw file directly, because of the moving shine. Each `<img>` starts its animation when
-that one image arrives, and on a first visit the images of one row arrived up to 1.2 s apart, so
-the band jumped between buttons and never caught up. The Worker in `worker/` rewrites each button's
-delay against the wall clock as it answers, which puts every image on the same schedule however
-late it loads. It also serves every repository's `.github/assets/download-buttons/<name>.svg` at
-`buttons.halleluja.design/<repo>/<name>.svg`, so a new button in either place needs no change there.
-Deploy with `npx wrangler deploy` from `worker/`, with `CLOUDFLARE_API_TOKEN` set and
-`CLOUDFLARE_ACCOUNT_ID` taken from the `halleluja.design` zone, because the deploy token cannot
-list accounts. The tests run with `node --test donate/worker/test/worker.test.mjs` and in CI.
+One file rather than three because of the moving shine. Each `<img>` starts its animation when it
+gets its file, so three files arriving at three moments made the band jump between buttons, and
+Firefox reuses an image it already has when GitHub swaps the page without a reload, starting a new
+clock on it. One file arrives once for all three. Rewriting each file's delay against the wall clock
+on a Worker was tried first and did not hold for exactly those two reasons.
+
+`gen-live-buttons.mjs` writes the single files and `give.svg` together (`sprite.mjs` explains the
+layout). The four repositories with a download row copy the single files into a sprite of their own,
+download and donation buttons in one file, so both rows run on one clock; after the buttons change
+here, their `scripts/gen_download_buttons.py` has to run again. CI checks that `give.svg` is exactly
+what the single files build.
 
 The PayPal and Crypto buttons wear their brand colours flat, which is the opposite of what the apps
 do. In an app they are neutral and take the brand on hover. **A GitHub README cannot hover at all:**
