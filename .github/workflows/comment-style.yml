@@ -1,0 +1,94 @@
+name: Comment style
+
+# Shared by every repository of this account through a short style.yml that calls it.
+# Only lines a push or pull request adds are checked, so older code never fails a build.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  comments:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: New lines follow the comment style
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -uo pipefail
+
+          # A new branch or a force push has no usable "before", so it is compared
+          # with the point where it left the default branch.
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            BASE=$(git merge-base "origin/$DEFAULT_BRANCH" "$HEAD" 2>/dev/null || true)
+          fi
+          if [ -z "$BASE" ] || [ "$(git rev-parse "$BASE")" = "$(git rev-parse "$HEAD")" ]; then
+            echo "Nothing to compare."
+            exit 0
+          fi
+
+          code_file() {
+            local p="/$1"
+            case "$p" in
+              */testdata/*|*/fixtures/*|*/vendor/*|*/node_modules/*|*/dist/*|*.min.js|*.min.css) return 1 ;;
+              *.go|*.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.css|*.less|*.py|*.sh|*.ps1|*.yml|*.yaml|*.xml) return 0 ;;
+              *.html|*.page|*.php|*.kt|*.kts|*.cs|*.tmpl|*/[Jj]ustfile|*Dockerfile*) return 0 ;;
+            esac
+            case "${p##*/}" in *.*) return 1 ;; esac
+            case "$(git show "$HEAD:$1" 2>/dev/null | head -1)" in '#!'*) return 0 ;; esac
+            return 1
+          }
+
+          files=()
+          while IFS= read -r f; do
+            code_file "$f" && files+=("$f")
+          done < <(git diff --name-only --diff-filter=d "$BASE...$HEAD")
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No code files changed."
+            exit 0
+          fi
+
+          # Each added line becomes "content<US>file<US>line", so the patterns still
+          # see the start of the line. Lines with Cyrillic keep their dash, which is
+          # grammar in Russian.
+          git diff -U0 "$BASE...$HEAD" -- "${files[@]}" |
+            awk '/^\+\+\+ b\//{f=substr($0,7); next}
+                 /^@@/{split($3,a,","); n=substr(a[1],2)+0; next}
+                 /^\+/{print substr($0,2) "\037" f "\037" n; n++}' |
+            LC_ALL=C grep -avE $'[\xd0\xd1][\x80-\xbf]' > "$RUNNER_TEMP/added.txt"
+
+          comment='(^[[:space:]]*(//|#|/?\*|<!--|\{/\*)|[[:space:]]//[[:space:]])'
+          rules=(
+            $'\xe2\x80[\x93\x94]|A dash. Use a comma, colon, period or parentheses.'
+            '^[[:space:]]*(//|#|/?\*)[[:space:]]*[-=]{4,}|A banner comment. Drop it, or split the file.'
+            "$comment"'.*\b(NEVER|ALWAYS|ONLY|MUST|NOT)\b|Upper-case emphasis in a comment. Say why instead.'
+            "$comment"'.*\b([Dd]eliberately|[Nn]ote that|[Tt]he whole point|[Hh]onestly)\b|A filler phrase in a comment.'
+            "$comment"'.*[[:alnum:],.)][[:space:]]--[[:space:]]+[[:alnum:](]|A double hyphen used as a dash in a comment.'
+            '\b(D|[A-TV-Z][A-Z]{2,}|U[A-SU-Z][A-Z]+|UT[A-EG-Z][A-Z]*|UTF[A-Z]+)-[0-9]{2}\b|A planning or tracking ID. Link the issue instead, or drop it.'
+          )
+
+          found=0
+          for rule in "${rules[@]}"; do
+            pattern=${rule%|*}
+            message=${rule##*|}
+            while IFS=$'\037' read -r _ file line; do
+              echo "::error file=$file,line=$line,title=Comment style::$message"
+              found=$((found + 1))
+            done < <(LC_ALL=C grep -aE "$pattern" "$RUNNER_TEMP/added.txt")
+          done
+          rm -f "$RUNNER_TEMP/added.txt"
+
+          if [ "$found" -gt 0 ]; then
+            echo "$found added lines break the comment style."
+            exit 1
+          fi
+          echo "All added lines follow the comment style."
