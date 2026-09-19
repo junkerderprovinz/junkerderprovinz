@@ -1,26 +1,17 @@
 /**
  * The coins, the chains under each, and the mark every coin wears.
  *
- * NO SIDE EFFECTS ON PURPOSE. build.mjs writes the page and check.mjs reads it
- * back; if the data lived in build.mjs, importing it from the checker would
- * REBUILD the page before the checker read it, and the one thing the checker
- * most needs to catch - somebody hand-editing the generated file - would be
- * overwritten a moment before it was looked for.
+ * Kept free of side effects, so check.mjs can import it without rebuilding the page
+ * it is about to check and erasing a hand-edit of the output.
  *
- * THIS IS A MIRROR OF BOMBVAULT'S web/src/lib/donate.ts, down to the order of
- * the coins and the order of the chains under each (jdp, 2026-09-11: "Mach es
- * genauso wie in BV"). The comments that explain why a chain is or is not
- * offered travel with it, because they are the part that keeps somebody from
- * helpfully adding one. check-app.mjs holds the addresses to that file over the
- * network, so the two copies cannot drift apart unnoticed.
+ * It mirrors BombVault's web/src/lib/donate.ts, down to the order of the coins and
+ * of the chains under each. The comments on why a chain is or is not offered travel
+ * with it, because they keep somebody from helpfully adding one. check-app.mjs
+ * compares the addresses with that file.
  *
- * THE SAFETY PROPERTY, inherited from that file: every network a donor can
- * pick carries its OWN address. No line names a chain without an address to go
- * with it, so the wrong choice is not discouraged, it cannot be made. The near
- * miss that made this a rule is written out there: an early list named "Tether"
- * with the networks "BNB, Tron, Solana, Ethereum" above a single 0x address.
- * That address exists on EVM chains only, so a donor picking Tron would have
- * sent USDT into nothing, and nobody would ever have reported it.
+ * Every network a donor can pick carries its own address, so no line can name a
+ * chain without one. A list that named Tron above a single 0x address, which
+ * exists on EVM chains only, would have sent USDT into nothing.
  */
 
 // The five wallets, named once. They are written into the networks below, so a
@@ -49,7 +40,7 @@ export const COINS = [
     id: "eth",
     symbol: "ETH",
     name: "Ethereum",
-    // Native ETH on all three. NOT BNB Smart Chain: what trades as ETH there
+    // Native ETH on all three. Not BNB Smart Chain: what trades as ETH there
     // is a bridged token, and offering it beside the real thing invites
     // somebody to send the wrong one.
     networks: [ETHEREUM, BASE, OPTIMISM],
@@ -68,10 +59,9 @@ export const COINS = [
         id: "xrpl",
         name: "XRP Ledger",
         address: XRP,
-        // Worth saying out loud: plenty of exchanges demand a destination tag,
-        // and somebody trained by one will go looking for a field that is not
-        // there. This is a self-custody account and its RequireDest flag is
-        // off, checked on the ledger.
+        // Many exchanges demand a destination tag, so a donor may look for a
+        // field that is not there. This is a self-custody account and its
+        // RequireDest flag is off, checked on the ledger.
         note: "No destination tag needed.",
       },
     ],
@@ -82,8 +72,8 @@ export const COINS = [
  * Which wallet each chain must resolve to, so check.mjs can test the list
  * against something other than itself.
  *
- * Written out by hand on purpose, exactly as the app's own file does it.
- * Derived from the list it guards, it would agree with any mistake in it.
+ * Written out by hand, as in the app's file: derived from the list it guards,
+ * it would agree with any mistake in it.
  */
 export const ADDRESS_BY_CHAIN = {
   bitcoin: BTC,
@@ -101,14 +91,14 @@ export const ADDRESS_BY_CHAIN = {
  * components/donateMarks.tsx so the two grids are the same drawing.
  *
  * Attribution, required by the licences:
- *   Simple Icons (https://simpleicons.org) - CC0 1.0 Universal: Bitcoin,
+ *   Simple Icons (https://simpleicons.org), CC0 1.0 Universal: Bitcoin,
  *   Ethereum, Tether, Solana, Binance, XRP, Sui, Buy Me a Coffee, PayPal.
- *   cryptocurrency-icons (https://github.com/spothq/cryptocurrency-icons) -
+ *   cryptocurrency-icons (https://github.com/spothq/cryptocurrency-icons),
  *   MIT: USD Coin and XRP. Copyright (c) 2018 Christopher Downer.
  *
  * XRP is the one mark with no colour of its own: it is near-black and would
  * vanish on a dark ground, so it takes `var(--coin-xrp)`, which the stylesheet
- * moves for the theme AND for the two tile states that stop matching it.
+ * moves for the theme and for the two tile states that stop matching it.
  */
 const B24 = "0 0 24 24";
 export const MARKS = {
@@ -149,7 +139,7 @@ export const MARKS = {
   },
   xrp: {
     // The current XRP mark, not Ripple's old wave lines: those are the
-    // COMPANY's former logo and read as a set of brackets at this size.
+    // company's former logo and read as a set of brackets at this size.
     box: "0 0 32 32",
     color: "var(--coin-xrp)",
     d: "M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm7.07-24l-4.574 4.523a3.556 3.556 0 01-4.996 0L8.93 8H6.035l6.02 5.957a5.621 5.621 0 007.89 0L25.961 8h-2.89zM8.895 24.563L13.504 20a3.556 3.556 0 014.996 0l4.605 4.563H26l-6.055-5.993a5.621 5.621 0 00-7.89 0L6 24.562h2.895z",

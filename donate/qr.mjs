@@ -1,10 +1,9 @@
 /**
  * One QR code, drawn as an SVG path.
  *
- * Shared by build.mjs and check.mjs deliberately: the checker rebuilds every
- * code from the address the page prints and demands the same path, and that
- * proof is only worth something if both sides draw it the same way. A second
- * copy of this function would let the two agree on a shared mistake.
+ * Shared by build.mjs and check.mjs: the checker rebuilds every code from the
+ * address the page prints and demands the same path, which only proves something
+ * if both sides draw it the same way.
  *
  * Inline, so the page makes no network request for an image, caches nothing,
  * and works with no internet at all.
@@ -18,16 +17,10 @@ const qrcode = require(`${execSync("npm root -g").toString().trim()}/qrcode-gene
 /**
  * The path data and the viewBox edge, for one string.
  *
- * NO QUIET ZONE INSIDE THE DRAWING (changed 2026-09-11, jdp: "der weiße
- * hintergrund hinter dem QR code ist bei den meisten zu groß"). The clear
- * margin a scanner needs is still there, but it is now the white plate's CSS
- * padding rather than modules baked into the viewBox.
- *
- * The reason is the word "bei den meisten". With the margin measured in
- * MODULES and every code rendered to the same pixel box, the margin is wide
- * for a short address and narrow for a long one: a 29-module XRP code and a
- * 45-module Sui code differ by half again. Measured in PIXELS by the plate, it
- * is identical on every coin, which is what makes the grid look deliberate.
+ * The drawing has no quiet zone; the margin a scanner needs is the white plate's
+ * CSS padding. Measured in modules, with every code rendered to the same box, it
+ * would be wide for a short address and narrow for a long one (a 29-module XRP
+ * code against a 45-module Sui code). In pixels it is the same on every coin.
  */
 export function qrPath(value) {
   const q = qrcode(0, "M");

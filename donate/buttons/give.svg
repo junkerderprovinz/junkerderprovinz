@@ -19,19 +19,10 @@
       15.19%   { transform: translateX(1120.3px); }
       100%           { transform: translateX(1120.3px); }
     }
-    /* linear, not eased: see the header. An eased pass hands off at the wrong
-       moment and the row stops reading as one band.
-
-       The fill mode is not decoration, it is the second half of the delay. An
-       animation that has not started yet leaves its element wherever the
-       document put it, which for this band is x=0 - INSIDE the button, against
-       its left edge. So the whole stagger that makes the row read as one band
-       was also parking a motionless band on every button but the first, for as
-       long as that button's delay, every single time the page loaded. It came
-       right on its own from the second cycle onwards, which is why it survived:
-       it is only ever wrong while somebody is looking at the row for the first
-       time. Holding the 0% state during the delay fixes it, and 0% is off the
-       left edge. */
+    /* Linear, so the hand-off from one button to the next stays on time. The
+       backwards fill mode holds the 0% state, off the left edge, during the
+       delay; without it the band would wait motionless at x=0, inside the
+       button, until the first pass starts. */
     .b0-band { animation: b0-pass 7s linear 3.800s infinite backwards; }
     @media (prefers-reduced-motion: reduce) {
       .b0-band { animation: none; opacity: 0; }
@@ -64,19 +55,10 @@
       15.19%   { transform: translateX(1120.3px); }
       100%           { transform: translateX(1120.3px); }
     }
-    /* linear, not eased: see the header. An eased pass hands off at the wrong
-       moment and the row stops reading as one band.
-
-       The fill mode is not decoration, it is the second half of the delay. An
-       animation that has not started yet leaves its element wherever the
-       document put it, which for this band is x=0 - INSIDE the button, against
-       its left edge. So the whole stagger that makes the row read as one band
-       was also parking a motionless band on every button but the first, for as
-       long as that button's delay, every single time the page loaded. It came
-       right on its own from the second cycle onwards, which is why it survived:
-       it is only ever wrong while somebody is looking at the row for the first
-       time. Holding the 0% state during the delay fixes it, and 0% is off the
-       left edge. */
+    /* Linear, so the hand-off from one button to the next stays on time. The
+       backwards fill mode holds the 0% state, off the left edge, during the
+       delay; without it the band would wait motionless at x=0, inside the
+       button, until the first pass starts. */
     .b1-band { animation: b1-pass 7s linear 4.493s infinite backwards; }
     @media (prefers-reduced-motion: reduce) {
       .b1-band { animation: none; opacity: 0; }
@@ -109,19 +91,10 @@
       15.19%   { transform: translateX(1120.3px); }
       100%           { transform: translateX(1120.3px); }
     }
-    /* linear, not eased: see the header. An eased pass hands off at the wrong
-       moment and the row stops reading as one band.
-
-       The fill mode is not decoration, it is the second half of the delay. An
-       animation that has not started yet leaves its element wherever the
-       document put it, which for this band is x=0 - INSIDE the button, against
-       its left edge. So the whole stagger that makes the row read as one band
-       was also parking a motionless band on every button but the first, for as
-       long as that button's delay, every single time the page loaded. It came
-       right on its own from the second cycle onwards, which is why it survived:
-       it is only ever wrong while somebody is looking at the row for the first
-       time. Holding the 0% state during the delay fixes it, and 0% is off the
-       left edge. */
+    /* Linear, so the hand-off from one button to the next stays on time. The
+       backwards fill mode holds the 0% state, off the left edge, during the
+       delay; without it the band would wait motionless at x=0, inside the
+       button, until the first pass starts. */
     .b2-band { animation: b2-pass 7s linear 5.185s infinite backwards; }
     @media (prefers-reduced-motion: reduce) {
       .b2-band { animation: none; opacity: 0; }

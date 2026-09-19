@@ -20,14 +20,13 @@ jobs:
         run: npm install -g qrcode-generator
 
       # The page is generated. If docs/index.html and the source disagree, somebody
-      # hand-edited the output, which is exactly how a wrong address gets in.
+      # hand-edited the output, and that is how a wrong address gets in.
       - name: The built page is the current build
         run: |
           node donate/build.mjs
           git diff --exit-code -- docs/index.html
 
-      # Every QR code has to encode the address printed beside it. Nobody can
-      # proofread this by eye, which is why it is a gate rather than a habit.
+      # A QR code cannot be proofread by eye.
       - name: Every QR encodes its own address
         run: node donate/check.mjs
 

@@ -1,15 +1,11 @@
 /**
  * Builds ../docs/index.html from template.html and the list in coins.mjs.
  *
- * WHY A BUILD STEP AT ALL, for a page this small: the QR codes. A payment
- * address is the one string on a page that nobody can proofread, and a code
- * drawn from anything other than the address beside it is the one wrong answer
- * a reader cannot catch. Generating both from the same constant makes that
- * failure impossible rather than unlikely.
+ * The build step exists for the QR codes. Nobody can proofread a payment address,
+ * so each code is drawn from the same constant as the address printed beside it.
  *
- * The page lives in ../docs because that is one of the two places GitHub Pages
- * will serve from, and the other one is the repository root, where the profile
- * README and its assets already live.
+ * The page lives in ../docs because GitHub Pages serves either that or the
+ * repository root, and the root already holds the profile README.
  *
  * Run: node donate/build.mjs
  */
@@ -30,12 +26,10 @@ const esc = (s) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-// --- The answer panels, one per DISTINCT address -----------------------------
-// One per address rather than one per chain, because several chains share a
-// wallet and repeating the drawing would be several chances for the copies to
-// stop agreeing. The address is printed INSIDE its own panel, so "the code
-// encodes the string beside it" stays a property of the markup that check.mjs
-// reads straight off the page rather than a claim about the generator.
+// One QR panel per distinct address rather than per chain: several chains share a
+// wallet, and every extra drawing is another copy that could disagree. The address
+// is printed inside its own panel, so check.mjs can compare each code with the
+// string beside it straight from the page.
 const addresses = [...new Set(COINS.flatMap((c) => c.networks.map((n) => n.address)))];
 const panels = addresses
   .map((address) => {
@@ -47,11 +41,8 @@ const panels = addresses
   })
   .join("\n");
 
-// --- The chain rows, one per coin -------------------------------------------
-// Rendered even for a coin with a single chain, and that is not filler: this is
-// the line that SAYS which network the address on screen belongs to, and the
-// one fact that decides whether the money arrives may not appear and disappear
-// depending on which tile is lit.
+// One chain row per coin, even for a coin with a single chain: the row says which
+// network the address belongs to, and that decides whether the money arrives.
 const chainRows = COINS.map((c) => {
   const chips = c.networks
     .map(
@@ -65,12 +56,9 @@ const chainRows = COINS.map((c) => {
   return `        <div class="chains" data-coin="${esc(c.id)}" role="listbox" aria-label="Network" hidden>${chips}</div>`;
 }).join("\n");
 
-// --- The picker -------------------------------------------------------------
 const tiles = COINS.map((c, i) => {
   const m = MARKS[c.id];
-  // A tile with no mark would ship as a bare ticker, which is the one thing
-  // this grid exists to avoid. Failing the build is cheaper than noticing it
-  // on the live page.
+  // A tile without a mark would ship as a bare ticker.
   if (!m) throw new Error(`no mark for coin "${c.id}"`);
   return `        <button type="button" role="option" class="coin${i === 0 ? " is-on" : ""}"` +
     ` data-coin="${esc(c.id)}" aria-selected="${i === 0 ? "true" : "false"}"` +
@@ -89,28 +77,17 @@ const out = template
 // A placeholder that survives means template.html and this file have drifted,
 // and the page would ship with a piece missing and no error anywhere.
 for (const marker of ["<!--QRPANELS-->", "<!--CHAINROWS-->", "<!--COINTILES-->"]) {
-  if (out.includes(marker)) throw new Error(`${marker} was not replaced - template.html has drifted`);
+  if (out.includes(marker)) throw new Error(`${marker} was not replaced, template.html has drifted`);
 }
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, "index.html"), out, "utf8");
 
-// --- A second door, whose only job is to be readable -------------------------
-// GitHub's Sponsor button can carry a `custom` entry, and it prints that entry
-// as the BARE URL: measured on syncthing/syncthing, whose menu reads
-// "https://syncthing.net/donations/". There is no label field - the docs allow
-// a URL and nothing else. So the only way to say something in that menu is to
-// say it in the path, and this is the path.
-//
-// It is a redirect rather than a copy. A second copy of the page would be a
-// second place for the addresses to live, which is the one thing this whole
-// repository is arranged to avoid.
-//
-// IT LANDS ON `#ways`, NOT ON THE BARE PAGE. The page opens the crypto window
-// on arrival, because almost everybody arrives from a Crypto button and the
-// window is the whole errand - but this door says "more ways to support", and
-// answering that with the crypto window is exactly one way too few. The page
-// skips the auto-open for this one fragment and shows the card with all three.
+// A redirect whose path reads as a label, for menus that print a link as its bare
+// URL, such as GitHub's Sponsor button. It redirects rather than copies, so the
+// addresses live in one place only. It lands on #ways: the page opens the crypto
+// window on arrival, except for that fragment, where it shows the card with all
+// three ways.
 const DOOR = "more-ways-to-support";
 mkdirSync(join(OUT, DOOR), { recursive: true });
 writeFileSync(
@@ -127,10 +104,8 @@ writeFileSync(
 <body>
 <p>Taking you to <a href="../#ways">the donation page</a>.</p>
 <script>
-// location.replace rather than letting the meta refresh do it: replace leaves
-// NO history entry, so pressing Back from the donation page skips this hop
-// instead of landing here and being forwarded straight back. The meta refresh
-// above stays as the fallback for a browser with script disabled.
+// location.replace leaves no history entry, so Back from the donation page skips
+// this hop. The meta refresh is the fallback for a browser without script.
 location.replace("../#ways");
 </script>
 </body>

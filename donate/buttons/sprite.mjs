@@ -1,28 +1,23 @@
 /**
- * Several buttons as ONE image file, each shown through its own #svgView fragment.
+ * Several buttons as one image file, each shown through its own #svgView fragment.
  *
- * WHY ONE FILE. A button's shine is a CSS animation inside its SVG, and the
- * browser runs it on a clock that starts when that <img> gets its file. Separate
- * files arrive at separate moments, so a band meant to cross a row button by
- * button jumps, doubles or runs backwards. Rewriting each file's delay against
- * the wall clock as it is served did not hold either: the time between serving
- * and arriving varies per file, and Firefox reuses an image it already has when
- * GitHub swaps the page without a reload, starting a fresh clock on a delay that
- * was computed for an earlier moment. One file for every button on a page
- * arrives once, for all of them at the same moment, and every <img> of it is
- * inserted in the same step, so all clocks start together. Chrome even runs them
- * on one shared clock. Measured on github.com in Firefox, freshly loaded, after
- * in-page navigation and with the file reused from memory.
+ * A button's shine is a CSS animation whose clock starts when its <img> gets the
+ * file. Separate files arrive at separate moments, so a band meant to cross the row
+ * button by button jumps, doubles or runs backwards. Retiming each file as it is
+ * served does not help: arrival times vary per file, and Firefox reuses a cached
+ * image when GitHub swaps the page without a reload. One file for every button on a
+ * page arrives once, and every <img> of it is inserted in the same step, so all
+ * clocks start together.
  *
- * HOW. Every button keeps its own document inside the sprite, as a nested <svg>
- * at its own x. Its ids, its class and its keyframes get a per-button prefix,
- * because the CSS inside one SVG document is shared: without it the last
- * button's delay would win for all of them. A README shows one button with
+ * Every button keeps its own document inside the sprite, as a nested <svg> at its
+ * own x. Its ids, class and keyframes get a per-button prefix, because the CSS
+ * inside one SVG document is shared and the last button's delay would otherwise win
+ * for all of them. A README shows one button, with its own link, as
  *
  *   <a href="..."><img src=".../give.svg#svgView(viewBox(x,0,w,h))" width="160" height="46.62"></a>
  *
- * so every button still links where it should. width AND height are both set,
- * because the image's own proportions are the whole sprite's, not the button's.
+ * Both width and height are set, because the image's own proportions are those of
+ * the whole sprite.
  */
 
 /**

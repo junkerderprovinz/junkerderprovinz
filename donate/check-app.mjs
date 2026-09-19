@@ -1,16 +1,13 @@
 /**
- * Holds this page's wallets to the ones BombVault's own donation window shows.
+ * Holds this page's wallets to the ones BombVault's donation window shows.
  *
- * The five addresses exist twice: once in coins.mjs here, once in
- * web/src/lib/donate.ts over in the bombvault repository. Two copies of a
- * payment address is a real risk, and neither repo's test suite can close it,
- * because neither one has the other's files. So this reaches for the other copy
- * over the network and compares. It is the one check here that needs the
- * internet, which is why it lives in its own file rather than inside check.mjs.
+ * The five addresses exist twice: in coins.mjs here and in web/src/lib/donate.ts in
+ * the bombvault repository. Neither repository's tests can see the other's files,
+ * so this fetches the other copy and compares. It is the only check that needs the
+ * network, so it lives apart from check.mjs.
  *
- * A mismatch is not necessarily a bug in this repo. It means the two have
- * drifted, and somebody has to decide which one is right - so the failure names
- * both sides rather than assuming.
+ * A mismatch means the two have drifted, not necessarily that this side is wrong,
+ * so the failure names both sides.
  *
  * Run: node donate/check-app.mjs
  */
@@ -37,10 +34,9 @@ const fail = (msg) => {
   failed++;
 };
 
-// Every exit below goes through `process.exitCode`, never `process.exit()`:
-// fetch leaves a handle open, and tearing the event loop down under it aborts
-// the process on Windows with a libuv assertion and a code of 127 - which is
-// not the code this meant, and is indistinguishable from a broken command.
+// Exits go through `process.exitCode` rather than `process.exit()`: fetch leaves a
+// handle open, and tearing the event loop down under it aborts the process on
+// Windows with a libuv assertion and exit code 127.
 const response = await fetch(SOURCE);
 if (!response.ok) {
   console.error(`FAIL  could not read ${SOURCE}: HTTP ${response.status}`);
@@ -51,9 +47,8 @@ if (!response.ok) {
 const there = new Set([...(await response.text()).matchAll(SHAPES)].map((m) => m[0]));
 
 if (there.size === 0) {
-  // The app's file was reachable but carried nothing that looks like an
-  // address. Silently passing here would defeat the whole check.
-  fail("no address found in the app's donate.ts - has the file moved or changed shape?");
+  // Without this the comparison below would pass on an empty set.
+  fail("no address found in the app's donate.ts; has the file moved or changed shape?");
 }
 
 for (const address of here) {
@@ -64,7 +59,7 @@ for (const address of there) {
 }
 
 if (failed) {
-  console.error(`\n${failed} problem(s). The page and the app disagree - decide which is right.`);
+  console.error(`\n${failed} problem(s). The page and the app disagree; decide which is right.`);
   process.exitCode = 1;
 } else {
   console.log(`OK  ${here.size} addresses, identical to the app's donation window.`);

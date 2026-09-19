@@ -1,17 +1,13 @@
 /**
- * Generates the GitHub profile banners as theme-flipping pairs so they blend into
- * BOTH GitHub themes (light `#ffffff`, dark `#0d1117`) with no visible edge:
+ * Generates the GitHub profile banners as light and dark pairs whose background
+ * matches GitHub's canvas (#ffffff, #0d1117), so they show no edge:
  *
- *   profile-banner.{svg,png} / profile-banner-dark.{svg,png}   hero: name + tagline
+ *   profile-banner.{svg,png} / profile-banner-dark.{svg,png}   hero: name and tagline
  *   section-<slug>.{svg,png} / section-<slug>-dark.{svg,png}    slim section headers
  *
- * The README serves each via <picture> (dark srcset + light default), pointing at
- * the SVG rather than the PNG: the hero is ANIMATED, and only the SVG can carry it.
- * The PNGs stay generated as a still fallback for anywhere SVG is not welcome.
- *
- * Text is rendered to SVG paths (opentype.js) so the SVG needs NO font. Section
- * headers are centred on their height; the hero is anchored near its top and sizes
- * its own canvas around the text block. Deps (global): opentype.js, @resvg/resvg-js.
+ * The README's <picture> elements point at the SVGs, because the hero is animated;
+ * the PNGs are a still fallback. Text is converted to paths with opentype.js, so the
+ * SVGs need no font. Deps (global): opentype.js, @resvg/resvg-js.
  * Run: node .github/assets/gen-profile-banner.mjs
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -27,13 +23,8 @@ const opentype = require(`${groot}/opentype.js`);
 const { Resvg } = require(`${groot}/@resvg/resvg-js`);
 const __dir = dirname(fileURLToPath(import.meta.url));
 
-// ---- content --------------------------------------------------------------
 const NAME = "Junker der Provinz";
-// Deliberately says nothing about WHERE the software runs. The old line ended in
-// "tools for Unraid & Docker", which stopped being true once the apps outgrew the
-// NAS: a desktop downloader, browser extensions, plain programs. A claim that
-// names platforms has to be rewritten every time a new one is added, so this one
-// names none.
+// Names no platform, so it stays true whatever the next app runs on.
 const TAG = "One knight's crusade: free, private, good-looking software.";
 const SECTIONS = [
   { slug: "apps", title: "Apps" },
@@ -46,23 +37,16 @@ const SECTIONS = [
   { slug: "support", title: "Support" },
 ];
 
-// One entry per GitHub theme; bg matches the GitHub canvas so the banner blends in.
-// `sheen` is the colour of the light that sweeps across the name (see the hero
-// section). It is GOLD rather than white or black on purpose: the name is near-black
-// on the light ground and near-white on the dark one, so a brightness-based sheen
-// would be invisible on one of the two. A hue shift reads on both.
-//
-// The tone is the avatar's own yellow, sampled from the picture rather than guessed:
-// its two dominant yellows are #857500 and #ffe600, and this is the bright one. Both
-// themes take it undiluted, jdp's call. Worth knowing on the light banner: there the
-// sheen replaces near-black letters on WHITE, so at full brightness the lit strokes
-// carry little contrast against the page.
+// One entry per GitHub theme. The sheen that sweeps across the name is a hue rather
+// than white or black: the name is near-black on one theme and near-white on the
+// other, so a change in brightness would vanish on one of them. It is the bright
+// yellow of the avatar, used undiluted on both themes even though its lit strokes
+// carry little contrast against white.
 const SHEEN = "#ffe600";
 const THEMES = [
   { suffix: "", bg: "#ffffff", fg: "#1f2328", sub: "#59636e", rule: "#d0d7de", accent: "#8b949e", sheen: SHEEN },
   { suffix: "-dark", bg: "#0d1117", fg: "#f0f6fc", sub: "#9198a1", rule: "#30363d", accent: "#6e7681", sheen: SHEEN },
 ];
-// ---------------------------------------------------------------------------
 
 async function font(file, url) {
   const p = join(tmpdir(), file);
@@ -77,7 +61,8 @@ async function font(file, url) {
 const bree = await font("jdp-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
 const lato = await font("jdp-Lato-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf");
 
-// NaN-safe size fit (some Lato glyphs emit NaN at certain sizes — step down).
+// Largest size up to cap that fits maxW. opentype.js emits NaN for some Lato glyphs
+// at certain sizes, so those sizes are skipped.
 function fitSize(fnt, text, maxW, cap) {
   let size = Math.min(cap, Math.floor((100 * maxW) / fnt.getAdvanceWidth(text, 100)));
   for (; size > 10; size--) {
@@ -88,25 +73,21 @@ function fitSize(fnt, text, maxW, cap) {
 const sc = (fnt, s) => s / fnt.unitsPerEm;
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// Writes the .svg, and renders the .png from `still` - which defaults to the same
-// markup but MUST be passed separately for anything animated. resvg has no timeline:
-// it rasterises the document as authored, so an element that starts at opacity 0 and
-// animates up renders as nothing at all. The hero passes its pre-animation markup
-// here; without that the PNG fallback would silently be an empty coloured rectangle.
+// Writes the .svg and renders the .png from `still`. Animated markup needs a separate
+// still version: resvg has no timeline and rasterises the document as authored, so an
+// element that fades in from opacity 0 would come out blank.
 function emit(name, svg, bg, still = svg) {
   writeFileSync(join(__dir, `${name}.svg`), svg);
   const png = new Resvg(still, { background: bg, fitTo: { mode: "original" } }).render().asPng();
   writeFileSync(join(__dir, `${name}.png`), png);
 }
 
-// ---- hero (name + rule + tagline) -----------------------------------------
 const HW = 1600;
-// The name gets 1280 of the 1600 canvas and a 176px cap (was 1120/132). It is the
-// one thing a profile banner exists to say, and at the old size it was carrying
-// about as much weight as the claim underneath it.
+// The name is what the banner exists to say, so it gets most of the width and clearly
+// more weight than the claim underneath.
 const nameSize = fitSize(bree, NAME, 1280, 176);
 const tagSize = fitSize(lato, TAG, 1000, 46);
-// decorative hero rule: the user's flourish SVG, embedded 1:1 and recoloured per theme
+// The ornament under the name, embedded as drawn and recoloured per theme.
 const ornRaw = readFileSync(join(__dir, "hero-rule-ornament.svg"), "utf8");
 const ornM = ornRaw.match(/viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/);
 const ornVW = parseFloat(ornM[1]), ornVH = parseFloat(ornM[2]);
@@ -119,15 +100,12 @@ const nameDesc = -bree.descender * sc(bree, nameSize);
 const tagAsc = lato.ascender * sc(lato, tagSize);
 const tagDesc = -lato.descender * sc(lato, tagSize);
 const heroBlockH = nameAsc + gapNameRule + ornHeight + gapRuleTag + tagAsc + tagDesc;
-// Anchored near the top instead of optically centred on HH/2. The ascent of a 176px
-// Bree Serif is mostly empty space above the caps, so a block centred by its metrics
-// LOOKS low even when the arithmetic is even; a fixed top edge puts the name where
-// the eye expects it and leaves the slack under the claim, where it reads as air.
+// Anchored at a fixed top rather than centred by its metrics: the ascent of a large
+// Bree Serif is mostly empty space above the caps, so a metrically centred block looks
+// low.
 const heroTop = 34;
-// The canvas is derived from the block, not fixed at some round number the block
-// then has to live inside. A fixed height only stays balanced for one particular
-// length of claim: the moment the text changes the slack all collects at the bottom.
-// Slightly more room below than above, which is where the eye expects the weight.
+// The height follows the text block, with a little more room below than above, so
+// the banner stays balanced when the claim changes length.
 const HH = Math.round(heroTop + heroBlockH + 52);
 const nameBaseline = Math.round(heroTop + nameAsc);
 const ornY = Math.round(nameBaseline + gapNameRule);
@@ -137,29 +115,25 @@ const tagX = (HW - lato.getAdvanceWidth(TAG, tagSize)) / 2;
 const namePath = bree.getPath(NAME, nameX, nameBaseline, nameSize).toPathData(2);
 const tagPath = lato.getPath(TAG, tagX, tagBaseline, tagSize).toPathData(2);
 
-// ---- the claim types itself out, gets the last word wrong, fixes it ----------
-// The typo is a TRANSPOSITION ("softwrae" for "software"), which is what makes the
-// whole thing cheap: the two endings are the same four glyphs in a different order,
-// so both spellings are exactly as wide and the claim stays centred on one position.
-// Any other typo would shift the line sideways at the moment of correction.
+// The claim types itself out, gets the last word wrong and fixes it. The typo is a
+// transposition ("softwrae"), so both endings are the same four glyphs, both
+// spellings are equally wide, and the line does not shift when it is corrected.
 const FIX_RIGHT = "are.";
 const FIX_WRONG = "rae.";
 const TAG_STEM = TAG.slice(0, -FIX_RIGHT.length);   // "...good-looking softw"
 const TAG_TYPO = TAG_STEM + FIX_WRONG;
 if (!TAG.endsWith(FIX_RIGHT)) throw new Error(`TAG must end in "${FIX_RIGHT}" for the typo animation`);
-// One path per spelling, both drawn from the SAME pen position: they share every
-// glyph up to the stem, so swapping layers mid-animation is invisible.
+// Both spellings start at the same pen position and share every glyph up to the
+// stem, so swapping the layers mid-animation is invisible.
 const tagTypoPath = lato.getPath(TAG_TYPO, tagX, tagBaseline, tagSize).toPathData(2);
 
-// Timeline as [ms, revealed width]. A reveal-width keyframe list rather than a
-// character count, because Lato is proportional: an "i" and a "w" are not one step.
+// Timeline as [ms, revealed width]. Widths rather than character counts, because
+// Lato is proportional: an "i" and a "w" are not one step.
 const TYPE_MS = 82, DEL_MS = 62, PAUSE_TYPO = 620, PAUSE_FIX = 240;
 const runW = (s) => lato.getAdvanceWidth(s, tagSize);
-// Nobody types on a metronome, and at this slower speed a perfectly even beat is
-// the thing that gives it away. So: a breath after punctuation, a shorter one after
-// a space, and a small wobble on every key. The wobble is derived from the index
-// rather than drawn at random, so the file is reproducible - regenerating it twice
-// gives byte-identical output instead of a spurious diff.
+// An even beat looks mechanical, so punctuation and spaces get a pause and every key
+// a small wobble. The wobble comes from the index rather than a random number, so
+// regenerating gives byte-identical output.
 const keyDelay = (ch, i) => {
   let d = TYPE_MS;
   if (",:".includes(ch)) d += 130;
@@ -186,12 +160,10 @@ const swapMs = tms;                                    // typo layer out, real o
 for (let i = 1; i <= FIX_RIGHT.length; i++) { tms += keyDelay(FIX_RIGHT[i - 1], i); typeSteps.push([tms, runW(TAG_STEM + FIX_RIGHT.slice(0, i))]); }
 const typeMs = tms;
 
-// Geometry for the reveal and the caret. The untyped remainder is covered by a rect
-// in the BACKGROUND colour that slides right, not by an animated clipPath: the
-// background is flat, so a cover is indistinguishable from a clip, and animating a
-// plain visible rect avoids depending on an engine re-evaluating clipPath geometry
-// every frame. It also means the cover and the caret are the same movement, one
-// keyframe list for both.
+// The untyped remainder is hidden by a rect in the background colour that slides
+// right, rather than by an animated clipPath. On a flat background the two look the
+// same, the rect does not rely on the renderer re-evaluating clip geometry every
+// frame, and cover and caret can share one keyframe list.
 const wipeTop = tagBaseline - tagAsc - 4;
 const wipeH = tagAsc + tagDesc + 8;
 const caretW = Math.max(2, Math.round(tagSize * 0.055));
@@ -201,13 +173,10 @@ const caretH = tagAsc * 0.82 + tagDesc * 0.55;
 // end, which is what typing looks like; a smooth tween would read as a wipe.
 const caretKeys = typeSteps.map(([ms, w]) => `${((ms / typeMs) * 100).toFixed(3)}%{transform:translateX(${w.toFixed(2)}px)}`).join("");
 
-// ---- what the caret does once it has nothing left to type ---------------------
-// Four things, spaced minutes apart, then the cycle repeats. They live in a SECOND,
-// nested transform rather than an extension of the typing animation: the typing runs
-// once and holds its end state (`forwards`), and a second animation on the same
-// element and the same property would replace it rather than continue from it.
-// Nesting gives each its own element, so the idle offsets are relative to wherever
-// the typing finished.
+// Once the claim is typed, the caret plays four idle scenes with long pauses between
+// them, in a loop. They run on a nested element: the typing holds its end state
+// (`forwards`), and a second animation of the same property on the same element would
+// replace it rather than continue from where it stopped.
 const SC_MOSTLY = " Mostly.";
 const SC_FORGING = " Still forging.";
 const claimW = runW(TAG);
@@ -238,7 +207,6 @@ function sceneAppend(text, key, hold = 1500) {
 // `dot` is a small cover over the full stop: the "!" is drawn at the same pen
 // position, so without it both would show at once.
 function sceneBang(hold = 1500) {
-  const start = scMs;
   wipeScene.push([scMs, 0]); caretScene.push([scMs, 0]);
   scMs += 240; wipeScene.push([scMs, relDotless]); caretScene.push([scMs, relDotless]);
   scMs += 430; wipeScene.push([scMs, relDotless]); caretScene.push([scMs, relDotless]);
@@ -251,10 +219,9 @@ function sceneBang(hold = 1500) {
   scMs += 130; wipeScene.push([scMs, 0]); caretScene.push([scMs, 0]);
   windows.bang = [on, off];
   windows.dotcover = [on - 240, off];   // covers from the moment the stop is deleted
-  void start;
 }
 
-// Walks back through the line a word at a time and returns. ONLY the caret moves:
+// Walks back through the line a word at a time and returns. Only the caret moves:
 // the cover stays where it is, so nothing is hidden while the caret travels.
 function sceneReread() {
   const stops = ["software.", "good-looking software.", "private, good-looking software."]
@@ -267,7 +234,7 @@ function sceneReread() {
   wipeScene.push([scMs, 0]);
 }
 
-const IDLE_GAP = 21000;                 // minutes between scenes, not seconds
+const IDLE_GAP = 21000;
 scMs += IDLE_GAP; sceneAppend(SC_MOSTLY, "mostly");
 scMs += IDLE_GAP; sceneAppend(SC_FORGING, "forging");
 scMs += IDLE_GAP; sceneBang();
@@ -292,19 +259,16 @@ const dotX = tagX + claimW + relDotless;
 const scBangPath = lato.getPath("!", dotX, tagBaseline, tagSize).toPathData(2);
 const dotCoverW = Math.ceil(runW(".")) + 3;
 
-// ---- hero animation --------------------------------------------------------
-// GitHub serves an <img>-embedded SVG through camo with Content-Type image/svg+xml,
-// which is exactly what the hosted animation services other profiles use return - so
-// the movement can live in this repo's own asset instead of on somebody else's
-// server. Nothing external is fetched and nothing breaks if a third party goes down.
+// GitHub serves an <img>-embedded SVG through camo as image/svg+xml, so the animation
+// can live in this repo's own asset instead of on a third-party service.
 //
-// CSS animation, not SMIL: SMIL cannot be switched off for a reader who asked their
-// system for less motion, and CSS can (see the reduced-motion block). Scripts are
-// blocked in this context; inline <style> is not.
+// CSS animation rather than SMIL, because only CSS can be switched off for a reader
+// who asked for less motion (see the reduced-motion block). Scripts are blocked in
+// this context; inline <style> is not.
 //
 // The name and claim fade up, the ornament unrolls from its centre, and a band of
-// gold then crosses the name every few seconds - clipped to the letterforms, so it
-// looks like light moving over the type rather than a rectangle sliding past it.
+// gold crosses the name every few seconds, clipped to the letterforms so it reads as
+// light on the type rather than a sliding rectangle.
 const nameTop = nameBaseline - nameAsc;
 const nameH = nameAsc + nameDesc;
 const SHEEN_W = 300;      // width of the light band
@@ -320,9 +284,8 @@ const TYPE_AT = 1.7;
 const typeEndS = TYPE_AT + typeMs / 1000;
 const SHEEN_AT = +(typeEndS + 0.9).toFixed(2);
 const swapAtS = +(TYPE_AT + swapMs / 1000).toFixed(3);
-// The caret keeps blinking for good once it has arrived, rather than stopping after
-// a few seconds: it is what makes the finished line still read as a caret sitting in
-// a text field, and it is the thing the idle scenes below hang off.
+// The caret keeps blinking after the typing ends, so the finished line still reads as
+// a text field and the idle scenes have something to start from.
 const BLINK_S = 0.9;
 const typeDurS = (typeMs / 1000).toFixed(3);
 const cycleS = (cycleMs / 1000).toFixed(2);
@@ -422,25 +385,20 @@ for (const t of THEMES) {
   emit(`profile-banner${t.suffix}`, heroSvg(t, true), t.bg, heroSvg(t, false));
 }
 
-// ---- slim section headers (title left of an accent bar) --------------------
-// Section banners render at a FIXED display width (SECTION_W), not width=100%, so
-// the title's pixel position is independent of GitHub's column width. Coords are 2x
-// (SW = 2 * SECTION_W) for crispness; displayed at half scale the title lands at 32px
-// = GitHub's list-text indent (ul padding-left: 2em), flush with the list below, and
-// the accent bar lands in the bullet gutter. The README sets <img width="480">.
+// Section headers render at a fixed display width (the README sets <img width="480">)
+// rather than 100%, so the title's position does not depend on GitHub's column width.
+// Coordinates are doubled for crispness; at half scale the title lands on GitHub's
+// list indent (2em = 32px), flush with the list below, and the bar sits in the bullet
+// gutter.
 const SECTION_W = 480;
 const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8;
-// The title's VISIBLE ink must start on the list-text indent (2em = 32px = 64 in
-// these 2x coords) so it lines up flush with the markdown list below. We place the
-// pen at TITLE_X - glyph-left-bearing (via the path bounding box), NOT the pen
-// itself at TITLE_X, otherwise the serif's left side bearing pushes the visible
-// text a few px to the right of the list text (the misalignment jdp kept seeing).
+// The visible ink, not the pen, has to start at TITLE_X; otherwise the serif's left
+// side bearing pushes the title a few pixels right of the list text.
 const TITLE_X = 64;
 const penFor = (fnt, text, y, size) => TITLE_X - fnt.getPath(text, 0, y, size).getBoundingBox().x1;
-// Largest size <= 60 at which every section title renders NaN-free at its real
-// (bbox-aligned) pen position; opentype.js can emit a NaN at the render coords
-// even when (0,0) is clean (that silently truncated "Templates" -> "T"), and the
-// baseline depends on the size, so pick both together.
+// Largest size up to 60 at which every title renders without NaN at its real pen
+// position. opentype.js can emit NaN there even when (0,0) is clean, and the baseline
+// depends on the size, so both are picked together.
 let titleSize, sAsc, sDesc, sBaseline;
 for (let size = 60; size > 10; size--) {
   sAsc = bree.ascender * sc(bree, size);
@@ -456,7 +414,6 @@ const barTop = Math.round(SH / 2 - (sAsc + sDesc) / 2);
 const barH = Math.round(sAsc + sDesc);
 
 for (const s of SECTIONS) {
-  // Align each title's visible ink left edge to TITLE_X (the list-text indent).
   const titlePath = bree.getPath(s.title, penFor(bree, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
   for (const t of THEMES) {
     const svg = `<?xml version="1.0" encoding="UTF-8"?>

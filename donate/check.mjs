@@ -1,29 +1,22 @@
 /**
- * Holds the built page to the things nobody can proofread.
+ * Holds the built page to the things nobody can proofread. A wrong address sends
+ * a stranger's donation elsewhere without any error, and there are three ways to
+ * get one:
  *
- * A wrong address here is the most expensive mistake this page can make, and it
- * is silent: money leaves, nothing errors, and the person it happens to is a
- * stranger who tried to give something away. There are three ways to get it
- * wrong and only one of them is catchable by eye.
+ *   1. The address itself is wrong. A reader can compare it with a wallet.
+ *   2. The QR code does not encode the address printed beside it. A phone reads
+ *      the code, not the characters, so the page still looks right.
+ *   3. A chain points at an address that does not live on it. The address is
+ *      well-formed and the code matches it; only the network is wrong. The app's
+ *      donate.ts records the near miss behind this rule.
  *
- *   1. The ADDRESS is wrong. A reader can compare it to a wallet, and so can I.
- *   2. The QR CODE does not encode the address printed beside it. Nobody can
- *      see this. A phone reads the code, not the characters, so a mismatch
- *      sends the money somewhere else and the page still looks perfect.
- *   3. A CHAIN points at an address that does not live on it. This is the one
- *      that loses the money outright, and it hides twice over: the address is
- *      well-formed, the code matches it, and only the network is wrong. The
- *      app's own donate.ts carries the near miss that made this a rule.
+ * So this rebuilds every code from the address the page prints, demands the same
+ * path, and checks every chain against ADDRESS_BY_CHAIN, which coins.mjs writes
+ * out by hand: a map derived from the list it guards would agree with any mistake
+ * in it.
  *
- * So this rebuilds every code from the address the page prints, demands the
- * same path, and checks every chain against ADDRESS_BY_CHAIN, which coins.mjs
- * writes out BY HAND. That hand-written map is the whole point of check 3:
- * derived from the list it guards, it would agree with any mistake in it.
- *
- * It reads the data from coins.mjs rather than from build.mjs, and that is not
- * a detail: importing the builder would REBUILD the page before this read it,
- * and a hand-edit of the generated file - the obvious shortcut somebody takes
- * once - would be erased a moment before it was looked for.
+ * It imports coins.mjs rather than build.mjs, because importing the builder would
+ * rebuild the page and erase a hand-edit of the output just before looking for it.
  *
  * Run: node donate/check.mjs   (build first, this reads the built page)
  */
@@ -43,14 +36,14 @@ const fail = (msg) => {
   failed++;
 };
 
-// --- 1 + 2: every panel's code encodes the address printed inside it ---------
+// Checks 1 and 2: every panel's code encodes the address printed inside it.
 const panels = [
   ...html.matchAll(
     /<div class="qrpanel" data-address="([^"]+)"[^>]*>[\s\S]*?<path d="([^"]+)"[\s\S]*?<p class="addr"[^>]*>([^<]+)<\/p>/g
   ),
 ];
 
-if (panels.length === 0) fail("no QR panels found in docs/index.html - did build.mjs run?");
+if (panels.length === 0) fail("no QR panels found in docs/index.html; did build.mjs run?");
 
 for (const [, dataAddress, path, printed] of panels) {
   if (printed.trim() !== dataAddress) {
@@ -61,7 +54,7 @@ for (const [, dataAddress, path, printed] of panels) {
   }
 }
 
-// --- 3: every chain resolves to the wallet that lives on it ------------------
+// Check 3: every chain resolves to the wallet that lives on it.
 const chips = [
   ...html.matchAll(/<button [^>]*class="chain[^"]*"[^>]*data-address="([^"]+)" data-chain="([^"]+)"/g),
 ];
@@ -82,7 +75,7 @@ for (const chain of Object.keys(ADDRESS_BY_CHAIN)) {
   if (!onPage.has(chain)) fail(`chain "${chain}" is declared but reaches no chip`);
 }
 
-// --- 4: the page's coins are the list's coins, each with its own chain row ---
+// Check 4: the page's coins are the list's coins, each with its own chain row.
 const tiles = [...html.matchAll(/<button [^>]*class="coin[^"]*"[^>]*data-coin="([^"]+)"/g)].map(
   (m) => m[1]
 );
@@ -98,9 +91,9 @@ for (const id of tiles) {
   }
 }
 
-// Every chip belongs to a coin that actually offers that chain, in that order.
-// Catches a row copied from one coin to another, which is exactly how ETH would
-// end up offered on BNB Smart Chain again - the trap donate.ts names by hand.
+// Every chip belongs to a coin that offers that chain, in that order.
+// Catches a row copied from one coin to another, the way ETH could end up offered
+// on BNB Smart Chain, the trap donate.ts names.
 for (const m of html.matchAll(/<div class="chains" data-coin="([^"]+)"[^>]*>([\s\S]*?)<\/div>/g)) {
   const coin = COINS.find((c) => c.id === m[1]);
   if (!coin) continue;
@@ -109,24 +102,21 @@ for (const m of html.matchAll(/<div class="chains" data-coin="([^"]+)"[^>]*>([\s
   if (want !== got) fail(`coin "${m[1]}" offers [${got}] on the page but [${want}] in the list`);
 }
 
-// --- 5: every address still fits on ONE line --------------------------------
-// An address is read back by eye before somebody sends to it, and a string
-// broken across two lines is one nobody can check at a glance. It broke once
-// already and by a single character: the Sui address wanted 442px in a window
-// that offered 440, two pixels short, and nothing in the build noticed.
+// Check 5: every address fits on one line. An address is read back by eye before
+// somebody sends to it, and one broken across two lines cannot be checked at a
+// glance.
 //
 // The four measurements come from the page's own CSS tokens, so this and the
-// stylesheet cannot drift apart: change --window-max there and this follows.
+// stylesheet cannot drift apart.
 //
-// PER_CHAR is deliberately pessimistic. The face this renders in measures 0.55em
-// per character; the widest monospace in the fallback stack is 0.60em, so a
-// viewer on another system needs about nine percent more room for the same
-// string, and the check has to pass for THEM, not for the machine it runs on.
+// PER_CHAR is pessimistic: the page's face measures 0.55em per character and the
+// widest monospace in the fallback stack 0.60em, and the check has to pass for a
+// viewer on another system, not for the machine it runs on.
 const PER_CHAR = 0.62;
 const rem = (name) => {
   const m = html.match(new RegExp(`--${name}:\\s*([\\d.]+)rem`));
   if (!m) {
-    fail(`the stylesheet has no --${name} token - the width check cannot run`);
+    fail(`the stylesheet has no --${name} token; the width check cannot run`);
     return null;
   }
   return parseFloat(m[1]) * 16;
@@ -144,7 +134,7 @@ if (windowMax && bodyPad && answerPad && addrSize) {
     if (needs > room) {
       fail(
         `${address} needs ${Math.ceil(needs)}px on one line but the window offers ` +
-          `${Math.floor(room)}px - widen --window-max past ${
+          `${Math.floor(room)}px; widen --window-max past ${
             Math.ceil((needs + 2 * bodyPad + 2 * answerPad) / 16 * 10) / 10
           }rem`
       );
@@ -152,7 +142,7 @@ if (windowMax && bodyPad && answerPad && addrSize) {
   }
 }
 
-// --- 6: a mark on every tile, so nothing ships as a bare ticker --------------
+// Check 6: a mark on every tile, so nothing ships as a bare ticker.
 for (const m of html.matchAll(
   /<button [^>]*class="coin[^"]*"[^>]*data-coin="([^"]+)"([\s\S]*?)<\/button>/g
 )) {

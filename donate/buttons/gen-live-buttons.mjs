@@ -1,45 +1,29 @@
 /**
  * The three donation buttons, with one sheen that crosses the whole row.
  *
- * WHY MOTION AT ALL: a README button cannot react to the pointer. Four ways
- * were checked and all four are closed - GitHub's sanitiser strips <style> and
- * script, an inline style carries no pseudo-classes, an SVG loaded as <img>
- * never receives pointer events, and <picture> inside <a> is broken by the same
- * sanitiser. Motion is the one thing that still works, and this account's own
- * profile banner has been proving it daily.
+ * A README button cannot react to the pointer: GitHub's sanitiser strips <style>
+ * and script, an inline style has no pseudo-classes, an SVG loaded as <img> never
+ * receives pointer events, and the sanitiser breaks <picture> inside <a>. Motion
+ * still works.
  *
- * HOW ONE BAND CROSSES THREE SEPARATE IMAGES, which is the whole trick here
- * (jdp, 2026-09-11: "kann der schein nicht über alle drei buttons hinweg
- * laufen?"). It cannot be one animation: each button is its own <img>, its own
- * SVG document, its own timeline, and nothing in a README can talk between
- * them. What they DO share is a period. So every button runs the identical
- * animation and button n starts it `n * STEP` later, where STEP is how long the
- * band takes to travel one button plus the gap between them. The band leaves
- * the first button exactly as it enters the second, which reads as one band
- * sweeping the row.
+ * Each button is its own SVG document with its own timeline, so no single animation
+ * can cross all three. Instead every button runs the same animation and button n
+ * starts it `n * STEP` later, where STEP is the time the band needs for one button
+ * plus the gap. The band leaves one button as it enters the next, which reads as
+ * one band sweeping the row. Two things make it work:
+ *   - The timing function is linear. Easing varies the speed inside each button,
+ *     so the hand-off at the seam would come early or late.
+ *   - The phase is fixed when each document loads and never settles afterwards,
+ *     and separate images of one row can arrive more than a STEP apart on a first
+ *     visit. So READMEs show give.svg, the three in one file, each through its own
+ *     view (see sprite.mjs).
  *
- * TWO THINGS THAT MAKE OR BREAK IT:
- *   - The timing function must be LINEAR. Any easing varies the speed inside
- *     each button, so the hand-off at the seam arrives early or late and the
- *     illusion of one band collapses into three that shimmer in turn.
- *   - The phase is set at LOAD, because a CSS animation in an <img>-loaded SVG
- *     starts with its own document, and it never settles afterwards: all three
- *     share a period, so whatever offset they start with they keep. Measured
- *     over the real network, the images of one row arrived up to 1.2 s apart on
- *     a first visit, more than a whole STEP. So no README links these files
- *     one by one: they all show give.svg, the three as one file, each through
- *     its own view; see sprite.mjs. One file arrives once for all three.
+ * The artwork is embedded as a PNG data URI rather than redrawn as vector, because
+ * an <img>-loaded SVG with <text> falls back to whatever font the viewer's renderer
+ * has. This keeps the lettering identical to the static row.
  *
- * WHY THE ARTWORK IS AN EMBEDDED RASTER rather than redrawn as vector: the
- * buttons carry WORDS, and an <img>-loaded SVG with a <text> element falls back
- * to whatever font the viewer's renderer happens to have - which is exactly why
- * the static buttons are PNGs in the first place. Embedding the finished
- * picture as a data URI keeps the lettering identical to the static row and
- * adds the motion on top. No network request, nothing cached separately.
- *
- * CSS, NOT SMIL, for one reason: only CSS can be switched off by
- * prefers-reduced-motion. Somebody who asked their system for less motion asked
- * everything, and an animation that ignores it is a bug.
+ * CSS rather than SMIL, because only CSS can be switched off by
+ * prefers-reduced-motion.
  *
  * Run: node donate/buttons/gen-live-buttons.mjs
  */
@@ -61,10 +45,9 @@ const H = 245.3;
 const R = 38.2;
 
 /**
- * The row, in the order every README shows it, with the artwork each one is
- * built from. Buy Me a Coffee is the vendor's own SVG and has no PNG, so it is
- * rasterised here; the other two already exist as PNGs and are used as they
- * are, byte for byte the same picture the static row shows.
+ * The row in README order, with the artwork each button is built from. Buy Me a
+ * Coffee is the vendor's SVG and is rasterised here; the other two use the PNGs of
+ * the static row.
  */
 const BUTTONS = [
   { name: "button-buy-me-a-coffee", from: "button-buy-me-a-coffee.svg" },
@@ -73,33 +56,21 @@ const BUTTONS = [
 ];
 
 /**
- * THE BAND IS DEFINED ON SCREEN, NOT ON THE CANVAS, and that sentence is the
- * whole of this block.
+ * The band is defined in screen pixels, not canvas units. Every button is drawn on
+ * its vendor canvas (841.9 wide here, 720 for the download rows in the app
+ * repositories) and each README scales its row to its own width, so a band in
+ * canvas units would have a different size and speed in every row. Band width,
+ * speed and loop are the same for every row (see the GitHub style guide, "Der
+ * Schein"); everything else follows from the width the row is rendered at.
  *
- * Every button in this house is drawn on the vendor canvas it inherited - 841.9
- * wide here, 720 for the download row in the app repositories - and each README
- * then scales its row to a width of its own. A band described in canvas units
- * therefore comes out a different size and a different speed in every row that
- * uses it, which is exactly what happened: two rows on one page, one band 31px
- * wide crossing at 249px per second and the other 38px at 304. They read as two
- * effects rather than one house.
+ * The gap is measured in a browser: the row is `<img width="160">` with a newline,
+ * two spaces and a `&nbsp;` between the images, which HTML collapses to space, nbsp,
+ * space, or 13.16px at GitHub's 16px body text.
  *
- * So the three numbers below are in SCREEN pixels and are the same for every
- * row anywhere (see the GitHub style guide, "Der Schein"): a 33px band, 250px
- * per second, a seven second loop. Everything else is derived from the width
- * the row is rendered at.
- *
- * THE GAP IS MEASURED, not assumed. This row is `<img width="160">` with a
- * newline, two spaces and a `&nbsp;` between the images, which HTML collapses
- * to space-nbsp-space: 13.16px at GitHub's 16px body text, measured in a
- * browser rather than guessed at. It used to be taken as 4px, which put the
- * hand-off 5% early in this row and 17% late in the other.
- *
- * PASS is how long the band needs to cross one button from fully outside the
- * left edge to fully outside the right, and STEP is how long it needs to travel
- * from one button's left edge to the next one's. Because both come from one
- * speed, the band leaves button n at the moment it enters button n+1 whatever
- * the row is scaled to.
+ * PASS is how long the band needs to cross one button, from fully outside its left
+ * edge to fully outside its right, and STEP how long it needs from one button's
+ * left edge to the next one's. Both come from one speed, so the band leaves button
+ * n as it enters button n+1 at any scale.
  */
 const BAND_PX = 33;                    // the band's width on screen
 const SPEED = 250;                     // screen pixels per second
@@ -108,29 +79,22 @@ const RENDER_PX = 160;                 // the width every README asks for
 const CYCLE = 7;                       // seconds, one full loop including the rest
 
 /**
- * ONE ROW AT A TIME, NOT ALL OF THEM AT ONCE, and this row goes second.
+ * Rows take turns, and this row goes second: on a README with a download row above
+ * it, the band works its way down the page, the whole first row and then the whole
+ * second.
  *
- * A README that has a download row above this one was running both bands on the
- * same schedule, so two bands crossed two rows side by side. They are meant to
- * read as one band working its way down the page: the whole first row, then the
- * whole second.
+ * This file cannot know what is above it, since it is one shared asset referenced
+ * by raw URL from many repositories and its phase is baked in. So the offset is
+ * fixed at 3.8s, when the longest download row is finished (four buttons, the last
+ * starting at 2.498s and needing 1.271s to cross). Without a download row the first
+ * 3.8s look like a longer rest.
  *
- * THIS FILE CANNOT KNOW WHAT IS ABOVE IT. These three buttons are one shared
- * asset, referenced by raw URL from twenty-six repositories, and their phase is
- * baked into the file. So the schedule is fixed rather than derived per page:
- * after one download row of at most four buttons.
- *
- * 3.8s is when the longest single download row in the house is finished - four
- * buttons, whose last one starts at 2.498s and needs 1.271s to cross. A README
- * with no download row shows nothing for the first 3.8s of the loop instead,
- * which nobody can tell from a longer rest.
- *
- * A page that does not fit this retimes the copies in its own sprite. ArrowLoop
- * and KnightLoader put the give row ABOVE two download rows, and their
- * scripts/gen_download_buttons.py moves these three to the start of a longer
- * loop there (three rows need 7.07s of travel). So the animation line and the
- * one keyframe stop between 0% and 100% have to keep their shape: that
- * generator rewrites them and refuses a file where it cannot find them.
+ * A page that does not fit this retimes the copies in its own sprite. ArrowLoop and
+ * KnightLoader put the give row above two download rows, and their
+ * scripts/gen_download_buttons.py moves these three to the start of a longer loop
+ * (three rows need 7.07s of travel). That generator rewrites the animation line and
+ * the one keyframe stop between 0% and 100%, and refuses a file where it cannot
+ * find them, so both have to keep their shape.
  */
 const ROW_OFFSET = 3.8;
 
@@ -169,7 +133,7 @@ function build({ name, from }, index) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
      version="1.1" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-  <!-- Generated by gen-live-buttons.mjs - do not hand-edit.
+  <!-- Generated by gen-live-buttons.mjs, do not hand-edit.
        Position ${index + 1} of ${BUTTONS.length} in the row; the sheen starts
        ${delay}s into the loop, so one band appears to cross all three, and the
        row runs after the download row above it rather than beside it. -->
@@ -190,19 +154,10 @@ function build({ name, from }, index) {
       ${PASS_PCT}%   { transform: translateX(${TO.toFixed(1)}px); }
       100%           { transform: translateX(${TO.toFixed(1)}px); }
     }
-    /* linear, not eased: see the header. An eased pass hands off at the wrong
-       moment and the row stops reading as one band.
-
-       The fill mode is not decoration, it is the second half of the delay. An
-       animation that has not started yet leaves its element wherever the
-       document put it, which for this band is x=0 - INSIDE the button, against
-       its left edge. So the whole stagger that makes the row read as one band
-       was also parking a motionless band on every button but the first, for as
-       long as that button's delay, every single time the page loaded. It came
-       right on its own from the second cycle onwards, which is why it survived:
-       it is only ever wrong while somebody is looking at the row for the first
-       time. Holding the 0% state during the delay fixes it, and 0% is off the
-       left edge. */
+    /* Linear, so the hand-off from one button to the next stays on time. The
+       backwards fill mode holds the 0% state, off the left edge, during the
+       delay; without it the band would wait motionless at x=0, inside the
+       button, until the first pass starts. */
     .band { animation: pass ${CYCLE}s linear ${delay}s infinite backwards; }
     @media (prefers-reduced-motion: reduce) {
       .band { animation: none; opacity: 0; }

@@ -1,31 +1,21 @@
 /**
- * The two donation buttons every README needs beside the Buy Me a Coffee one.
+ * The PayPal and Crypto buttons shown beside Buy Me a Coffee in every README.
+ * Every README points at this repository on raw.githubusercontent.com, so there is
+ * one copy to regenerate instead of one per repository.
  *
- * WHY THEY LIVE HERE: the row of three appears in the README of every
- * repository, and the images are the same three files each time. Kept per-repo
- * they would be dozens of copies that must be regenerated in lockstep, so they
- * are served from this one place - the repository that already exists to serve
- * all of them - and every README points at raw.githubusercontent.com.
+ * They are generated to match the vendor's button-buy-me-a-coffee.svg: the same
+ * 841.9x245.3 canvas, the same 38.2 corner and the same inner 460x120 design grid
+ * (scaled by 1.830217 and centred), because the README renders the row at one
+ * fixed width and a box a few units off makes the row wobble.
  *
- * WHY THESE ARE GENERATED RATHER THAN DRAWN: they have to match a button that
- * already exists. button-buy-me-a-coffee.svg is the vendor's own, 841.9x245.3
- * with a 38.2 corner, and a README renders the row at one fixed width. A
- * hand-drawn box a few units off reads as a wobbly row at that size, so both
- * of these take the same canvas, the same corner, and the same inner 460x120
- * design grid (scaled by 1.830217 and offset to sit centred in the larger box).
+ * Each button wears its brand colour. The app shows the brand only on hover, which
+ * a README cannot do: GitHub strips <style> and script, an inline style has no
+ * pseudo-classes, and an SVG embedded as <img> never sees the pointer. A flat brand
+ * fill also reads in both GitHub themes without a <picture>, which GitHub's
+ * sanitiser breaks inside a link.
  *
- * EACH ONE WEARS ITS OWN BRAND COLOUR (jdp, 2026-09-11). That is the opposite
- * of what the app does, and deliberately so: in the app the buttons are
- * neutral and take the brand only on hover, which a README cannot do at all.
- * GitHub strips <style> and script, an inline style carries no pseudo-classes,
- * and an SVG embedded as <img> never sees the pointer. A flat brand fill is
- * also what makes the row readable in BOTH GitHub themes without a <picture>
- * element, which could not be used here anyway: a <picture> inside an <a> is
- * broken by GitHub's sanitiser, and these buttons are links.
- *
- * The text is rendered to PNG so the lettering is baked. The README points at
- * the PNG for exactly that reason: an <img> of an SVG with a <text> element
- * would fall back to whatever font the viewer's renderer happens to have.
+ * The README points at the PNG, so the lettering does not depend on the fonts of
+ * the viewer's renderer.
  *
  * Run: node buttons/gen-buttons.mjs
  */
@@ -50,30 +40,23 @@ const DX = 0.05;
 const DY = 12.85;
 
 /**
- * Simple Icons paths, 24x24 box, same sources as the app's own marks.
+ * Simple Icons paths in a 24x24 box, from the same sources as the app's marks.
  *
- * A mark may name its own INK box, `[x, y, w, h]` inside that 24-square. The
- * two brand logos fill theirs edge to edge and say nothing; the Bitcoin
- * letterform does not, and laying it out as if it did would leave it floating
- * in a hole the size of a coin.
+ * A mark may give its own ink box, `[x, y, w, h]` inside that square. The two
+ * brand logos fill the square and give none; the Bitcoin letterform does not, and
+ * laid out as if it did it would float in a coin-sized hole.
  */
 const MARK_PAYPAL =
   "M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z";
 /**
- * Bitcoin's letterform, with the coin cut away.
+ * Bitcoin's letterform without the coin. The logo is one path, a disc with the
+ * symbol wound against it, so dropping the first subpath leaves the letter filled
+ * and its counters open. The leading move is absolute because the original was
+ * relative to the disc.
  *
- * The same drawing as before, minus its first subpath: the logo is one path,
- * a disc with the symbol wound against it, so dropping the disc leaves the
- * letter filling and its counters open. The leading move is absolute because
- * the original's was relative to the disc.
- *
- * WHY NOT THE COIN: on this button the ink is dark and the fill is Bitcoin's
- * orange, so the disc arrived as a dark circle with a small orange symbol cut
- * out of it. Next to a coffee cup and a PayPal P at README size, that reads as
- * a dot rather than as a symbol. The app's own crypto button made the same
- * move for the same reason, and the two rows have to agree.
- *
- * The ink box is measured off the path's own cubic extrema, not guessed.
+ * With dark ink on the orange fill the disc would be a dark circle, which at README
+ * size reads as a dot rather than a symbol; the app's crypto button drops it for
+ * the same reason. The ink box is measured from the path's cubic extrema.
  */
 const MARK_BITCOIN = {
   d: "M17.288 10.291c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z",
@@ -87,17 +70,10 @@ const FONT = 'Verdana, DejaVu Sans, Arial, sans-serif';
 const SIZE = 46;
 
 /**
- * One button.
- *
- * The mark and the word are CENTRED as one block, not set from the left edge.
- * Left-aligned they looked wrong beside the vendor button, whose own lettering
- * fills its box: two buttons with a stretch of empty fill on the right read as
- * a row of three different sizes.
- *
- * `startX` is measured rather than guessed - see `textWidth` below, which
- * renders the word alone and trims it. Estimating the advance width of a bold
- * face at 46px is exactly the kind of number that comes out four percent wrong
- * and is then invisible until the three sit side by side.
+ * One button. Mark and word are centred as one block: set from the left, they leave
+ * empty fill on the right, and beside the vendor button, whose lettering fills its
+ * box, the row reads as three different sizes. `startX` comes from the measured
+ * width in `textWidth`.
  */
 function button({ fill, ink, mark, label }, startX) {
   const { d, box } = markGeometry(mark);
@@ -120,12 +96,9 @@ function button({ fill, ink, mark, label }, startX) {
 }
 
 /**
- * A mark's drawn size and where to put it, in the 460x120 design grid.
- *
- * The mark is scaled to the row's mark HEIGHT and keeps its aspect, so a
- * narrow letterform stands as tall as a round logo without being stretched to
- * its width. A plain path string is treated as a full-bleed 24-square, which
- * is what the two brand logos are, and comes out byte for byte as before.
+ * A mark's drawn size and position in the 460x120 design grid. The mark is scaled
+ * to the row's mark height and keeps its aspect, so a narrow letterform stands as
+ * tall as a round logo. A plain path string counts as a full-bleed 24-square.
  */
 function markGeometry(mark) {
   const d = typeof mark === "string" ? mark : mark.d;
@@ -135,14 +108,9 @@ function markGeometry(mark) {
 }
 
 /**
- * The word's real painted width, measured from the renderer's own bounding box.
- *
- * Rendering the word alone and trimming the raster gave the same number, and
- * needed ImageMagick on the PATH plus a temporary file for a question the
- * renderer can answer directly. Measured rather than estimated either way:
- * guessing the advance width of a bold face at 46px is exactly the kind of
- * number that comes out four percent wrong and stays invisible until the three
- * buttons sit side by side.
+ * The word's painted width, from the renderer's own bounding box. An estimated
+ * advance width for a bold face can be a few percent off, which only shows once
+ * the three buttons sit side by side.
  */
 function textWidth(label) {
   const probe = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" width="900" height="200">
@@ -157,7 +125,7 @@ const BUTTONS = [
   // PayPal's own dark blue, white ink. Measured 13.4:1, the same pairing the
   // app's own hover uses for this brand.
   { name: "button-paypal", fill: "#003087", ink: "#ffffff", mark: MARK_PAYPAL, label: "PayPal" },
-  // Bitcoin's orange stands for the whole window, exactly as it does on the
+  // Bitcoin's orange stands for the whole window, as it does on the
   // app's own crypto button: it is the one symbol that reads as "crypto" to
   // somebody who has never held any. Dark ink on it, 7.9:1.
   { name: "button-crypto", fill: "#f7931a", ink: "#161616", mark: MARK_BITCOIN, label: "Crypto" },

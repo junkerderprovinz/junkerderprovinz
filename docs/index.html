@@ -8,33 +8,20 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23fcc419'/%3E%3Ccircle cx='16' cy='16' r='9.5' fill='none' stroke='%23161616' stroke-width='3'/%3E%3C/svg%3E">
 <style>
-/* ---------------------------------------------------------------------------
-   THIS PAGE IS BOMBVAULT'S OWN DONATION WINDOW, rebuilt in plain HTML.
+/* BombVault's donation window, rebuilt in plain HTML. The rules are the app's,
+   and the comments give their reasons:
 
-   jdp, 2026-09-11: "können wir das nicht so machen wie in BV mit dem Fenster
-   was aufploppt wen man auf Crypto klickt? Coins nicht nach chain aufteilen!
-   Mach es genauso wie in BV".
+     - The answer comes first and the picker sits under it. Changing the coin
+       changes the answer in place, so what somebody came to scan never moves
+       off the top.
+     - The coins are the tiles and the chains sit underneath. A donor thinks
+       "I have USDT", not "I have Ethereum"; the chain is the dangerous choice
+       and stays a separate one.
+     - The chain row shows even for a coin with only one chain, because it says
+       which network the address belongs to.
 
-   So the rules below are not new decisions, they are the app's, and the
-   comments say which ones, because the reason a rule exists is the only thing
-   that keeps somebody from undoing it later:
-
-     - THE ANSWER COMES FIRST and the picker sits under it. A window usually
-       asks before it answers; this one answers first, because the answer is
-       what it was opened for. Changing the coin changes the answer in place,
-       so the thing somebody came to scan never moves off the top.
-     - THE COINS ARE THE TILES, THE CHAINS ARE UNDERNEATH. A donor thinks "I
-       have USDT", not "I have Ethereum", so the first choice is the one they
-       can actually answer. The second is the dangerous one and stays a real,
-       separate choice.
-     - THE CHAIN ROW SHOWS even for a coin with only one chain. It is the line
-       that says WHICH network the address belongs to, and that fact may not
-       appear and disappear depending on which tile is lit.
-
-   The palette is Carbon, the same tokens the apps use. Light is the bare
-   :root block; dark redefines ONLY tokens. Nothing below reaches for a literal
-   colour except the brand marks, which is what a brand colour is for.
-   --------------------------------------------------------------------------- */
+   The palette is Carbon, the same tokens the apps use. Light is the bare :root
+   block and dark redefines only tokens. Literal colours are for brand marks. */
 :root {
   --bg: #f4f4f4;
   --surface: #ffffff;
@@ -53,17 +40,14 @@
   --coin-xrp: #23292f;
   --radius-card: 16px;
   --radius-control: 10px;
-  /* Die vier Masse, die entscheiden, ob eine Adresse in EINE Zeile passt.
-     Als Token, damit check.mjs sie lesen kann und die Rechnung nicht an zwei
-     Orten steht. Siehe die Wache dort: sie rechnet die laengste Adresse gegen
-     diese Werte und faellt, bevor wieder ein Zeichen umbricht. */
+  /* The four measures that decide whether an address fits on one line. They are
+     tokens so check.mjs can read them rather than repeat them. */
   --window-max: 38rem;
   --body-pad: 1.25rem;
   --answer-pad: 1rem;
   --addr-size: 0.76rem;
-  /* GlimStone's own elevation, verbatim. Only the title badge uses it here:
-     the window itself deliberately carries no shadow, and the badge is the one
-     thing on this page that rides above a surface rather than sitting in it. */
+  /* GlimStone's elevation. Only the title badge uses it: the window has no
+     shadow, and the badge is the one thing that rides above a surface. */
   --elevation: 0 1px 2px rgba(0, 0, 0, .06), 0 16px 36px -26px rgba(0, 0, 0, .35);
 }
 @media (prefers-color-scheme: dark) {
@@ -96,13 +80,11 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 .lede { font-size: 1.05rem; }
 [hidden] { display: none !important; }
 
-/* --- The three ways, as real buttons ---------------------------------------
-   This page can do what a README cannot: a button here reacts to the pointer,
-   because it is a page and not an image inside somebody else's sanitiser. At
-   rest the mark carries its brand colour; on hover the BUTTON becomes the
-   brand and everything on it flips to that colour's own ink. Same rule the
-   apps follow, and for the same reason: a fixed colour on a fill somebody else
-   chose is a contrast nobody can predict. */
+/* The three ways as real buttons. Unlike a README image, a page can react to the
+   pointer: at rest the mark carries its brand colour, on hover the button becomes
+   the brand and everything on it takes that colour's ink. The apps do the same,
+   because a fixed colour on a fill somebody else chose has unpredictable
+   contrast. */
 .ways { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.75rem 0 0; }
 .way {
   display: inline-flex; align-items: center; gap: .6rem;
@@ -131,30 +113,20 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 .fineprint { margin-top: 2.5rem; font-size: .88rem; color: var(--text-muted); }
 .fineprint strong { color: var(--text-sub); }
 
-/* --- The window ------------------------------------------------------------
-   70 percent, which is the app's own figure (jdp, 2026-09-10: the backdrop was
-   not darkening the page enough at 50). Anything less and the window reads as
-   a panel lying on the page rather than as the thing in front. */
 .backdrop {
   position: fixed; inset: 0; z-index: 50;
-  /* `align-items: flex-start` with `margin: auto` on the window, rather than
-     `align-items: center`: a centred flex item whose container scrolls has its
-     TOP clipped and unreachable once it grows past the viewport, and the auto
-     margins simply collapse to nothing in that case. This is the pair that
-     centres a short window and lets a tall one scroll. */
+  /* `align-items: flex-start` with `margin: auto` on the window rather than
+     `align-items: center`: a centred flex item in a scrolling container has its
+     top clipped and unreachable once it outgrows the viewport, while auto margins
+     collapse to nothing in that case. The pair centres a short window and lets a
+     tall one scroll. */
   display: flex; align-items: flex-start; justify-content: center;
   overflow-y: auto;
   padding: 1rem;
-  /* DECKEND, nicht abgedunkelt (jdp, 2026-09-11: "kann man diese zwischenseite
-     ganz ausblenden?"). Vorher schienen Titel, Knoepfe und Kleingedrucktes
-     durch 70 Prozent Schwarz hindurch, und das las sich als "eine Seite mit
-     einem Dialog darauf". Wer von einem Krypto-Knopf kommt, will das Fenster
-     und keine Seite dahinter.
-
-     Die Karte bleibt trotzdem im Dokument. Sie ist der Rueckfall fuer den
-     einen Besucher OHNE Referrer - wer ueber GitHubs Sponsor-Knopf kommt, den
-     FUNDING.yml hierher schickt, braucht auch Kaffee und PayPal und nicht nur
-     Krypto. Gesehen wird sie nur von dem, fuer den sie da ist. */
+  /* Opaque rather than dimmed: somebody who came from a Crypto button wants the
+     window, not a page showing through behind it. The card stays in the document
+     as the fallback for a visitor without a referrer, who may want coffee or
+     PayPal instead. */
   background: var(--bg);
 }
 .window {
@@ -165,17 +137,13 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   margin: auto;
   background: var(--surface);
   border-radius: var(--radius-card);
-  /* Kein Rahmen und kein Schlagschatten (jdp, 2026-09-11). Der abgedunkelte
-     Hintergrund trennt das Fenster schon von der Seite; ein Schatten obendrauf
-     zeichnet bei 70 Prozent Abdunklung nur eine graue Kante auf die Kante. */
+  /* No border and no shadow: the backdrop already separates the window from the
+     page. */
   animation: window-in 220ms cubic-bezier(.2, .6, .2, 1) both;
 }
-/* Das Fenster nimmt beim Oeffnen den Fokus, damit ein Screenreader darin
-   landet. Chrome zaehlt das als :focus-visible und zeichnet seinen eigenen
-   Ring, gemessen `outline-style: auto` - das war der blaue Rahmen (jdp,
-   2026-09-11). Ein Ring gehoert an ein Bedienelement, und dieses Fenster ist
-   nur ein Behaelter mit tabindex="-1". Die echten Bedienelemente darin haben
-   ihre eigenen :focus-visible-Regeln und behalten sie. */
+/* The window takes focus on opening so a screen reader lands in it. Chrome counts
+   that as :focus-visible and draws its own ring, but the window is only a
+   container with tabindex="-1"; the controls inside keep their own rings. */
 .window:focus, .window:focus-visible { outline: none; }
 
 @keyframes window-in {
@@ -186,18 +154,11 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   .window { animation: none; }
   .way:hover { transform: none; }
 }
-/* THE TITLE IS A BADGE STRADDLING THE TOP EDGE, exactly as it is in the app's
-   own window (GlimStone rule 11, "every heading is a filled section badge, and
-   it is always coloured"). It was a bold line of text inside the window, which
-   is the one heading treatment the house does not have: every card in every app
-   wears this notch, and a window is a window no matter who renders it.
-
-   The numbers are the language's, not new ones: 22px tall, pill radius, the
-   accent fill with the ink it was paired with, 12px uppercase with wide
-   tracking. `position: absolute` with `top: 0` and a half-height lift is what
-   makes it sit ON the edge rather than under it; the window is the positioned
-   ancestor. Its lift stays even though the window itself carries no shadow -
-   the badge is what rides above the surface here. */
+/* The title is a badge straddling the top edge, as in the app's window (GlimStone
+   rule 11: every heading is a filled section badge, and it is always coloured).
+   The numbers are the design language's: 22px tall, pill radius, the accent fill
+   with its paired ink, 12px uppercase with wide tracking. `top: 0` with a
+   half-height lift puts it on the edge; the window is the positioned ancestor. */
 .window h2 {
   position: absolute; top: 0; left: var(--body-pad); z-index: 10;
   transform: translateY(-50%);
@@ -209,12 +170,9 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   text-transform: uppercase; letter-spacing: .1em;
   box-shadow: var(--elevation);
 }
-/* NO SCROLL AREA INSIDE THE WINDOW. It used to be capped at 88vh with the body
-   scrolling inside it, which put a scrollbar down the middle of a window whose
-   content fits on any ordinary screen and cut the coin tiles off at the bottom
-   of a short one. The window is as tall as what it holds now, and on a screen
-   too short for it the PAGE scrolls, which is the scrollbar a reader already
-   knows about. */
+/* No scroll area inside the window. It is as tall as what it holds, and on a
+   screen too short for it the page scrolls, which is the scrollbar a reader
+   expects. */
 .body {
   display: flex; flex-direction: column; gap: 1rem;
   padding: 1.35rem var(--body-pad) var(--body-pad);
@@ -228,62 +186,37 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   border-radius: var(--radius-card);
   padding: var(--answer-pad);
 }
-/* The code stays black on white in BOTH themes, which is the app's decision
-   and was asked about there: a code drawn light-on-dark is inverted, the
-   standard does not describe one, and the scanners that refuse it are exactly
-   the wallet apps a donor would be holding. What DOES change is the plate:
-   rounded, so the white square reads as a deliberate card rather than a slab.
-   Safe to clip, because the outermost modules are the quiet zone. */
-/* Das Panel ist selbst eine zentrierte Spalte. OHNE das ist der weisse Teller
-   ein Block im Panel und damit so breit wie dessen breitester Inhalt, naemlich
-   die ADRESSE - also 440px bei Sui mit seinen 66 Zeichen und 232px bei XRP mit
-   34. Genau das war der Befund hinter "der weisse hintergrund ist bei den
-   meisten zu gross" (jdp, 2026-09-11): der Teller hat nie den Code umschlossen,
-   sondern die Textbreite darunter. */
+/* The code stays black on white in both themes, as in the app: a light-on-dark
+   code is inverted, the standard does not describe one, and wallet apps are among
+   the scanners that refuse it. Rounding the plate is safe, because its padding is
+   the quiet zone. */
+/* The panel is a centred column itself; otherwise the white plate would be as
+   wide as the address under it rather than wrapping the code. */
 .qrpanel { display: flex; flex-direction: column; align-items: center; gap: .75rem; width: 100%; }
-/* Der helle Rand ist jetzt die Polsterung und NICHT im Bild eingebacken. In
-   Modulen gemessen faellt er bei einer kurzen Adresse breit und bei einer
-   langen schmal aus, weil alle Codes in dieselbe Pixelbox gerendert werden; in
-   Pixeln gemessen ist er auf jeder Muenze gleich. */
-/* The white plate's padding IS the QR quiet zone, and the standard asks for
-   four modules of it on every side. 8px around a 216px code was 1.07 modules on
-   the smallest code here (XRP, 29 modules), so the codes were shipping with a
-   quarter of the clear margin a scanner is entitled to - on addresses that move
-   money.
-   Fixed by shrinking the code rather than growing the plate, which keeps jdp's
-   original complaint answered: 176px across 29 modules is 6.07px per module, so
-   4 modules is 24.3px and a constant 25px covers every coin (the densest, 37
-   modules, needs only 19px). The plate lands at 226px, slightly SMALLER than the
-   232px it was, and it is still identical on all eight coins because the padding
-   is measured in pixels rather than modules. */
+/* The plate's padding is the QR quiet zone, in pixels so it is the same on every
+   coin. The standard asks for four modules on every side: at 176px the smallest
+   code here (XRP, 29 modules) has 6.07px per module, so four modules are 24.3px
+   and 25px covers every coin. */
 .qrwrap { background: #fff; padding: 25px; border-radius: var(--radius-card); line-height: 0; }
 .qr { display: block; width: 176px; height: 176px; max-width: 100%; }
-/* Whole, in one piece, in a mono face, and NEVER shortened: an address is read
-   back by eye before somebody sends to it, so an ellipsis in the middle turns
-   the one string that has to be exact into a string nobody can check.
+/* Whole, in a mono face and never shortened: an address is read back by eye
+   before somebody sends to it, and an ellipsis makes it uncheckable.
 
-   AND ON ONE LINE, which is what sets the window's width (jdp, 2026-09-11:
-   "bitte mach das fenster so breit das alle adressen in einer zeile platz
-   haben. bei sui steht ein charakter in zweiter zeile"). It really was one
-   character: the Sui address measured 442px, the window offered 440px of room
-   for it, and it was two pixels short. The window is not two pixels wider now,
-   it has real slack - this face is 0.55em per character and the widest mono in
-   the fallback stack is 0.60em, so a viewer on another system needs about nine
-   percent more room for the same string. check.mjs holds the numbers. */
+   It also has to fit on one line, which is what sets the window's width, with
+   slack for other systems: this face is 0.55em per character and the widest mono
+   in the fallback stack 0.60em. check.mjs holds the numbers. */
 .addr {
   margin: 0; width: 100%; text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: var(--addr-size); line-height: 1.5; word-break: break-all; color: var(--text);
 }
-/* The chain, switched HERE, directly under the address it changes. A picker
-   one box away from its own effect makes somebody look twice to see whether
-   the address moved; a row of chips under it changes the string in front of
-   their eyes. */
+/* The chain is switched directly under the address it changes, so the string
+   changes in front of the reader's eyes. */
 .chains { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
 .chain {
   padding: .3rem .75rem; border: 0; cursor: pointer;
-  /* Rechteck mit weichen Ecken, keine Pille (jdp, 2026-09-11). Dasselbe Mass
-     wie jeder andere Knopf im Fenster, damit die Reihe eine Familie ist. */
+  /* A rounded rectangle rather than a pill, like the other buttons in the
+     window. */
   border-radius: 8px; font: inherit; font-size: .75rem; font-weight: 500;
   background: var(--surface3); color: var(--text-sub);
   transition: background-color 140ms, color 140ms;
@@ -296,12 +229,11 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
    tag or a memo, so the chain that wants neither has to say so where the
    address is. */
 .note { margin: 0; font-size: .78rem; text-align: center; color: var(--warn); }
-/* EVERY BUTTON IN THIS WINDOW CARRIES ITS MARK, the same rule the About card
-   follows: the copy button a copy glyph, the close button an X. A row of
-   controls where some wear a symbol and some do not reads as a missing image
-   rather than as a plainer button. 16px beside 14px text is the house
-   proportion, and `flex: none` keeps the mark from being squeezed by a long
-   word in a translation. */
+/* Every button in the window carries a mark, as on the About card: the copy
+   button a copy glyph, the close button an X. A row where only some controls wear
+   a symbol reads as a missing image. 16px beside 14px text is the house
+   proportion, and `flex: none` keeps a long translated word from squeezing the
+   mark. */
 .copy, .close button {
   display: inline-flex; align-items: center; gap: .45rem;
 }
@@ -329,23 +261,18 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 .coin span { font-size: .72rem; font-weight: 500; }
 .coin:hover { background: var(--surface3); color: var(--text); }
 .coin:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* Hovered on the dark theme the tile goes WHITE, which is KnightLoader's
-   browser-tile hover adopted by the app: a surface one step up is not a hover
-   anybody notices on a dark ground. The marks keep their own colours straight
-   through it, only the surface and the ticker change - except XRP, whose token
-   has to come back down to its dark value, because white is the one dark-theme
-   surface a white mark cannot sit on. */
+/* On the dark theme a hovered tile turns white, KnightLoader's tile hover as the
+   app adopted it, because a surface one step lighter is not a hover anybody
+   notices on a dark ground. The marks keep their colours, except XRP, whose token
+   returns to its dark value because a white mark cannot sit on white. */
 @media (prefers-color-scheme: dark) {
   .coin:not(.is-on):hover { background: #ffffff; color: #161616; --coin-xrp: #23292f; }
 }
-/* Selected: the tile is FILLED with the accent, so EVERY mark drops its brand
-   colour and takes the ink that fill was paired with. The accent is a chosen
-   colour, and a fixed brand colour on it is a contrast nobody can predict -
-   measured in the app before this rule existed, Bitcoin's #F7931A on #FCC419
-   is 1.45:1, against the 3:1 a graphic needs. It read as an empty tile.
-   Nothing is lost: a brand colour earns its place while somebody is SCANNING
-   for their coin, and the selected tile is the one they have stopped scanning.
-   `fill` as a property beats the inline attribute build.mjs writes. */
+/* The selected tile is filled with the accent, so every mark drops its brand
+   colour for the accent's ink: Bitcoin's #F7931A on #FCC419 is 1.45:1, against
+   the 3:1 a graphic needs. A brand colour helps while somebody scans for their
+   coin, and the selected tile is where they stopped. `fill` as a property beats
+   the inline attribute build.mjs writes. */
 .coin.is-on { background: var(--accent); color: var(--accent-ink); }
 .coin.is-on svg { fill: currentColor !important; }
 
@@ -492,9 +419,8 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   const rows = [...document.querySelectorAll(".chains")];
   const tiles = [...document.querySelectorAll(".coin")];
 
-  /** The address currently on screen, read from the DOM rather than tracked in
-   *  a second variable: the panel that is visible IS the answer, so there is
-   *  no way for a copied string to drift from the one being shown. */
+  /** The address on screen, read from the visible panel rather than tracked
+   *  separately, so the copied string cannot drift from the one shown. */
   function shownAddress() {
     const open = panels.find((p) => !p.hidden);
     return open ? open.dataset.address : "";
@@ -511,10 +437,8 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
     note.hidden = !chip.dataset.note;
   }
 
-  // Picking a coin always lands on a network of THAT coin. Keeping the previous
-  // chain when it happens to also carry the new coin would be a convenience
-  // with one bad case: the chain somebody last looked at staying selected under
-  // a coin they never checked it against.
+  // Picking a coin always selects that coin's first network. Keeping the previous
+  // chain would leave it selected under a coin nobody checked it against.
   function showCoin(tile) {
     tiles.forEach((t) => {
       t.classList.toggle("is-on", t === tile);
@@ -530,10 +454,8 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
     [...r.children].forEach((c) => c.addEventListener("click", () => showChain(c)))
   );
 
-  // The WORD, not the whole button. The button carries a glyph beside its
-  // label now, and `copyBtn.textContent = "Copied"` would throw that mark away
-  // the first time anybody pressed it - silently, and for good, because the
-  // restore puts back a string and not an element.
+  // Only the label changes. Setting the button's textContent would drop its glyph
+  // for good, because the restore puts back a string, not an element.
   const copyLabel = copyBtn.querySelector("span");
   copyBtn.addEventListener("click", async () => {
     const value = shownAddress();
@@ -542,8 +464,8 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
       await navigator.clipboard.writeText(value);
     } catch {
       // Clipboard access can be refused (no HTTPS, a locked-down browser).
-      // Selecting the text is the honest fallback: it still lets somebody copy
-      // by hand, and it never claims a copy that did not happen.
+      // Selecting the text lets somebody copy by hand without claiming a copy
+      // that did not happen.
       const open = panels.find((p) => !p.hidden);
       const range = document.createRange();
       range.selectNodeContents(open.querySelector(".addr"));
@@ -560,27 +482,14 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
 
   function open() {
     backdrop.hidden = false;
-    // WITHOUT SCROLLING. Focusing an element scrolls it into view, and this
-    // window is taller than a short screen: the browser answered by scrolling
-    // its bottom into view, which put the title badge and the QR code above the
-    // top edge before anybody had touched anything. The focus itself has to
-    // stay - it is what puts a screen reader inside the window.
+    // Focus without scrolling: on a short screen, focusing the tall window would
+    // scroll its bottom into view and push the title and QR code off the top.
+    // The focus is what puts a screen reader inside the window.
     win.focus({ preventScroll: true });
     backdrop.scrollTop = 0;
   }
-  /**
-   * Closing goes BACK, not "reveal the page underneath" (jdp, 2026-09-11:
-   * "wenn man das cryptofenster schließt soll man wieder im repo readme landen
-   * und nicht diese zwischenseite sehen").
-   *
-   * Almost everybody here arrived by pressing a Crypto button in a README, so
-   * the window is the whole errand and closing it means going back to where
-   * they were. The card behind it is not a stop on the way, it is the fallback
-   * for the one visitor who typed the address or came from a sponsor link, and
-   * that is exactly who `document.referrer` tells apart.
-   */
-  /** Kam der Besucher von einer FREMDEN Seite? Die eigene zaehlt nicht. */
-  function vonAussen() {
+  /** Whether the visitor came from another site; this one does not count. */
+  function fromAnotherSite() {
     if (!document.referrer || history.length <= 1) return false;
     try {
       return new URL(document.referrer).origin !== location.origin;
@@ -589,12 +498,12 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
     }
   }
 
+  // Closing goes back to where the visitor came from, usually a Crypto button in
+  // a README. The card behind the window is for a visitor without a referrer.
   function close() {
-    // Zurueck nur zu einer fremden Seite. Die Weiterleitung unter
-    // /more-ways-to-support/ liegt auf DIESEM Ursprung und leitet sofort wieder
-    // hierher - ein `history.back()` dorthin waere eine Schleife, aus der man
-    // nur mit Gewalt herauskommt.
-    if (vonAussen()) {
+    // Only back to another site: the redirect at /more-ways-to-support/ is on this
+    // origin and forwards straight here, so going back to it would loop.
+    if (fromAnotherSite()) {
       history.back();
       return;
     }
@@ -610,11 +519,8 @@ p { margin: 0 0 1rem; color: var(--text-sub); }
   });
 
   showCoin(tiles[0]);
-  // Offen beim Ankommen, WEIL fast jeder von einem Krypto-Knopf kommt und das
-  // Fenster der ganze Auftrag ist. Die eine Ausnahme ist `#ways`: dorthin
-  // schickt der Sponsor-Eintrag, und der meint ausdruecklich die Uebersicht mit
-  // allen drei Wegen. Ein Krypto-Fenster als Antwort auf "weitere
-  // Moeglichkeiten" ist genau eine Moeglichkeit zu wenig.
+  // Open on arrival, because nearly everybody comes from a Crypto button. The
+  // exception is #ways, which asks for the overview with all three ways.
   if (location.hash !== "#ways") open();
 })();
 </script>
