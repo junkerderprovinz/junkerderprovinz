@@ -6,8 +6,4 @@ Thumbs.db
 # itself. Standing rule: no reference to any assistant, anywhere, in any repo.
 # Listed rather than trusted, because the file that caused this was added twice
 # before anyone looked at whether it belonged there at all.
-.claude/
-CLAUDE.md
-AGENTS.md
 .aider*
-.cursor/
