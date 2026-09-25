@@ -27,7 +27,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-apps.png" alt="Apps" width="480">
 </picture>
 
-- **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way file sync that shows you the whole plan before it moves anything: a state database, a trash and two brakes. *Still under development, not ready to rely on.*
+- **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way file sync that shows you the whole plan before it moves anything: a state database, a trash and two brakes. Server, desktop and Android.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** - backup & full disaster recovery for containers, VMs and the Unraid flash, via restic.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** - feather-light, login-free, end-to-end encrypted file sharing with self-expiring links.
 - **[knightloader](https://github.com/junkerderprovinz/knightloader)** - self-hosted download manager with a clean UI, a phone app and a browser extension. *Still under development, not ready to install.*
