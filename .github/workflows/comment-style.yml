@@ -45,6 +45,8 @@ jobs:
             local p="/$1"
             case "$p" in
               */testdata/*|*/fixtures/*|*/vendor/*|*/node_modules/*|*/dist/*|*.min.js|*.min.css) return 1 ;;
+              # Gradle writes the wrapper scripts and rewrites them on every upgrade.
+              */gradlew|*/gradlew.bat) return 1 ;;
               *.go|*.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.css|*.less|*.py|*.sh|*.ps1|*.yml|*.yaml|*.xml) return 0 ;;
               *.html|*.page|*.php|*.kt|*.kts|*.cs|*.tmpl|*/[Jj]ustfile|*Dockerfile*) return 0 ;;
             esac
