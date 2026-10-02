@@ -64,12 +64,13 @@ jobs:
 
           # Each added line becomes "content<US>file<US>line", so the patterns still
           # see the start of the line. Lines with Cyrillic keep their dash, which is
-          # grammar in Russian.
+          # grammar in Russian. A change that only removes lines leaves grep nothing
+          # to print, and its exit status 1 is not a failure here.
           git diff -U0 "$BASE...$HEAD" -- "${files[@]}" |
             awk '/^\+\+\+ b\//{f=substr($0,7); next}
                  /^@@/{split($3,a,","); n=substr(a[1],2)+0; next}
                  /^\+/{print substr($0,2) "\037" f "\037" n; n++}' |
-            LC_ALL=C grep -avE $'[\xd0\xd1][\x80-\xbf]' > "$RUNNER_TEMP/added.txt"
+            { LC_ALL=C grep -avE $'[\xd0\xd1][\x80-\xbf]' || [ $? -eq 1 ]; } > "$RUNNER_TEMP/added.txt"
 
           comment='(^[[:space:]]*(//|#|/?\*|<!--|\{/\*)|[[:space:]]//[[:space:]])'
           rules=(
