@@ -30,7 +30,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way sync that shows you the plan before it moves anything: a trash, two brakes, on server, desktop and Android.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** - backup & disaster recovery for containers, VMs and the Unraid flash, via restic, encrypted, off-site, one-click restore.
 - **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** - private WeTransfer: login-free, end-to-end encrypted sharing with self-expiring links, in one feather-light container.
-- **[knightloader](https://github.com/junkerderprovinz/knightloader)** - self-hosted download manager with a clean UI, phone app and browser extension. *Under development, not ready.*
+- **[knightloader](https://github.com/junkerderprovinz/knightloader)** - self-hosted download manager with a clean UI, a phone app and an extension. *In development, testers welcome.*
 - **[parleyport](https://github.com/junkerderprovinz/parleyport)** - your own relay for KnightLoader and BombVault: instances on different networks meet there, and it reads none of it.
 - **[trickwork](https://github.com/junkerderprovinz/trickwork)** - turns images into proportional-font-aware ASCII art, live preview, TXT/XHTML/RTF/PNG export, desktop or Docker.
 
@@ -73,7 +73,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 </picture>
 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** - companion plugin that puts BombVault's activity log on Unraid's dashboard as a real, native tile of its own.
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** - health-gated startup order, live CPU/RAM/network limits, themeable badges, in the Docker and VM tabs.
+- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** - health-gated startup order, live limits and badges for Docker and VMs. *In development, testers welcome.*
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** - per-container update advisor in Unraid's Docker tab: changelog, risk level and the real version jump, plus auto-update.
 - **[firesquire](https://github.com/junkerderprovinz/firesquire)** - a pre-reboot health check for Unraid: one **GO / CAUTION / NO-GO** verdict so you never reboot your server blind.
 
