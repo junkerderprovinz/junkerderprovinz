@@ -50,6 +50,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** - one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable, around the official image.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** - PrusaSlicer, the 3D-printing slicer, in your browser on a Selkies web desktop, no VNC client, nothing to install locally.
 - **[seafile](https://github.com/junkerderprovinz/seafile)** - official Seafile sync server from one template, MariaDB and Redis built in if you want. *In development, testers welcome.*
+- **[securo](https://github.com/junkerderprovinz/securo)** - self-hosted finance manager in one container, your PostgreSQL and Redis or built-in. *In development, testers welcome.*
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** - Stellarium planetarium in your browser via Selkies: pan, zoom and time-scrub the sky, no VNC client, amd64/arm64.
 - **[strawdroid](https://github.com/junkerderprovinz/strawdroid)** - a real Android emulator on a Selkies desktop, driven over adb, so an app gets installed and broken without a phone.
 - **[trialyard](https://github.com/junkerderprovinz/trialyard)** - a GPU-accelerated Selkies desktop with real browsers, the standing sandbox every test runs in, away from the host.
