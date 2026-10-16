@@ -96,6 +96,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 
 - **[unraid-apps](https://github.com/junkerderprovinz/unraid-apps)** - one Community Applications feed for my apps and plugins, added once. The themes install from their own repos.
 - **[mos-apps](https://github.com/junkerderprovinz/mos-apps)** - my containers for MOS, ich777's modular server OS, as a MOS Hub repository rebuilt every night from unraid-apps.
+- **[zimaos-apps](https://github.com/junkerderprovinz/zimaos-apps)** - my containers for ZimaOS, IceWhale's NAS OS, as a community app store rebuilt every night from unraid-apps.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support-dark.png">
