@@ -40,6 +40,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-images.png" alt="Images" width="480">
 </picture>
 
+- **[artcraft-apps](https://github.com/junkerderprovinz/artcraft-apps)** - thirteen ArtCraft apps, PhotoCraft to WordCraft, each on its own Selkies web desktop with your shares at hand.
 - **[euro-office](https://github.com/junkerderprovinz/euro-office)** - sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing, one click on Unraid.
 - **[excalidraw](https://github.com/junkerderprovinz/excalidraw)** - the hand-drawn whiteboard, self-hosted so shared links, live collaboration and even the fonts stay on your server.
 - **[garage](https://github.com/junkerderprovinz/garage)** - Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup at all.
