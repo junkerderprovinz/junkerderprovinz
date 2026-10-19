@@ -76,7 +76,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 </picture>
 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** - companion plugin that puts BombVault's activity log on Unraid's dashboard as a real, native tile of its own.
-- **[cannonadecommand](https://github.com/junkerderprovinz/cannonadecommand)** - health-gated startup order, live limits and badges for Docker and VMs. *In development, testers welcome.*
+- **[towertorch](https://github.com/junkerderprovinz/towertorch)** - a fully revamped, modern UI for your Unraid server, plus containers that start once their dependencies are ready.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** - per-container update advisor in Unraid's Docker tab: changelog, risk level and the real version jump, plus auto-update.
 - **[firesquire](https://github.com/junkerderprovinz/firesquire)** - a pre-reboot health check for Unraid: one **GO / CAUTION / NO-GO** verdict so you never reboot your server blind.
 - **[tillertouch](https://github.com/junkerderprovinz/tillertouch)** - a second look at your coding assistant's replies, sent back when they leave a gap open or skip a clearly better way.
