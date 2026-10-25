@@ -51,6 +51,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[matrix](https://github.com/junkerderprovinz/matrix)** - plug-and-play Matrix homeserver: Synapse, coturn, Element Web and Ketesa admin in one box, federation from the start.
 - **[opencloud](https://github.com/junkerderprovinz/opencloud)** - one-click OpenCloud file sync & share: auto-init, permission-heal, PUID/PGID, S3-capable, around the official image.
 - **[prusaslicer](https://github.com/junkerderprovinz/prusaslicer)** - PrusaSlicer, the 3D-printing slicer, in your browser on a Selkies web desktop, no VNC client, nothing to install locally.
+- **[rustdesk](https://github.com/junkerderprovinz/rustdesk)** - your own RustDesk server with a web console, accounts, an address book on every client and ID changes that work.
 - **[seafile](https://github.com/junkerderprovinz/seafile)** - official Seafile sync server from one template, MariaDB and Redis built in if you want. *In development, testers welcome.*
 - **[securo](https://github.com/junkerderprovinz/securo)** - self-hosted finance manager with budgets and bank sync in one container, your own PostgreSQL and Redis or built-in.
 - **[stellarium](https://github.com/junkerderprovinz/stellarium)** - Stellarium planetarium in your browser via Selkies: pan, zoom and time-scrub the sky, no VNC client, amd64/arm64.
