@@ -89,6 +89,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
   <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes.png" alt="Themes" width="480">
 </picture>
 
+- **[jd-highlighter](https://github.com/junkerderprovinz/jd-highlighter)** - borderless JDownloader 2 themes, dark and light, any accent colour, on the desktop app and in the container.
 - **[jd-plain-dark](https://github.com/junkerderprovinz/jd-plain-dark)** - a fully dark JD Plain theme for JDownloader 2, download list, link grabber and settings included, and no jar patch.
 - **[flat-monkey-dark](https://github.com/junkerderprovinz/flat-monkey-dark)** - dark IBM-Carbon reshell of MediaMonkey 5's Flat Monkey skin, with a free picker for your own accent colour.
 - **[vlc-redesign](https://github.com/junkerderprovinz/vlc-redesign)** - VLC 4 with Juxtopposed's redesign built in: new library, player and settings, any accent colour, Windows and Linux.
