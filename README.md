@@ -43,6 +43,7 @@ I build the free, open-source tools I always wished existed, so I stopped waitin
 - **[artcraft-apps](https://github.com/junkerderprovinz/artcraft-apps)** - thirteen ArtCraft apps, PhotoCraft to WordCraft, each on its own Selkies web desktop with your shares at hand.
 - **[euro-office](https://github.com/junkerderprovinz/euro-office)** - sovereign OnlyOffice-compatible document server, wired into OpenCloud for office editing, one click on Unraid.
 - **[excalidraw](https://github.com/junkerderprovinz/excalidraw)** - the hand-drawn whiteboard, self-hosted so shared links, live collaboration and even the fonts stay on your server.
+- **[filebot](https://github.com/junkerderprovinz/filebot)** - FileBot, the media renamer, on a Selkies web desktop, dark from the start, with an automatic mode. Bring your own license.
 - **[garage](https://github.com/junkerderprovinz/garage)** - Garage's S3-compatible object store plus its web admin panel, bundled into one container, zero manual CLI setup at all.
 - **[handbrake](https://github.com/junkerderprovinz/handbrake)** - HandBrake's full GUI in your browser via Selkies, GPU-accelerated, dark by default, with a watch-folder converter.
 - **[jdownloader](https://github.com/junkerderprovinz/jdownloader)** - JDownloader 2 on a Selkies web desktop in your browser, complete dark UI out of the box, and no VNC client.
