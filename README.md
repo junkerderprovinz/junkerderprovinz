@@ -6,20 +6,14 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Unraid-393939?style=for-the-badge&logo=unraid&logoColor=white" alt="Unraid">
-  <img src="https://img.shields.io/badge/Docker-393939?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
-  <img src="https://img.shields.io/badge/Go-393939?style=for-the-badge&logo=go&logoColor=white" alt="Go">
-  <img src="https://img.shields.io/badge/Next.js-393939?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
-  <img src="https://img.shields.io/badge/TypeScript-393939?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
-  <img src="https://img.shields.io/badge/Python-393939?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Selkies-393939?style=for-the-badge&logo=kde&logoColor=white" alt="Selkies">
-  <img src="https://img.shields.io/badge/Matrix-393939?style=for-the-badge&logo=matrix&logoColor=white" alt="Matrix">
-  <img src="https://img.shields.io/badge/License-AGPL--3.0-393939?style=for-the-badge&logo=gnu&logoColor=white" alt="License: AGPL-3.0">
-  <img src="https://img.shields.io/github/followers/junkerderprovinz?style=for-the-badge&logo=github&logoColor=white&label=Followers&labelColor=393939&color=6e7681" alt="Followers">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/logo-marquee-dark.svg">
+    <img src="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/logo-marquee.svg" alt="Logos of my apps and plugins" width="100%">
+  </picture>
 </p>
 
 <p align="center">
-I build the free, open-source tools I always wished existed, so I stopped waiting and forged them myself: self-hosted servers, a phone app, browser extensions. Private by design: no accounts, no telemetry, nothing ever leaves your own walls. It started as a hobby and got happily out of hand, and it turns out a one-knight crusade doesn't know when to stop.
+I got tired of waiting for someone else to build the tools I wanted, so I fired up the forge myself. Out came apps for your server, your desktop and your phone, a browser extension, plugins for Unraid, themes for programs that never asked for a makeover, and a whole stable of containers that come saddled and ready to ride. All of it is free and open source, and none of it phones home: no accounts, no telemetry, your data stays inside your own walls. It started as a hobby and got happily out of hand, and it turns out a one-knight crusade doesn't know when to stop.
 </p>
 
 <picture>
