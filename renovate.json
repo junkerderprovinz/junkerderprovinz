@@ -27,6 +27,12 @@
       "platformAutomerge": true,
       "commitMessagePrefix": "ci:",
       "labels": ["github-actions"]
+    },
+    {
+      "description": "style.yml calls this repo's own comment check. Each pin bump merged here is a new commit for every other repo to follow and one more for this repo to pin, so this pin moves by hand.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["junkerderprovinz/junkerderprovinz"],
+      "enabled": false
     }
   ]
 }
