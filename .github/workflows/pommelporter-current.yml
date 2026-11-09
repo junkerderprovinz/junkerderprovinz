@@ -1,0 +1,38 @@
+name: PommelPorter current
+
+# Called by the release workflow of every app with a desktop installer, before
+# the long builds, so a release always ships the newest PommelPorter.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  pommelporter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Every installer uses the newest PommelPorter
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest=$(gh release view --repo junkerderprovinz/pommelporter --json tagName --jq .tagName)
+          echo "Newest PommelPorter: $latest"
+          stale=0
+          while IFS= read -r mod; do
+            used=$(awk '$1 == "github.com/junkerderprovinz/pommelporter" { print $2 } $2 == "github.com/junkerderprovinz/pommelporter" { print $3 }' "$mod" | head -1)
+            [ -n "$used" ] || continue
+            if [ "$used" = "$latest" ]; then
+              echo "$mod: $used"
+            else
+              dir=$(dirname "$mod")
+              echo "::error file=$mod::$mod uses PommelPorter $used, the newest is $latest. Run: (cd $dir && go get github.com/junkerderprovinz/pommelporter@$latest && go mod tidy)"
+              stale=1
+            fi
+          done < <(git ls-files '*go.mod')
+          exit "$stale"
