@@ -23,7 +23,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 
 - **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way sync that shows you the plan before it moves anything: a trash, two brakes, on server, desktop and Android.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** - backup & disaster recovery for containers, VMs and the Unraid flash, via restic, encrypted, off-site, one-click restore.
-- **[cannoncommander](https://github.com/junkerderprovinz/cannoncommander)** - two-pane Unraid file manager, browser or desktop: F5 copies, background jobs, a trash for the rest.
+- **[cannoncommander](https://github.com/junkerderprovinz/cannoncommander)** - the most beautiful file manager you will ever run, and the only one you need: two panels, F5 to copy, in the browser and on your desktop.
 - **[castleparcel](https://github.com/junkerderprovinz/castleparcel)** - the big-file transfer site you know, in your own castle: encrypted in your browser, so not even your server looks inside.
 - **[knightloader](https://github.com/junkerderprovinz/knightloader)** - download manager for hosters, debrid, torrents, Usenet and videos, with an Android app and a browser extension.
 - **[parleyport](https://github.com/junkerderprovinz/parleyport)** - your own relay for apps that pair their instances: on different networks they meet there, and it reads none of it.
