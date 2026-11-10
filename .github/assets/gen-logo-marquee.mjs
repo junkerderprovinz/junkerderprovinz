@@ -25,7 +25,7 @@ const feed = (slug) => `${RAW}/unraid-apps/main/${slug}/icon.png`;
 const ICONS = [
   { slug: "arrowloop", url: feed("arrowloop") },
   { slug: "bombvault", url: feed("bombvault") },
-  { slug: "featherdrop", file: "logo-src/featherdrop.svg" },
+  { slug: "castleparcel", url: feed("castleparcel") },
   { slug: "knightloader", url: feed("knightloader") },
   { slug: "parleyport", url: feed("parleyport") },
   { slug: "pommelporter", url: `${RAW}/pommelporter/main/.github/assets/logo.svg` },

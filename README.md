@@ -23,7 +23,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 
 - **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way sync that shows you the plan before it moves anything: a trash, two brakes, on server, desktop and Android.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** - backup & disaster recovery for containers, VMs and the Unraid flash, via restic, encrypted, off-site, one-click restore.
-- **[featherdrop](https://github.com/junkerderprovinz/featherdrop)** - private WeTransfer: login-free, end-to-end encrypted sharing with self-expiring links, in one feather-light container.
+- **[castleparcel](https://github.com/junkerderprovinz/castleparcel)** - login-free, end-to-end encrypted file sharing with self-expiring links, file requests and notes, kept behind the castle gate.
 - **[knightloader](https://github.com/junkerderprovinz/knightloader)** - download manager for hosters, debrid, torrents, Usenet and videos, with an Android app and a browser extension.
 - **[parleyport](https://github.com/junkerderprovinz/parleyport)** - your own relay for apps that pair their instances: on different networks they meet there, and it reads none of it.
 - **[pommelporter](https://github.com/junkerderprovinz/pommelporter)** - one installer for KnightLoader, ArrowLoop and TrickWork on Windows and Linux, in its own GlimStone window.
