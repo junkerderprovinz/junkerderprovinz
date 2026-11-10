@@ -23,11 +23,11 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 
 - **[arrowloop](https://github.com/junkerderprovinz/arrowloop)** - two-way sync that shows you the plan before it moves anything: a trash, two brakes, on server, desktop and Android.
 - **[bombvault](https://github.com/junkerderprovinz/bombvault)** - backup & disaster recovery for containers, VMs and the Unraid flash, via restic, encrypted, off-site, one-click restore.
-- **[cannoncommander](https://github.com/junkerderprovinz/cannoncommander)** - two-pane file manager for Unraid in the browser and on your desktop: F5 copies, jobs run in the background, a trash catches the rest.
-- **[castleparcel](https://github.com/junkerderprovinz/castleparcel)** - the big-file transfer site you know, moved into your own castle: files are encrypted in your browser, so not even your server can look inside. Login-free, with self-expiring links, file requests and notes.
+- **[cannoncommander](https://github.com/junkerderprovinz/cannoncommander)** - two-pane file manager for Unraid in browser and desktop: F5 copies, jobs run in the background, a trash catches the rest.
+- **[castleparcel](https://github.com/junkerderprovinz/castleparcel)** - the big-file transfer site you know, in your own castle: encrypted in your browser, so not even your server looks inside.
 - **[knightloader](https://github.com/junkerderprovinz/knightloader)** - download manager for hosters, debrid, torrents, Usenet and videos, with an Android app and a browser extension.
 - **[parleyport](https://github.com/junkerderprovinz/parleyport)** - your own relay for apps that pair their instances: on different networks they meet there, and it reads none of it.
-- **[pommelporter](https://github.com/junkerderprovinz/pommelporter)** - one installer for KnightLoader, ArrowLoop, TrickWork and CannonCommander on Windows and Linux, in its own GlimStone window.
+- **[pommelporter](https://github.com/junkerderprovinz/pommelporter)** - one installer for KnightLoader, ArrowLoop, TrickWork and CannonCommander, on Windows and Linux.
 - **[trickwork](https://github.com/junkerderprovinz/trickwork)** - turns images into proportional-font-aware ASCII art, live preview, TXT/XHTML/RTF/PNG export, desktop or Docker.
 
 <picture>
