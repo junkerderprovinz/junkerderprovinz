@@ -75,7 +75,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 </picture>
 
 - **[bombvault-widget](https://github.com/junkerderprovinz/bombvault-widget)** - companion plugin that puts BombVault's activity log on Unraid's dashboard as a real, native tile of its own.
-- **[tollroll](https://github.com/junkerderprovinz/tollroll)** - one dashboard tile for the apps on your server: a row per app with how it is doing, and one log for all of them. Your apps report in, you just unroll. *In development, testers welcome.*
+- **[tollroll](https://github.com/junkerderprovinz/tollroll)** - one dashboard tile for all your apps: how each is doing and one log for all of them. Your apps report in, you just unroll.
 - **[towertorch](https://github.com/junkerderprovinz/towertorch)** - a fully revamped, modern UI for your Unraid server, plus containers that start once their dependencies are ready.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** - per-container update advisor in Unraid's Docker tab: changelog, risk level and the real version jump, plus auto-update.
 - **[firesquire](https://github.com/junkerderprovinz/firesquire)** - a pre-reboot health check for Unraid: one **GO / CAUTION / NO-GO** verdict so you never reboot your server blind.
