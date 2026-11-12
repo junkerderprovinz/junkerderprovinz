@@ -95,7 +95,7 @@ jobs:
           TITLE=$(cat "$RUNNER_TEMP/glimstone/issue-title")
           export TITLE
           body="$RUNNER_TEMP/glimstone/issue-body.md"
-          pattern='^GlimStone [0-9]+\.[0-9]+\.[0-9]+ is ready to port$'
+          pattern='^GlimStone [0-9]+\.[0-9]+\.[0-9]+ is here and wants in$'
           mine=$(gh issue list --repo "$GITHUB_REPOSITORY" --author app/github-actions --state all --limit 200 --json number,title,state)
           found=$(jq -r '[.[] | select(.title == env.TITLE)][0] // empty | "\(.number) \(.state)"' <<< "$mine")
           if [ -z "$found" ]; then
@@ -113,6 +113,6 @@ jobs:
           fi
           jq -r --arg p "$pattern" '.[] | select(.state == "OPEN" and (.title | test($p)) and .title != env.TITLE) | .number' <<< "$mine" |
             while read -r old; do
-              gh issue close "$old" --repo "$GITHUB_REPOSITORY" --comment "GlimStone $VERSION is out, so #$number takes over from here."
+              gh issue close "$old" --repo "$GITHUB_REPOSITORY" --comment "GlimStone $VERSION is out, so #$number takes the baton from here."
               echo "Closed #$old"
             done

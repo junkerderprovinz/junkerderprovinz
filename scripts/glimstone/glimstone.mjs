@@ -28,7 +28,7 @@ const issueLimit = 60000
 
 class ConfigError extends Error {}
 
-export const issueTitle = (version) => `GlimStone ${version} is ready to port`
+export const issueTitle = (version) => `GlimStone ${version} is here and wants in`
 export const branchName = (version) => `chore/glimstone-${version}`
 
 export function compareVersions(a, b) {
@@ -206,19 +206,20 @@ function issueBody(targets, latest, releases) {
   const between = releases
     .filter((r) => compareVersions(r.version, oldest) > 0 && compareVersions(r.version, latest.version) <= 0)
     .sort((a, b) => compareVersions(a.version, b.version))
-  const parts = targets.map((t) => `- **${t.name}** is on ${t.version}${t.versionFile ? ` (\`${t.versionFile}\`)` : ''}`)
+  const parts = targets.map((t) => `- **${t.name}** is still on ${t.version}${t.versionFile ? ` (\`${t.versionFile}\`)` : ''}`)
+  const one = targets.length === 1
   const head = [
-    `Hi! [GlimStone ${latest.version}](${latest.url}) is out. ${targets.length === 1 ? 'This part of the app is' : 'These parts of the app are'} ported by hand, so ${targets.length === 1 ? 'it waits' : 'they wait'} for you:`,
+    `Hi! [GlimStone ${latest.version}](${latest.url}) just dropped, and ${one ? "this part of the app still wears last season's look. It's ported by hand, so it's" : "these parts of the app still wear last season's look. They're ported by hand, so they're"} waiting on you:`,
     parts.join('\n'),
-    `Once a part is ported, set its \`version\` in glimstone.json to ${latest.version}, and in its version file where it has one. Until then the release check holds back the next tag. If a newer GlimStone comes out first, a fresh issue takes over from this one.`,
-    `Here is what changed since ${oldest}, oldest first.`,
+    `Once ${one ? "it's" : 'a part is'} ported, set its \`version\` in glimstone.json to ${latest.version}, and in its version file where it has one. Until then the release check keeps the next tag on the bench. If an even newer GlimStone shows up first, a fresh issue takes over and this one bows out.`,
+    `Here's what changed since ${oldest}, oldest first.`,
   ]
-  const foot = 'Happy porting!'
+  const foot = 'Happy porting, and may every glyph line up on the first try!'
   const section = (r) => `### [${r.version}](${r.url})\n\n${demoteHeadings(r.body.trim()) || 'This release came without notes.'}`
   const linked = []
   const full = [...between]
   const compose = () => {
-    const older = linked.length ? [`The notes for ${linked.map((r) => `[${r.version}](${r.url})`).join(', ')} didn't fit here, you'll find them on their release pages.`] : []
+    const older = linked.length ? [`The notes for ${linked.map((r) => `[${r.version}](${r.url})`).join(', ')} wouldn't fit in here. Their release pages have them in full.`] : []
     return [...head, ...older, ...full.map(section), foot].join('\n\n') + '\n'
   }
   let body = compose()
