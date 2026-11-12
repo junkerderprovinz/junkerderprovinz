@@ -1,0 +1,61 @@
+name: GlimStone fanout
+
+# GlimStone's release workflow sends glimstone-release here, and this passes it
+# on to every repository of the account that has
+# .github/workflows/glimstone-update.yml on its default branch. Sending a
+# repository_dispatch to another repository takes a token with Contents read
+# and write there, which GITHUB_TOKEN never has.
+
+on:
+  repository_dispatch:
+    types: [glimstone-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: GlimStone version to pass on, empty for the newest release.
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: glimstone-fanout
+  cancel-in-progress: false
+
+jobs:
+  fanout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Tell every app about the release
+        env:
+          GH_TOKEN: ${{ secrets.GLIMSTONE_FANOUT_TOKEN }}
+          VERSION: ${{ github.event.client_payload.tag || inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::The fanout needs the secret GLIMSTONE_FANOUT_TOKEN, and it is not set yet. Please create a fine-grained personal access token for junkerderprovinz with access to all repositories and Contents: read and write, then save it as GLIMSTONE_FANOUT_TOKEN in this repository and in junkerderprovinz/glimstone (Settings, Secrets and variables, Actions)."
+            exit 1
+          fi
+          if [ -z "$VERSION" ]; then
+            VERSION=$(gh api repos/junkerderprovinz/glimstone/releases/latest --jq .tag_name)
+          fi
+          VERSION=${VERSION#v}
+          if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::\"$VERSION\" is not a GlimStone version like 4.3.7."
+            exit 1
+          fi
+          sent=0
+          failed=0
+          while read -r repo branch; do
+            if out=$(gh api "repos/$GITHUB_REPOSITORY_OWNER/$repo/contents/.github/workflows/glimstone-update.yml?ref=$branch" --jq .path 2>&1); then
+              gh api "repos/$GITHUB_REPOSITORY_OWNER/$repo/dispatches" -f event_type=glimstone-release -f "client_payload[version]=$VERSION" --silent
+              echo "Told $repo about GlimStone $VERSION."
+              sent=$((sent + 1))
+            elif [[ $out != *"HTTP 404"* ]]; then
+              echo "::error::Couldn't look into $repo: $out"
+              failed=1
+            fi
+          done < <(gh repo list "$GITHUB_REPOSITORY_OWNER" --no-archived --limit 1000 --json name,defaultBranchRef \
+            --jq '.[] | select(.defaultBranchRef != null) | "\(.name) \(.defaultBranchRef.name)"')
+          echo "Passed GlimStone $VERSION on to $sent repositories."
+          exit "$failed"

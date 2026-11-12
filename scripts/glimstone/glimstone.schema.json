@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/scripts/glimstone/glimstone.schema.json",
+  "title": "glimstone.json",
+  "description": "The parts of an app that follow GlimStone, and how each one takes a new release.",
+  "type": "object",
+  "required": ["targets"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/target" }
+    }
+  },
+  "$defs": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "The GlimStone release this part follows, without the leading v."
+    },
+    "path": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "target": {
+      "type": "object",
+      "required": ["name", "mode", "version"],
+      "properties": {
+        "name": { "$ref": "#/$defs/path", "description": "What the check and the issue call this part." },
+        "mode": { "enum": ["npm", "copy", "port"] },
+        "version": { "$ref": "#/$defs/version" },
+        "versionFile": {
+          "$ref": "#/$defs/path",
+          "description": "A file that holds the version as a quoted string, such as export const GLIMSTONE_VERSION = '4.3.7'."
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "mode": { "const": "npm" },
+            "name": true, "version": true, "versionFile": true,
+            "package": { "$ref": "#/$defs/path", "description": "The package.json whose @glimstone/* dependencies follow the version." }
+          },
+          "required": ["package"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "mode": { "const": "copy" },
+            "name": true, "version": true, "versionFile": true,
+            "files": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["from", "to"],
+                "additionalProperties": false,
+                "properties": {
+                  "from": { "$ref": "#/$defs/path", "description": "The path in the GlimStone repo at tag v<version>." },
+                  "to": { "$ref": "#/$defs/path", "description": "The path in the app." }
+                }
+              }
+            }
+          },
+          "required": ["files"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "mode": { "const": "port" },
+            "name": true, "version": true, "versionFile": true
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,118 @@
+name: GlimStone update
+
+# Called by every app built on GlimStone when a release comes out (the GlimStone
+# fanout sends glimstone-release) and on the app's own schedule. The npm and
+# copy parts move on a chore/glimstone-<version> branch, which the app's CI
+# then checks, and the parts ported by hand get an issue. There is never a pull
+# request: the branch waits until someone merges it before the next release.
+#
+# A push with GITHUB_TOKEN starts no workflow, so CI is started with a
+# workflow_dispatch, and the CI workflow named in ci-workflow needs that trigger.
+
+on:
+  workflow_call:
+    inputs:
+      ci-workflow:
+        description: File name of the app's CI workflow, which runs on the update branch.
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # A scheduled run has no repository in its payload and falls back to the
+      # default branch by itself.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: ${{ job.workflow_repository }}
+          ref: ${{ job.workflow_sha }}
+          path: .glimstone-tooling
+          sparse-checkout: scripts/glimstone
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: "24"
+
+      - name: Move to the newest GlimStone
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .glimstone-tooling/scripts/glimstone/glimstone.mjs update --out "$RUNNER_TEMP/glimstone"
+
+      - name: Refresh the lockfiles
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          while IFS= read -r dir; do
+            (cd "$dir" && npm install --package-lock-only --ignore-scripts --no-audit --no-fund)
+          done < "$RUNNER_TEMP/glimstone/lock-dirs"
+
+      # The branch is pushed again only when its content differs, which is also
+      # how it follows the default branch when that moves on.
+      - name: Push the update branch and start CI
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.update.outputs.version }}
+          BRANCH: ${{ steps.update.outputs.branch }}
+          CI_WORKFLOW: ${{ inputs.ci-workflow }}
+        run: |
+          set -euo pipefail
+          mapfile -t files < "$RUNNER_TEMP/glimstone/files"
+          git add -- "${files[@]}"
+          git ls-files -m -z -- '*package-lock.json' | xargs -0 -r git add --
+          git -c user.name=junkerderprovinz -c user.email=133605895+junkerderprovinz@users.noreply.github.com \
+            commit -q -m "Move to GlimStone $VERSION"
+          if git fetch -q origin "refs/heads/$BRANCH" 2>/dev/null && git diff --quiet FETCH_HEAD HEAD; then
+            echo "$BRANCH already holds this update."
+            exit 0
+          fi
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+          gh workflow run "$CI_WORKFLOW" --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
+          echo "Pushed $BRANCH and started $CI_WORKFLOW on it."
+
+      # One issue per release. A closed one is an answer too and stays closed.
+      # The pattern matches issueTitle in glimstone.mjs.
+      - name: Open or refresh the port issue
+        if: steps.update.outputs.issue == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.update.outputs.version }}
+        run: |
+          set -euo pipefail
+          TITLE=$(cat "$RUNNER_TEMP/glimstone/issue-title")
+          export TITLE
+          body="$RUNNER_TEMP/glimstone/issue-body.md"
+          pattern='^GlimStone [0-9]+\.[0-9]+\.[0-9]+ is ready to port$'
+          mine=$(gh issue list --repo "$GITHUB_REPOSITORY" --author app/github-actions --state all --limit 200 --json number,title,state)
+          found=$(jq -r '[.[] | select(.title == env.TITLE)][0] // empty | "\(.number) \(.state)"' <<< "$mine")
+          if [ -z "$found" ]; then
+            url=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$body")
+            number=${url##*/}
+            echo "Opened $url"
+          else
+            read -r number state <<< "$found"
+            if [ "$state" = OPEN ]; then
+              gh issue edit "$number" --repo "$GITHUB_REPOSITORY" --body-file "$body"
+              echo "Refreshed #$number"
+            else
+              echo "#$number was closed, so it stays closed."
+            fi
+          fi
+          jq -r --arg p "$pattern" '.[] | select(.state == "OPEN" and (.title | test($p)) and .title != env.TITLE) | .number' <<< "$mine" |
+            while read -r old; do
+              gh issue close "$old" --repo "$GITHUB_REPOSITORY" --comment "GlimStone $VERSION is out, so #$number takes over from here."
+              echo "Closed #$old"
+            done
