@@ -79,7 +79,6 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 - **[towertorch](https://github.com/junkerderprovinz/towertorch)** - a fully revamped, modern UI for your Unraid server, plus containers that start once their dependencies are ready.
 - **[shiplog](https://github.com/junkerderprovinz/shiplog)** - per-container update advisor in Unraid's Docker tab: changelog, risk level and the real version jump, plus auto-update.
 - **[firesquire](https://github.com/junkerderprovinz/firesquire)** - a pre-reboot check for Unraid: **All clear**, **Smouldering** or **The roof is on fire**, so you never reboot your server blind.
-- **[tillertouch](https://github.com/junkerderprovinz/tillertouch)** - a second look at your coding assistant's replies, sent back when they leave a gap open or skip a clearly better way.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-themes-dark.png">

@@ -35,7 +35,6 @@ const ICONS = [
   { slug: "towertorch", url: feed("towertorch") },
   { slug: "shiplog", url: feed("shiplog") },
   { slug: "firesquire", url: feed("firesquire") },
-  { slug: "tillertouch", url: `${RAW}/tillertouch/main/.github/assets/icon.png` },
 ];
 
 // The edges fade into GitHub's canvas colour. A mask would serve both themes with one
