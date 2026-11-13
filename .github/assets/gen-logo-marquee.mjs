@@ -28,6 +28,7 @@ const ICONS = [
   { slug: "cannoncommander", url: `${RAW}/cannoncommander/main/.github/assets/logo.svg` },
   { slug: "castleparcel", url: `${RAW}/castleparcel/main/.github/assets/castleparcel-logo.svg` },
   { slug: "knightloader", url: feed("knightloader") },
+  { slug: "knightsight", url: `${RAW}/knightsight/main/.github/assets/logo.png` },
   { slug: "parleyport", url: feed("parleyport") },
   { slug: "pommelporter", url: `${RAW}/pommelporter/main/.github/assets/logo.svg` },
   { slug: "trickwork", url: feed("trickwork") },

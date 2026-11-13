@@ -26,6 +26,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 - **[cannoncommander](https://github.com/junkerderprovinz/cannoncommander)** - the most beautiful file manager you will ever run, and the only one you need: two panels, browser or desktop.
 - **[castleparcel](https://github.com/junkerderprovinz/castleparcel)** - the big-file transfer site you know, in your own castle: encrypted in your browser, so not even your server looks inside.
 - **[knightloader](https://github.com/junkerderprovinz/knightloader)** - download manager for hosters, debrid, torrents, Usenet and videos, with an Android app and a browser extension.
+- **[knightsight](https://github.com/junkerderprovinz/knightsight)** - share one window with your coding assistant over MCP. It looks, clicks and types there, and nowhere else.
 - **[parleyport](https://github.com/junkerderprovinz/parleyport)** - your own relay for apps that pair their instances: on different networks they meet there, and it reads none of it.
 - **[pommelporter](https://github.com/junkerderprovinz/pommelporter)** - one installer for KnightLoader, ArrowLoop, TrickWork and CannonCommander, on Windows and Linux.
 - **[trickwork](https://github.com/junkerderprovinz/trickwork)** - turns images into proportional-font-aware ASCII art, live preview, TXT/XHTML/RTF/PNG export, desktop or Docker.
