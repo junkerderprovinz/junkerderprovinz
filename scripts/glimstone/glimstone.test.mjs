@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { afterEach, test } from 'node:test'
 
-import { check, issueTitle, run, update } from './glimstone.mjs'
+import { check, fileIssue, issueTitle, repoIssues, run, update } from './glimstone.mjs'
 
 const release = (version, body = `Notes for ${version}.`) => ({
   version,
@@ -401,6 +401,146 @@ test('update on a current repo tells the workflow there is nothing to do', async
   assert.match(outputs, /^changed=false$/m)
   assert.match(outputs, /^issue=false$/m)
   assert.ok(!existsSync(join(outDir, 'issue-title')))
+})
+
+// fakeIssues stands in for the bot's issues in the app's repository and
+// records what the update does to them.
+function fakeIssues(existing) {
+  const issues = existing.map(([number, version, open = true]) => ({ number, title: issueTitle(version), open }))
+  const calls = []
+  let next = Math.max(0, ...issues.map((i) => i.number)) + 1
+  return {
+    calls,
+    list: async () => issues.map((i) => ({ ...i })),
+    create: async (title, body) => {
+      calls.push(['create', title, body])
+      return next++
+    },
+    edit: async (number, body) => calls.push(['edit', number, body]),
+    close: async (number, comment) => calls.push(['close', number, comment]),
+  }
+}
+
+test('the first run for a release opens its issue and retires the open ones for older releases', async () => {
+  const issues = fakeIssues([
+    [3, '4.3.5', false],
+    [5, '4.3.6'],
+  ])
+  const result = await fileIssue(issues, '4.3.7', 'body')
+  assert.deepEqual(issues.calls, [
+    ['create', issueTitle('4.3.7'), 'body'],
+    ['close', 5, 'GlimStone 4.3.7 is out, so #6 takes the baton from here.'],
+  ])
+  assert.deepEqual(result, { number: 6, opened: true, open: true, closed: [5] })
+})
+
+test('a later run for the same release refreshes its issue instead of opening another', async () => {
+  const issues = fakeIssues([[8, '4.3.7']])
+  const result = await fileIssue(issues, '4.3.7', 'fresh body')
+  assert.deepEqual(issues.calls, [['edit', 8, 'fresh body']])
+  assert.equal(result.opened, false)
+})
+
+test('duplicate issues for a release fold into the newest one', async () => {
+  const issues = fakeIssues([
+    [4, '4.3.6'],
+    [7, '4.3.7'],
+    [9, '4.3.7'],
+    [11, '4.3.7'],
+  ])
+  const result = await fileIssue(issues, '4.3.7', 'body')
+  assert.ok(!issues.calls.some(([op]) => op === 'create'))
+  assert.deepEqual(issues.calls[0], ['edit', 11, 'body'])
+  assert.deepEqual(result.closed.sort((a, b) => a - b), [4, 7, 9])
+  assert.deepEqual(issues.calls.find((c) => c[1] === 9), ['close', 9, null], 'a duplicate goes without a comment')
+})
+
+test('a closed issue for the release is an answer and stays closed', async () => {
+  const issues = fakeIssues([
+    [5, '4.3.6'],
+    [8, '4.3.7', false],
+  ])
+  const result = await fileIssue(issues, '4.3.7', 'body')
+  assert.deepEqual(issues.calls, [['close', 5, 'GlimStone 4.3.7 is out, so #8 takes the baton from here.']])
+  assert.equal(result.open, false)
+})
+
+test('an issue for a newer release than the one at hand is left alone', async () => {
+  const issues = fakeIssues([[12, '4.4.0']])
+  await fileIssue(issues, '4.3.7', 'body')
+  assert.deepEqual(issues.calls.map(([op]) => op), ['create'])
+})
+
+function issueRun(root, issues) {
+  const outDir = join(root, 'out')
+  mkdirSync(outDir, { recursive: true })
+  writeFileSync(join(outDir, 'issue-title'), issueTitle('4.3.7'))
+  writeFileSync(join(outDir, 'issue-body.md'), 'drafted body')
+  const out = capture()
+  return run(['issue', '--out', outDir], { source: fakeSource(['4.3.7']), issues, stdout: out, env: {} }).then((code) => ({ code, out }))
+}
+
+test('issue files the drafted issue', async () => {
+  const issues = fakeIssues([[2, '4.3.6']])
+  const { code, out } = await issueRun(repo({}), issues)
+  assert.equal(code, 0)
+  assert.deepEqual(issues.calls[0], ['create', issueTitle('4.3.7'), 'drafted body'])
+  assert.ok(out.lines.some((l) => l.includes('#3')), out.lines.join('\n'))
+})
+
+test('an issue list that fails opens nothing and fails the run', async () => {
+  const issues = fakeIssues([])
+  issues.list = async () => {
+    throw new Error('api.github.com answered 403 rate limit exceeded')
+  }
+  const { code, out } = await issueRun(repo({}), issues)
+  assert.equal(code, 1)
+  assert.deepEqual(issues.calls, [])
+  assert.ok(out.lines.some((l) => l.startsWith('::error::') && l.includes('403')), out.lines.join('\n'))
+})
+
+function stubFetch(t, handler) {
+  const requests = []
+  t.mock.method(globalThis, 'fetch', async (url, init = {}) => {
+    const request = { url: String(url), method: init.method ?? 'GET', body: init.body && JSON.parse(init.body) }
+    requests.push(request)
+    const [status, json] = handler(request)
+    return new Response(JSON.stringify(json), { status, statusText: status === 200 ? 'OK' : 'Forbidden' })
+  })
+  return requests
+}
+
+test('the issue list reads every page and keeps only the bot issues', async (t) => {
+  const bot = { login: 'github-actions[bot]' }
+  const first = Array.from({ length: 100 }, (_, i) => ({ number: 300 - i, title: 'Some pull request', state: 'open', user: bot, pull_request: {} }))
+  first[10] = { number: 290, title: issueTitle('4.5.1'), state: 'open', user: bot }
+  first[20] = { number: 280, title: issueTitle('4.5.1'), state: 'open', user: { login: 'someone' } }
+  const second = [{ number: 176, title: issueTitle('4.4.1'), state: 'closed', user: bot }]
+  const requests = stubFetch(t, ({ url }) => [200, new URL(url).searchParams.get('page') === '1' ? first : second])
+  const list = await repoIssues({ GITHUB_REPOSITORY: 'junkerderprovinz/app', GH_TOKEN: 't' }).list()
+  assert.deepEqual(list, [
+    { number: 290, title: issueTitle('4.5.1'), open: true },
+    { number: 176, title: issueTitle('4.4.1'), open: false },
+  ])
+  assert.equal(requests.length, 2)
+  assert.ok(requests.every((r) => r.url.startsWith('https://api.github.com/repos/junkerderprovinz/app/issues?state=all')))
+})
+
+test('a refused issue list throws instead of reading as empty', async (t) => {
+  stubFetch(t, () => [403, { message: 'API rate limit exceeded' }])
+  await assert.rejects(repoIssues({ GITHUB_REPOSITORY: 'junkerderprovinz/app', GH_TOKEN: 't' }).list(), /403/)
+})
+
+test('closing an issue marks it not planned', async (t) => {
+  const requests = stubFetch(t, () => [200, {}])
+  await repoIssues({ GITHUB_REPOSITORY: 'junkerderprovinz/app', GH_TOKEN: 't' }).close(5, 'Bye.')
+  assert.deepEqual(
+    requests.map((r) => [r.method, r.url.replace('https://api.github.com/repos/junkerderprovinz/app/issues', ''), r.body]),
+    [
+      ['POST', '/5/comments', { body: 'Bye.' }],
+      ['PATCH', '/5', { state: 'closed', state_reason: 'not_planned' }],
+    ],
+  )
 })
 
 test('an unknown subcommand prints the usage', async () => {

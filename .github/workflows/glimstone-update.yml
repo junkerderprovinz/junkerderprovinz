@@ -88,39 +88,8 @@ jobs:
           gh workflow run "$CI_WORKFLOW" --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
           echo "Pushed $BRANCH and started $CI_WORKFLOW on it."
 
-      # One issue per release. A closed one is an answer too and stays closed.
-      # The pattern matches issueTitle in glimstone.mjs.
       - name: Open or refresh the port issue
         if: steps.update.outputs.issue == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.update.outputs.version }}
-        run: |
-          set -euo pipefail
-          TITLE=$(cat "$RUNNER_TEMP/glimstone/issue-title")
-          export TITLE
-          body="$RUNNER_TEMP/glimstone/issue-body.md"
-          pattern='^GlimStone [0-9]+\.[0-9]+\.[0-9]+ is here and wants in$'
-          # gh's --author finds nothing for an app, so the bot's issues are
-          # picked out by their author here.
-          mine=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 200 --json number,title,state,author |
-            jq '[.[] | select(.author.login == "app/github-actions")]')
-          found=$(jq -r '[.[] | select(.title == env.TITLE)][0] // empty | "\(.number) \(.state)"' <<< "$mine")
-          if [ -z "$found" ]; then
-            url=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$body")
-            number=${url##*/}
-            echo "Opened $url"
-          else
-            read -r number state <<< "$found"
-            if [ "$state" = OPEN ]; then
-              gh issue edit "$number" --repo "$GITHUB_REPOSITORY" --body-file "$body"
-              echo "Refreshed #$number"
-            else
-              echo "#$number was closed, so it stays closed."
-            fi
-          fi
-          jq -r --arg p "$pattern" '.[] | select(.state == "OPEN" and (.title | test($p)) and .title != env.TITLE) | .number' <<< "$mine" |
-            while read -r old; do
-              gh issue close "$old" --repo "$GITHUB_REPOSITORY" --comment "GlimStone $VERSION is out, so #$number takes the baton from here."
-              echo "Closed #$old"
-            done
+        run: node .glimstone-tooling/scripts/glimstone/glimstone.mjs issue --out "$RUNNER_TEMP/glimstone"

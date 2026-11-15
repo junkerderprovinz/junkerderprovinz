@@ -4,11 +4,13 @@
 //
 //     node glimstone.mjs check [--repo DIR]
 //     node glimstone.mjs update [--repo DIR] [--out DIR]
+//     node glimstone.mjs issue [--out DIR]
 //
 // check fails while a part is behind the newest release or a file disagrees
 // with glimstone.json. update moves the npm and copy parts in the working tree
-// and drafts an issue for the parts ported by hand. The reusable workflows
-// glimstone-current.yml and glimstone-update.yml run the two in CI.
+// and drafts an issue for the parts ported by hand, and issue files that draft
+// in GITHUB_REPOSITORY. The reusable workflows glimstone-current.yml and
+// glimstone-update.yml run them in CI.
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -29,6 +31,7 @@ const issueLimit = 60000
 class ConfigError extends Error {}
 
 export const issueTitle = (version) => `GlimStone ${version} is here and wants in`
+const issueVersion = (title) => /^GlimStone (\d+\.\d+\.\d+) is here and wants in$/.exec(title)?.[1]
 export const branchName = (version) => `chore/glimstone-${version}`
 
 export function compareVersions(a, b) {
@@ -275,6 +278,60 @@ export async function update(root, source) {
   return { version: latest.version, files: [...files].sort(), lockDirs: [...lockDirs].sort(), issue }
 }
 
+// fileIssue keeps one issue per release: it refreshes or opens the newest one
+// and closes the open issues it replaces. A closed one for the release is an
+// answer and stays closed.
+export async function fileIssue(issues, version, body) {
+  const title = issueTitle(version)
+  const ours = (await issues.list())
+    .map((i) => ({ ...i, version: issueVersion(i.title) }))
+    .filter((i) => i.version && compareVersions(i.version, version) <= 0)
+    .sort((a, b) => b.number - a.number)
+  let kept = ours.find((i) => i.version === version)
+  const opened = !kept
+  if (opened) kept = { number: await issues.create(title, body), open: true }
+  else if (kept.open) await issues.edit(kept.number, body)
+  const closed = []
+  for (const i of ours) {
+    if (i === kept || !i.open) continue
+    await issues.close(i.number, i.version === version ? null : `GlimStone ${version} is out, so #${kept.number} takes the baton from here.`)
+    closed.push(i.number)
+  }
+  return { number: kept.number, opened, open: kept.open, closed }
+}
+
+const issueBot = 'github-actions[bot]'
+
+export function repoIssues(env) {
+  const api = `https://api.github.com/repos/${env.GITHUB_REPOSITORY}/issues`
+  const headers = { accept: 'application/vnd.github+json', 'user-agent': 'glimstone-update', authorization: `Bearer ${env.GH_TOKEN}` }
+  const call = async (method, url, body) => {
+    const res = await fetch(url, { method, headers, body: body && JSON.stringify(body), signal: AbortSignal.timeout(30_000) })
+    if (!res.ok) throw new Error(`${method} ${url} answered ${res.status} ${res.statusText}`)
+    return res.json()
+  }
+  return {
+    // The whole list is read rather than searched, because the search index
+    // lags behind an issue opened a moment ago.
+    list: async () => {
+      const all = []
+      for (let page = 1; ; page++) {
+        const batch = await call('GET', `${api}?state=all&per_page=100&page=${page}`)
+        for (const i of batch) if (!i.pull_request && i.user?.login === issueBot) all.push({ number: i.number, title: i.title, open: i.state === 'open' })
+        if (batch.length < 100) return all
+      }
+    },
+    create: async (title, body) => (await call('POST', api, { title, body })).number,
+    edit: async (number, body) => {
+      await call('PATCH', `${api}/${number}`, { body })
+    },
+    close: async (number, comment) => {
+      if (comment) await call('POST', `${api}/${number}/comments`, { body: comment })
+      await call('PATCH', `${api}/${number}`, { state: 'closed', state_reason: 'not_planned' })
+    },
+  }
+}
+
 function asRelease(json) {
   const version = String(json.tag_name ?? '').replace(/^v/, '')
   if (!semver.test(version)) throw new Error(`the GlimStone release ${JSON.stringify(json.tag_name)} has no x.y.z version`)
@@ -316,18 +373,30 @@ function options(args) {
   return opts
 }
 
-const usage = 'usage: node glimstone.mjs check [--repo DIR]\n       node glimstone.mjs update [--repo DIR] [--out DIR]\n'
+const usage = 'usage: node glimstone.mjs check [--repo DIR]\n       node glimstone.mjs update [--repo DIR] [--out DIR]\n       node glimstone.mjs issue [--out DIR]\n'
 
-export async function run(argv, { source, stdout, env }) {
+export async function run(argv, { source, issues, stdout, env }) {
   const [command, ...rest] = argv
   const opts = options(rest)
-  if (!['check', 'update'].includes(command) || !opts) {
+  if (!['check', 'update', 'issue'].includes(command) || !opts) {
     stdout.write(usage)
     return 2
   }
   const root = opts.repo ?? process.cwd()
+  const out = opts.out ?? join(tmpdir(), 'glimstone')
   const say = (line) => stdout.write(`${line}\n`)
   try {
+    if (command === 'issue') {
+      const title = readFileSync(join(out, 'issue-title'), 'utf8').trim()
+      const version = issueVersion(title)
+      if (!version) throw new Error(`${join(out, 'issue-title')} holds "${title}", which is no GlimStone issue title.`)
+      const result = await fileIssue(issues, version, readFileSync(join(out, 'issue-body.md'), 'utf8'))
+      if (result.opened) say(`Opened #${result.number} for GlimStone ${version}.`)
+      else if (result.open) say(`Refreshed #${result.number}.`)
+      else say(`#${result.number} was closed, so it stays closed.`)
+      for (const n of result.closed) say(`Closed #${n}.`)
+      return 0
+    }
     if (command === 'check') {
       const { latest, problems } = await check(root, source)
       for (const p of problems) say(`::error file=${p.file}::${p.message}`)
@@ -336,7 +405,6 @@ export async function run(argv, { source, stdout, env }) {
       return 0
     }
     const result = await update(root, source)
-    const out = opts.out ?? join(tmpdir(), 'glimstone')
     mkdirSync(out, { recursive: true })
     writeFileSync(join(out, 'files'), result.files.map((f) => `${f}\n`).join(''))
     writeFileSync(join(out, 'lock-dirs'), result.lockDirs.map((d) => `${d}\n`).join(''))
@@ -367,5 +435,5 @@ export async function run(argv, { source, stdout, env }) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  process.exitCode = await run(process.argv.slice(2), { source: github(process.env), stdout: process.stdout, env: process.env })
+  process.exitCode = await run(process.argv.slice(2), { source: github(process.env), issues: repoIssues(process.env), stdout: process.stdout, env: process.env })
 }
