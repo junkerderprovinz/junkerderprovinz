@@ -47,6 +47,9 @@ jobs:
           sent=0
           failed=0
           while read -r repo branch; do
+            # This repository holds the shared glimstone-update.yml, and a
+            # dispatch to it would start this fanout again.
+            [ "$repo" = "${GITHUB_REPOSITORY#*/}" ] && continue
             if out=$(gh api "repos/$GITHUB_REPOSITORY_OWNER/$repo/contents/.github/workflows/glimstone-update.yml?ref=$branch" --jq .path 2>&1); then
               gh api "repos/$GITHUB_REPOSITORY_OWNER/$repo/dispatches" -f event_type=glimstone-release -f "client_payload[version]=$VERSION" --silent
               echo "Told $repo about GlimStone $VERSION."

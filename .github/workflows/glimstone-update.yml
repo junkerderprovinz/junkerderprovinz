@@ -26,6 +26,11 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # A release and the daily run can arrive together, and two runs at once
+    # would each open the issue.
+    concurrency:
+      group: glimstone-update
+      cancel-in-progress: false
     steps:
       # A scheduled run has no repository in its payload and falls back to the
       # default branch by itself.
@@ -96,7 +101,10 @@ jobs:
           export TITLE
           body="$RUNNER_TEMP/glimstone/issue-body.md"
           pattern='^GlimStone [0-9]+\.[0-9]+\.[0-9]+ is here and wants in$'
-          mine=$(gh issue list --repo "$GITHUB_REPOSITORY" --author app/github-actions --state all --limit 200 --json number,title,state)
+          # gh's --author finds nothing for an app, so the bot's issues are
+          # picked out by their author here.
+          mine=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 200 --json number,title,state,author |
+            jq '[.[] | select(.author.login == "app/github-actions")]')
           found=$(jq -r '[.[] | select(.title == env.TITLE)][0] // empty | "\(.number) \(.state)"' <<< "$mine")
           if [ -z "$found" ]; then
             url=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$body")
