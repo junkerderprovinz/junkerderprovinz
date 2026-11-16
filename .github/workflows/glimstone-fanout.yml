@@ -46,6 +46,21 @@ jobs:
           fi
           sent=0
           failed=0
+          # Listed up front, because a failed listing inside the loop's process
+          # substitution would pass unnoticed and the release would reach
+          # nobody. GitHub's GraphQL answers 502 now and then.
+          for try in 1 2 3; do
+            if repos=$(gh repo list "$GITHUB_REPOSITORY_OWNER" --no-archived --limit 1000 --json name,defaultBranchRef \
+              --jq '.[] | select(.defaultBranchRef != null) | "\(.name) \(.defaultBranchRef.name)"') && [ -n "$repos" ]; then
+              break
+            fi
+            repos=""
+            sleep $((try * 15))
+          done
+          if [ -z "$repos" ]; then
+            echo "::error::Couldn't list the account's repositories, so nobody heard about GlimStone $VERSION."
+            exit 1
+          fi
           while read -r repo branch; do
             # This repository holds the shared glimstone-update.yml, and a
             # dispatch to it would start this fanout again.
@@ -58,7 +73,6 @@ jobs:
               echo "::error::Couldn't look into $repo: $out"
               failed=1
             fi
-          done < <(gh repo list "$GITHUB_REPOSITORY_OWNER" --no-archived --limit 1000 --json name,defaultBranchRef \
-            --jq '.[] | select(.defaultBranchRef != null) | "\(.name) \(.defaultBranchRef.name)"')
+          done <<< "$repos"
           echo "Passed GlimStone $VERSION on to $sent repositories."
           exit "$failed"
