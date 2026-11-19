@@ -64,6 +64,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 - **[couchdb](https://github.com/junkerderprovinz/unraid-apps/tree/main/couchdb)** - the HTTP/JSON database behind Obsidian LiveSync, 3.x with persistent data, config and CORS set up for the plugin.
 - **[n8n](https://github.com/junkerderprovinz/unraid-apps/tree/main/n8n)** - workflow automation with every option exposed in the Unraid template form, no compose editing, no hunting for variables.
 - **[openhands](https://github.com/junkerderprovinz/unraid-apps/tree/main/openhands)** - open-source AI software-development agent that writes and tests code, pre-wired for your local Ollama, no cloud.
+- **[pocket-id](https://github.com/junkerderprovinz/unraid-apps/tree/main/pocket-id)** - a small OpenID Connect provider: every app on your server shares one login, and you sign in with a passkey.
 - **[rustfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/rustfs)** - an S3 object store written in Rust, which without this template's fixes does not start on Unraid at all. *Still a pre-release.*
 - **[seaweedfs](https://github.com/junkerderprovinz/unraid-apps/tree/main/seaweedfs)** - S3-compatible object storage, the maintained alternative now that MinIO's open edition is done, ready for Unraid.
 - **[silo](https://github.com/junkerderprovinz/unraid-apps/tree/main/silo)** - MinIO, still maintained: the open-source fork with the full web console, which reads your existing MinIO data folder as it is.
