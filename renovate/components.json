@@ -45,6 +45,13 @@
       "commitMessagePrefix": "chore(component):"
     },
     {
+      "description": "s6-overlay counts four parts (3.2.0.2), which semver-coerced cannot move, so it is compared loosely.",
+      "matchDepNames": [
+        "just-containers/s6-overlay"
+      ],
+      "versioning": "loose"
+    },
+    {
       "description": "A component patch or digest refresh merges once every check is green.",
       "matchManagers": [
         "custom.regex"
