@@ -1,33 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "helpers:pinGitHubActionDigests",
-    ":semanticCommits",
-    ":dependencyDashboard",
-    ":enableVulnerabilityAlertsWithLabel(security)"
-  ],
-  "timezone": "Europe/Vienna",
-  "schedule": ["before 6am on monday"],
-  "labels": ["dependencies"],
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 6,
+  "extends": ["local>junkerderprovinz/junkerderprovinz//renovate/base"],
   "packageRules": [
-    {
-      "description": "Node stays on 24 until 26 is tested. This covers the node image, node-version in setup-node (looked up as actions/node-versions), .nvmrc, engines and @types/node.",
-      "matchPackageNames": ["node", "actions/node-versions", "@types/node"],
-      "allowedVersions": "<25"
-    },
-    {
-      "description": "GitHub Actions: auto-merge all updates",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["major", "minor", "patch", "digest"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
-      "commitMessagePrefix": "ci:",
-      "labels": ["github-actions"]
-    },
     {
       "description": "style.yml calls this repo's own comment check. Each pin bump merged here is a new commit for every other repo to follow and one more for this repo to pin, so this pin moves by hand.",
       "matchManagers": ["github-actions"],

@@ -1,0 +1,139 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Components an app bundles, such as restic, rclone or yt-dlp. A patch merges once CI is green, a minor or major waits for a live test, and component-update.yml opens an issue when one needs work. Extend this after base.json, so these rules come after its groups.",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "A '# renovate: datasource=<d> depName=<name>' line right above the ARG or ENV that holds the version. versioning= and extractVersion= may follow. A GitHub release is written without its leading v, which the build adds back where it needs one.",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile[^/]*$/",
+        "/(^|/)Containerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?\\s*\\n\\s*(?:ARG|ENV) \\w+=(?<currentValue>[^\\s@\"]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else if (equals datasource 'docker')}}docker{{else if (equals datasource 'pypi')}}pep440{{else}}semver-coerced{{/if}}",
+      "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{else if (or (equals datasource 'github-releases') (equals datasource 'github-tags'))}}^v?(?<version>.+)${{else}}^(?<version>.+)${{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Every component gets a PR of its own, outside the Go and npm groups.",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "groupName": null,
+      "addLabels": [
+        "component"
+      ],
+      "commitMessagePrefix": "chore(component):"
+    },
+    {
+      "description": "Go libraries an app is built around, which a release names like a bundled tool.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "github.com/rclone/rclone",
+        "github.com/anacrolix/torrent",
+        "github.com/restic/restic"
+      ],
+      "groupName": null,
+      "addLabels": [
+        "component"
+      ],
+      "commitMessagePrefix": "chore(component):"
+    },
+    {
+      "description": "A component patch or digest refresh merges once every check is green.",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "digest",
+        "pinDigest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "A component minor or major stays open until it has run on the test instance.",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "automerge": false,
+      "prBodyNotes": [
+        "This moves a bundled component by a minor or major version. Run it on the test instance before merging."
+      ]
+    },
+    {
+      "description": "A major gets the label component-update.yml looks for, so it opens an issue for the work it may need.",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "major"
+      ]
+    },
+    {
+      "description": "A component patch or digest refresh merges once every check is green.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "github.com/rclone/rclone",
+        "github.com/anacrolix/torrent",
+        "github.com/restic/restic"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "digest",
+        "pinDigest"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "A component minor or major stays open until it has run on the test instance.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "github.com/rclone/rclone",
+        "github.com/anacrolix/torrent",
+        "github.com/restic/restic"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "automerge": false,
+      "prBodyNotes": [
+        "This moves a bundled component by a minor or major version. Run it on the test instance before merging."
+      ]
+    },
+    {
+      "description": "A major gets the label component-update.yml looks for, so it opens an issue for the work it may need.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "github.com/rclone/rclone",
+        "github.com/anacrolix/torrent",
+        "github.com/restic/restic"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "major"
+      ]
+    }
+  ]
+}

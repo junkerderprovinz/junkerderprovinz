@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate settings for every junkerderprovinz repository. A repository extends this and keeps only its own exceptions.",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlertsWithLabel(security)"
+  ],
+  "timezone": "Europe/Vienna",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 6,
+  "automergeType": "pr",
+  "platformAutomerge": false,
+  "packageRules": [
+    {
+      "description": "Node stays on 24 until 26 is tested. This covers the node image, node-version in setup-node (looked up as actions/node-versions), .nvmrc, engines and @types/node.",
+      "matchPackageNames": ["node", "actions/node-versions", "@types/node"],
+      "allowedVersions": "<25"
+    },
+    {
+      "description": "GitHub Actions merge once every check is green. Renovate merges them itself, since main has no required checks and GitHub's own auto-merge would not wait.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major", "minor", "patch", "digest"],
+      "automerge": true,
+      "commitMessagePrefix": "ci:",
+      "labels": ["github-actions"]
+    },
+    {
+      "description": "Go modules: minor, patch and digest updates share one weekly PR, majors stay separate.",
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "Go modules (non-major)",
+      "commitMessagePrefix": "chore(deps):"
+    },
+    {
+      "description": "npm: minor and patch updates share one weekly PR, majors stay separate.",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "web dependencies (non-major)",
+      "commitMessagePrefix": "chore(deps):"
+    }
+  ]
+}

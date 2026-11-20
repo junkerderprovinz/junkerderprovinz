@@ -1,0 +1,75 @@
+name: Component update
+
+# Called by an app's workflow_run on its CI. A Renovate pull request that moves a
+# bundled component (label component, see renovate/components.json) gets an
+# issue when its CI fails or when it moves a major version, since either means
+# work beyond the version bump. Everything else stays with the pull request.
+
+on:
+  workflow_call:
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Two CI workflows finishing together would each open the issue.
+    concurrency:
+      group: component-update-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
+    steps:
+      - name: Open or refresh the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+        run: |
+          set -euo pipefail
+          case "$BRANCH" in renovate/*) ;; *) echo "$BRANCH is not a Renovate branch."; exit 0 ;; esac
+
+          pr=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number,title,url,labels --jq '.[0] // empty')
+          if [ -z "$pr" ]; then
+            echo "No open pull request for $BRANCH."
+            exit 0
+          fi
+          labels=" $(jq -r '[.labels[].name] | join(" ")' <<<"$pr") "
+          case "$labels" in *" component "*) ;; *) echo "Not a component update."; exit 0 ;; esac
+          major=false
+          case "$labels" in *" major "*) major=true ;; esac
+          if [ "$CONCLUSION" != failure ] && ! $major; then
+            echo "CI is $CONCLUSION and the update is no major, so the pull request covers it."
+            exit 0
+          fi
+
+          number=$(jq -r .number <<<"$pr")
+          what=$(jq -r '.title | sub("^[a-z]+\\([a-z]+\\): "; "")' <<<"$pr")
+          title="Component update needs work: $what"
+          reason_ci="$WORKFLOW failed on #$number: $RUN_URL"
+          reason_major="#$number moves a major version, so read the upstream release notes for breaking changes before it goes in."
+
+          gh label create component-update --repo "$REPO" --color c5def5 \
+            --description "A component update that needs more than the version bump" --force >/dev/null
+
+          existing=$(gh issue list --repo "$REPO" --label component-update --state open --json number,title \
+            | jq -r --arg t "$title" '[.[] | select(.title == $t) | .number][0] // empty')
+          if [ -n "$existing" ]; then
+            if [ "$CONCLUSION" = failure ]; then
+              gh issue comment "$existing" --repo "$REPO" --body "$reason_ci"
+              echo "Added the failed run to #$existing."
+            else
+              echo "#$existing already tracks this update."
+            fi
+            exit 0
+          fi
+
+          body="Renovate opened #$number for this update."$'\n'
+          if [ "$CONCLUSION" = failure ]; then body+=$'\n'"- $reason_ci"; fi
+          if $major; then body+=$'\n'"- $reason_major"; fi
+          body+=$'\n\n'"Close this once #$number is merged or replaced."
+          gh issue create --repo "$REPO" --title "$title" --label component-update --body "$body"
