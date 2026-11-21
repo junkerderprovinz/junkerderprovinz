@@ -196,9 +196,13 @@ jobs:
           set -euo pipefail
           docker buildx build --platform "$PLATFORMS" --build-arg BASE="$BASE" \
             --target report --output type=local,dest=report .
+          # The image sorted the lists under its own locale.
+          export LC_ALL=C
           changed=0
           for before in $(find report -name before | sort); do
             dir=$(dirname "$before")
+            sort -o "$before" "$before"
+            sort -o "$dir/after" "$dir/after"
             n=$(comm -13 "$before" "$dir/after" | wc -l)
             echo "::group::${dir#report}: $n packages"
             diff "$before" "$dir/after" || true
