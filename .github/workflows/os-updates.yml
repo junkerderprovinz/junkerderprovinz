@@ -1,0 +1,237 @@
+name: OS updates
+
+# Called weekly by every repo that publishes its own image, so the security
+# fixes a distribution ships reach people between app releases. It puts the
+# pending Debian, Ubuntu or Alpine updates on top of the published image and
+# moves every tag that names the same image with it. sha- tags keep naming the
+# build of their commit. When no package changes nothing is pushed, so the
+# digest stays and nobody pulls an update for nothing. Callers run it on
+# Monday, so it lands on top of the build workflows' Sunday rebuilds.
+
+on:
+  workflow_call:
+    inputs:
+      images:
+        description: Images under ghcr.io/<owner>, separated by spaces. Empty means the repository name.
+        type: string
+        default: ""
+      tags:
+        description: Tags to refresh, separated by spaces. {version} stands for the newest release without its v.
+        type: string
+        default: latest
+      dockerhub-user:
+        description: Docker Hub account that mirrors the images. A mirror is updated where docker.io/<account>/<image> exists.
+        type: string
+        default: ""
+    secrets:
+      DOCKERHUB_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      targets: ${{ steps.plan.outputs.targets }}
+    steps:
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMAGES: ${{ inputs.images }}
+          TAGS: ${{ inputs.tags }}
+        run: |
+          set -euo pipefail
+          images=${IMAGES:-${GITHUB_REPOSITORY#*/}}
+          version=""
+          case "$TAGS" in *"{version}"*)
+            version=$(gh release view -R "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+            version=${version#v}
+            ;;
+          esac
+          targets=$(for image in $images; do
+            for tag in $TAGS; do
+              jq -nc --arg image "$image" --arg tag "${tag//\{version\}/$version}" '{image: $image, tag: $tag}'
+            done
+          done | jq -sc .)
+          echo "$targets" | jq .
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
+  refresh:
+    needs: plan
+    name: ${{ matrix.image }}:${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.targets) }}
+    concurrency:
+      group: os-updates-${{ github.repository }}-${{ matrix.image }}-${{ matrix.tag }}
+      cancel-in-progress: false
+    env:
+      SOURCE: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+      TAG: ${{ matrix.tag }}
+      HUB_USER: ${{ inputs.dockerhub-user }}
+    steps:
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: hub
+        name: Find the Docker Hub mirror
+        run: |
+          set -euo pipefail
+          mirror=""
+          if [ -n "$HUB_USER" ]; then
+            repo="$HUB_USER/${SOURCE##*/}"
+            if curl -fsS -o /dev/null "https://hub.docker.com/v2/repositories/$repo/"; then
+              mirror="docker.io/$repo"
+            else
+              echo "docker.io/$repo does not exist, so only GHCR is updated."
+            fi
+          fi
+          echo "mirror=$mirror" >> "$GITHUB_OUTPUT"
+
+      - if: steps.hub.outputs.mirror != ''
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
+        with:
+          username: ${{ inputs.dockerhub-user }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - id: source
+        name: Read the published image
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          digest=$(docker buildx imagetools inspect "$SOURCE:$TAG" --format '{{json .Manifest}}' | jq -r .digest)
+          raw=$(docker buildx imagetools inspect --raw "$SOURCE@$digest")
+          config=$(docker buildx imagetools inspect "$SOURCE@$digest" --format '{{json .Image}}')
+          platforms=$(jq -r '[.manifests[]?.platform | select(.os != "unknown")
+            | .os + "/" + .architecture + (if .variant then "/" + .variant else "" end)] | join(",")' <<<"$raw")
+          if jq -e 'has("config")' <<<"$config" >/dev/null; then
+            [ -n "$platforms" ] || platforms=$(jq -r '.os + "/" + .architecture + (if .variant then "/" + .variant else "" end)' <<<"$config")
+            user=$(jq -r '.config.User // ""' <<<"$config")
+          else
+            user=$(jq -r 'first(.[]) | .config.User // ""' <<<"$config")
+          fi
+
+          path=${SOURCE#ghcr.io/}
+          token=$(curl -fsS -u "$GITHUB_ACTOR:$GH_TOKEN" "https://ghcr.io/token?scope=repository:$path:pull" | jq -r .token)
+          accept='application/vnd.oci.image.index.v1+json,application/vnd.docker.distribution.manifest.list.v2+json,application/vnd.oci.image.manifest.v1+json,application/vnd.docker.distribution.manifest.v2+json'
+          tags=""
+          for tag in $(curl -fsS -H "Authorization: Bearer $token" "https://ghcr.io/v2/$path/tags/list?n=10000" | jq -r '.tags[]'); do
+            case "$tag" in sha-* | sha256-*) continue ;; esac
+            tagged=$(curl -fsS -I -H "Authorization: Bearer $token" -H "Accept: $accept" "https://ghcr.io/v2/$path/manifests/$tag" \
+              | tr -d '\r' | awk 'tolower($1) == "docker-content-digest:" { print $2 }')
+            if [ "$tagged" = "$digest" ]; then tags="$tags $tag"; fi
+          done
+
+          echo "$SOURCE:$TAG is $digest"
+          echo "platforms: $platforms"
+          echo "user: ${user:-(image default)}"
+          echo "tags:$tags"
+          {
+            echo "digest=$digest"
+            echo "platforms=$platforms"
+            echo "user=$user"
+            echo "tags=${tags# }"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write the Dockerfile
+        env:
+          RUNTIME_USER: ${{ steps.source.outputs.user }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/os-updates"
+          cd "$RUNNER_TEMP/os-updates"
+          list='{ dpkg-query -W -f '"'"'${binary:Package} ${Version}\n'"'"' 2>/dev/null || apk info -v; } | sort > /tmp/packages'
+          {
+            echo 'ARG BASE'
+            echo 'FROM ${BASE} AS before'
+            echo "RUN $list"
+            echo
+            echo 'FROM ${BASE} AS upgraded'
+            echo 'USER root'
+            cat <<'EOF'
+          RUN set -eu; . /etc/os-release; \
+              case " $ID ${ID_LIKE:-} " in \
+                *" alpine "*) apk upgrade --no-cache ;; \
+                *" debian "* | *" ubuntu "*) \
+                  apt-get update; \
+                  DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade; \
+                  rm -rf /var/lib/apt/lists/* ;; \
+                *) echo "$ID is neither Debian, Ubuntu nor Alpine" >&2; exit 1 ;; \
+              esac
+          EOF
+            if [ -n "$RUNTIME_USER" ]; then echo "USER $RUNTIME_USER"; fi
+            echo
+            echo 'FROM upgraded AS after'
+            echo "RUN $list"
+            echo
+            echo 'FROM scratch AS report'
+            echo 'COPY --from=before /tmp/packages /before'
+            echo 'COPY --from=after /tmp/packages /after'
+          } > Dockerfile
+          cat Dockerfile
+
+      - id: changes
+        name: List the updates
+        working-directory: ${{ runner.temp }}/os-updates
+        env:
+          BASE: ${{ env.SOURCE }}@${{ steps.source.outputs.digest }}
+          PLATFORMS: ${{ steps.source.outputs.platforms }}
+        run: |
+          set -euo pipefail
+          docker buildx build --platform "$PLATFORMS" --build-arg BASE="$BASE" \
+            --target report --output type=local,dest=report .
+          changed=0
+          for before in $(find report -name before | sort); do
+            dir=$(dirname "$before")
+            n=$(comm -13 "$before" "$dir/after" | wc -l)
+            echo "::group::${dir#report}: $n packages"
+            diff "$before" "$dir/after" || true
+            echo "::endgroup::"
+            changed=$((changed + n))
+          done
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Push the updated image
+        if: steps.changes.outputs.changed != '0'
+        working-directory: ${{ runner.temp }}/os-updates
+        env:
+          BASE: ${{ env.SOURCE }}@${{ steps.source.outputs.digest }}
+          PLATFORMS: ${{ steps.source.outputs.platforms }}
+          TAGS: ${{ steps.source.outputs.tags }}
+          MIRROR: ${{ steps.hub.outputs.mirror }}
+        run: |
+          set -euo pipefail
+          args=()
+          for tag in $TAGS; do
+            args+=(-t "$SOURCE:$tag")
+            [ -z "$MIRROR" ] || args+=(-t "$MIRROR:$tag")
+          done
+          docker buildx build --platform "$PLATFORMS" --build-arg BASE="$BASE" \
+            --target upgraded --provenance=true --sbom=true --push "${args[@]}" .
+
+      - name: Summary
+        env:
+          CHANGED: ${{ steps.changes.outputs.changed }}
+          TAGS: ${{ steps.source.outputs.tags }}
+        run: |
+          if [ "$CHANGED" = 0 ]; then
+            echo "$SOURCE:$TAG has no pending updates, nothing pushed." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "$SOURCE: $CHANGED updated packages, pushed as $TAGS." >> "$GITHUB_STEP_SUMMARY"
+          fi
