@@ -86,6 +86,25 @@
       ],
       "groupName": "web dependencies (non-major)",
       "commitMessagePrefix": "chore(deps):"
+    },
+    {
+      "description": "GlimStone's packages must share one version, or the app bundles two copies of core with separate stores.",
+      "matchPackageNames": [
+        "@glimstone/**"
+      ],
+      "groupName": "GlimStone",
+      "commitMessagePrefix": "chore(deps):"
+    },
+    {
+      "description": "A compose file is for people to copy, so it follows our own latest tag instead of a digest that goes stale with every build.",
+      "matchManagers": [
+        "docker-compose"
+      ],
+      "matchPackageNames": [
+        "junkerderprovinz/**",
+        "ghcr.io/junkerderprovinz/**"
+      ],
+      "enabled": false
     }
   ]
 }
