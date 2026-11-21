@@ -156,14 +156,16 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/os-updates"
           cd "$RUNNER_TEMP/os-updates"
-          list='{ dpkg-query -W -f '"'"'${binary:Package} ${Version}\n'"'"' 2>/dev/null || apk info -v; } | sort > /tmp/packages'
+          list='{ dpkg-query -W -f '"'"'${binary:Package} ${Version}\n'"'"' 2>/dev/null || apk info -v; } > /tmp/packages'
           {
             echo 'ARG BASE'
             echo 'FROM ${BASE} AS before'
             echo "RUN $list"
             echo
             echo 'FROM ${BASE} AS upgraded'
-            echo 'USER root'
+            # An image without a USER runs as root already, and saying so
+            # would set root in its config.
+            if [ -n "$RUNTIME_USER" ]; then echo 'USER root'; fi
             cat <<'EOF'
           RUN set -eu; . /etc/os-release; \
               case " $ID ${ID_LIKE:-} " in \
@@ -196,7 +198,6 @@ jobs:
           set -euo pipefail
           docker buildx build --platform "$PLATFORMS" --build-arg BASE="$BASE" \
             --target report --output type=local,dest=report .
-          # The image sorted the lists under its own locale.
           export LC_ALL=C
           changed=0
           for before in $(find report -name before | sort); do
