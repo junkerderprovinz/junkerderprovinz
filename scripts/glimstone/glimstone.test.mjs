@@ -403,6 +403,55 @@ test('update on a current repo tells the workflow there is nothing to do', async
   assert.ok(!existsSync(join(outDir, 'issue-title')))
 })
 
+async function flatpakLockOf(tree) {
+  const root = repo({
+    'glimstone.json': { targets: [{ name: 'web', mode: 'npm', version: '4.3.4', package: 'web/package.json' }] },
+    'web/package.json': pkg({ '@glimstone/core': '4.3.4' }),
+    ...tree,
+  })
+  const githubOutput = join(root, 'github-output')
+  const out = capture()
+  const code = await run(['update', '--repo', root, '--out', join(root, 'out')], {
+    source: fakeSource(['4.3.7', '4.3.4']),
+    stdout: out,
+    env: { GITHUB_OUTPUT: githubOutput },
+  })
+  const lock = existsSync(githubOutput) ? /^flatpak-lock=(.*)$/m.exec(read(root, 'github-output'))?.[1] : undefined
+  return { code, lock, lines: out.lines }
+}
+
+test('update names the lockfile the Flatpak manifest installs from', async () => {
+  const { code, lock } = await flatpakLockOf({
+    'flatpak/node-sources.json': '[]',
+    'flatpak/io.example.app.yml': 'build-commands:\n  - npm --prefix web ci --offline --no-audit\n  - npm --prefix web run build\n',
+  })
+  assert.equal(code, 0)
+  assert.equal(lock, 'web/package-lock.json')
+})
+
+test('a manifest running npm ci at the root points at the root lockfile', async () => {
+  const { lock } = await flatpakLockOf({
+    'flatpak/node-sources.json': '[]',
+    'flatpak/io.example.app.yml': 'build-commands:\n  - npm ci --offline --ignore-scripts\n',
+  })
+  assert.equal(lock, 'package-lock.json')
+})
+
+test('an app without Flatpak node sources has no Flatpak lockfile', async () => {
+  const { code, lock } = await flatpakLockOf({ 'flatpak/io.example.app.yml': 'build-commands:\n  - npm ci\n' })
+  assert.equal(code, 0)
+  assert.equal(lock, '')
+})
+
+test('update fails when the manifest leaves open which lockfile the node sources follow', async () => {
+  const { code, lines } = await flatpakLockOf({
+    'flatpak/node-sources.json': '[]',
+    'flatpak/io.example.app.yml': 'build-commands:\n  - npm --prefix web ci\n  - npm --prefix mobile ci\n',
+  })
+  assert.equal(code, 1)
+  assert.ok(lines.some((l) => l.startsWith('::error::') && l.includes('node-sources.json')), lines.join('\n'))
+})
+
 // fakeIssues stands in for the bot's issues in the app's repository and
 // records what the update does to them.
 function fakeIssues(existing) {

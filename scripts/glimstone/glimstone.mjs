@@ -12,7 +12,7 @@
 // in GITHUB_REPOSITORY. The reusable workflows glimstone-current.yml and
 // glimstone-update.yml run them in CI.
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, posix } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -242,6 +242,22 @@ function writeIfChanged(root, path, content) {
   return true
 }
 
+// flatpakLock finds the lockfile flatpak/node-sources.json has to follow: the
+// one the manifest runs npm ci on, since the offline build installs it from there.
+function flatpakLock(root) {
+  const dir = join(root, 'flatpak')
+  if (!existsSync(join(dir, 'node-sources.json'))) return null
+  const prefixes = new Set()
+  for (const name of readdirSync(dir)) {
+    if (!/\.(ya?ml|json)$/.test(name) || name.endsWith('-sources.json')) continue
+    for (const m of readFileSync(join(dir, name), 'utf8').matchAll(/\bnpm\s+(?:--prefix[=\s]+(\S+)\s+)?ci\b/g)) prefixes.add(m[1] ?? '.')
+  }
+  if (prefixes.size !== 1) {
+    throw new Error(`flatpak/node-sources.json needs one lockfile to follow, and the manifest in flatpak/ runs npm ci in ${prefixes.size ? [...prefixes].join(', ') : 'no folder'}.`)
+  }
+  return posix.join(...prefixes, 'package-lock.json')
+}
+
 export async function update(root, source) {
   const config = readConfig(root)
   const latest = await source.latest()
@@ -275,7 +291,7 @@ export async function update(root, source) {
   }
   if (moved && writeIfChanged(root, configFile, JSON.stringify(config, null, 2) + '\n')) files.add(configFile)
   const issue = ported.length ? { title: issueTitle(latest.version), body: issueBody(ported, latest, await source.releases()) } : null
-  return { version: latest.version, files: [...files].sort(), lockDirs: [...lockDirs].sort(), issue }
+  return { version: latest.version, files: [...files].sort(), lockDirs: [...lockDirs].sort(), flatpakLock: flatpakLock(root), issue }
 }
 
 // fileIssue keeps one issue per release: it refreshes or opens the newest one
@@ -422,6 +438,7 @@ export async function run(argv, { source, issues, stdout, env }) {
         branch: branchName(result.version),
         changed: String(result.files.length > 0),
         issue: String(result.issue !== null),
+        'flatpak-lock': result.flatpakLock ?? '',
       }
       appendFileSync(env.GITHUB_OUTPUT, Object.entries(outputs).map(([k, v]) => `${k}=${v}\n`).join(''))
     }

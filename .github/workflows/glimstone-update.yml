@@ -64,6 +64,27 @@ jobs:
             (cd "$dir" && npm install --package-lock-only --ignore-scripts --no-audit --no-fund)
           done < "$RUNNER_TEMP/glimstone/lock-dirs"
 
+      # The Flatpak build installs offline from flatpak/node-sources.json, so it
+      # has to follow the lockfile. This is the generator the app's
+      # flatpak/update-sources.mjs runs, pinned to a commit since the project
+      # tags no releases, and like that script it leaves out Playwright's browsers.
+      - name: Refresh the Flatpak node sources
+        if: steps.update.outputs.changed == 'true' && steps.update.outputs.flatpak-lock != ''
+        env:
+          LOCK: ${{ steps.update.outputs.flatpak-lock }}
+          GENERATOR: git+https://github.com/flatpak/flatpak-builder-tools.git@9d86d336a39b9af38b86f114b6ce5820fe260f91#subdirectory=node
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- "$LOCK"; then
+            echo "$LOCK did not move, so flatpak/node-sources.json stays as it is."
+            exit 0
+          fi
+          pipx install "$GENERATOR"
+          # Some apps' scripts end the file with a newline and some do not.
+          newline=$(tail -c1 flatpak/node-sources.json | wc -l)
+          flatpak-node-generator npm --no-playwright-browsers "$LOCK" -o flatpak/node-sources.json
+          if [ "$newline" = 1 ]; then echo >> flatpak/node-sources.json; fi
+
       # The branch is pushed again only when its content differs, which is also
       # how it follows the default branch when that moves on.
       - name: Push the update branch and start CI
@@ -77,7 +98,7 @@ jobs:
           set -euo pipefail
           mapfile -t files < "$RUNNER_TEMP/glimstone/files"
           git add -- "${files[@]}"
-          git ls-files -m -z -- '*package-lock.json' | xargs -0 -r git add --
+          git ls-files -m -z -- '*package-lock.json' flatpak/node-sources.json | xargs -0 -r git add --
           git -c user.name=junkerderprovinz -c user.email=133605895+junkerderprovinz@users.noreply.github.com \
             commit -q -m "Move to GlimStone $VERSION"
           if git fetch -q origin "refs/heads/$BRANCH" 2>/dev/null && git diff --quiet FETCH_HEAD HEAD; then
