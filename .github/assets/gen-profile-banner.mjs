@@ -8,12 +8,12 @@
  * The README's <picture> elements point at the SVGs, because the hero is animated;
  * the PNGs are a still fallback. Text is converted to paths with opentype.js, so the
  * SVGs need no font. Deps (global): opentype.js, @resvg/resvg-js.
- * The name is set in Bree Serif Light and every other hero line in Bree Light, read
- * as TTF from HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts). The section
- * titles use Bree Serif, fetched to the OS temp dir.
+ * The name and the section titles are set in Bree Serif Light and every other hero
+ * line in Bree Light, read as TTF from HOUSE_FONTS (default
+ * %LOCALAPPDATA%\halleluja-fonts).
  * Run: node .github/assets/gen-profile-banner.mjs
  */
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
@@ -50,18 +50,6 @@ const THEMES = [
   { suffix: "", bg: "#ffffff", fg: "#1f2328", sub: "#59636e", rule: "#d0d7de", accent: "#8b949e", sheen: SHEEN },
   { suffix: "-dark", bg: "#0d1117", fg: "#f0f6fc", sub: "#9198a1", rule: "#30363d", accent: "#6e7681", sheen: SHEEN },
 ];
-
-async function font(file, url) {
-  const p = join(tmpdir(), file);
-  if (!existsSync(p)) {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`${file} fetch ${r.status}`);
-    writeFileSync(p, Buffer.from(await r.arrayBuffer()));
-  }
-  const b = readFileSync(p);
-  return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
-}
-const sectionFont = await font("jdp-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
 
 // The house typeface is licensed, so it is read from a local folder and never committed.
 const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
@@ -408,25 +396,25 @@ const SW = SECTION_W * 2, SH = 112, barX = 30, barW = 8;
 // side bearing pushes the title a few pixels right of the list text.
 const TITLE_X = 64;
 const penFor = (fnt, text, y, size) => TITLE_X - fnt.getPath(text, 0, y, size).getBoundingBox().x1;
+// The bar reaches from above the ascenders to below the descenders. The title is
+// anchored at the top of its capitals, like the name in the hero, because the tall
+// ascent of Bree Serif Light would push a metrically centred title low.
+const barTop = 15, barH = 81, sCapTop = 40;
 // Largest size up to 60 at which every title renders without NaN at its real pen
 // position. opentype.js can emit NaN there even when (0,0) is clean, and the baseline
 // depends on the size, so both are picked together.
-let titleSize, sAsc, sDesc, sBaseline;
+let titleSize, sBaseline;
 for (let size = 60; size > 10; size--) {
-  sAsc = sectionFont.ascender * sc(sectionFont, size);
-  sDesc = -sectionFont.descender * sc(sectionFont, size);
-  sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
-  if (SECTIONS.every((s) => !sectionFont.getPath(s.title, penFor(sectionFont, s.title, sBaseline, size), sBaseline, size).toPathData(2).includes("NaN"))) {
+  sBaseline = Math.round(sCapTop + bree.tables.os2.sCapHeight * sc(bree, size));
+  if (SECTIONS.every((s) => !bree.getPath(s.title, penFor(bree, s.title, sBaseline, size), sBaseline, size).toPathData(2).includes("NaN"))) {
     titleSize = size;
     break;
   }
 }
 if (!titleSize) throw new Error("no NaN-free section title size");
-const barTop = Math.round(SH / 2 - (sAsc + sDesc) / 2);
-const barH = Math.round(sAsc + sDesc);
 
 for (const s of SECTIONS) {
-  const titlePath = sectionFont.getPath(s.title, penFor(sectionFont, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
+  const titlePath = bree.getPath(s.title, penFor(bree, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
   for (const t of THEMES) {
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}" role="img" aria-label="${esc(s.title)}">
