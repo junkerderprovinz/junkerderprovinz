@@ -8,6 +8,9 @@
  * The README's <picture> elements point at the SVGs, because the hero is animated;
  * the PNGs are a still fallback. Text is converted to paths with opentype.js, so the
  * SVGs need no font. Deps (global): opentype.js, @resvg/resvg-js.
+ * The name is set in Bree Serif Light and every other hero line in Bree Light, read
+ * as TTF from HOUSE_FONTS (default %LOCALAPPDATA%\halleluja-fonts). The section
+ * titles use Bree Serif, fetched to the OS temp dir.
  * Run: node .github/assets/gen-profile-banner.mjs
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -58,10 +61,18 @@ async function font(file, url) {
   const b = readFileSync(p);
   return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
 }
-const bree = await font("jdp-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
-const lato = await font("jdp-Lato-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf");
+const sectionFont = await font("jdp-BreeSerif-Regular.ttf", "https://github.com/google/fonts/raw/main/ofl/breeserif/BreeSerif-Regular.ttf");
 
-// Largest size up to cap that fits maxW. opentype.js emits NaN for some Lato glyphs
+// The house typeface is licensed, so it is read from a local folder and never committed.
+const fonts = process.env.HOUSE_FONTS ?? join(process.env.LOCALAPPDATA ?? tmpdir(), "halleluja-fonts");
+function houseFont(file) {
+  const b = readFileSync(join(fonts, file));
+  return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
+}
+const bree = houseFont("bree-serif-light.ttf");
+const claimFont = houseFont("bree-light.ttf");
+
+// Largest size up to cap that fits maxW. opentype.js emits NaN for some glyphs
 // at certain sizes, so those sizes are skipped.
 function fitSize(fnt, text, maxW, cap) {
   let size = Math.min(cap, Math.floor((100 * maxW) / fnt.getAdvanceWidth(text, 100)));
@@ -86,7 +97,7 @@ const HW = 1600;
 // The name is what the banner exists to say, so it gets most of the width and clearly
 // more weight than the claim underneath.
 const nameSize = fitSize(bree, NAME, 1280, 176);
-const tagSize = fitSize(lato, TAG, 1000, 46);
+const tagSize = fitSize(claimFont, TAG, 1000, 46);
 // The ornament under the name, embedded as drawn and recoloured per theme.
 const ornRaw = readFileSync(join(__dir, "hero-rule-ornament.svg"), "utf8");
 const ornM = ornRaw.match(/viewBox="[\d.\-]+\s+[\d.\-]+\s+([\d.]+)\s+([\d.]+)"/);
@@ -97,8 +108,8 @@ const ornX = (HW - ornWidth) / 2;
 const gapNameRule = 30, gapRuleTag = 30;
 const nameAsc = bree.ascender * sc(bree, nameSize);
 const nameDesc = -bree.descender * sc(bree, nameSize);
-const tagAsc = lato.ascender * sc(lato, tagSize);
-const tagDesc = -lato.descender * sc(lato, tagSize);
+const tagAsc = claimFont.ascender * sc(claimFont, tagSize);
+const tagDesc = -claimFont.descender * sc(claimFont, tagSize);
 const heroBlockH = nameAsc + gapNameRule + ornHeight + gapRuleTag + tagAsc + tagDesc;
 // Anchored at a fixed top rather than centred by its metrics: the ascent of a large
 // Bree Serif is mostly empty space above the caps, so a metrically centred block looks
@@ -111,9 +122,9 @@ const nameBaseline = Math.round(heroTop + nameAsc);
 const ornY = Math.round(nameBaseline + gapNameRule);
 const tagBaseline = Math.round(ornY + ornHeight + gapRuleTag + tagAsc);
 const nameX = (HW - bree.getAdvanceWidth(NAME, nameSize)) / 2;
-const tagX = (HW - lato.getAdvanceWidth(TAG, tagSize)) / 2;
+const tagX = (HW - claimFont.getAdvanceWidth(TAG, tagSize)) / 2;
 const namePath = bree.getPath(NAME, nameX, nameBaseline, nameSize).toPathData(2);
-const tagPath = lato.getPath(TAG, tagX, tagBaseline, tagSize).toPathData(2);
+const tagPath = claimFont.getPath(TAG, tagX, tagBaseline, tagSize).toPathData(2);
 
 // The claim types itself out, gets the last word wrong and fixes it. The typo is a
 // transposition ("softwrae"), so both endings are the same four glyphs, both
@@ -125,12 +136,12 @@ const TAG_TYPO = TAG_STEM + FIX_WRONG;
 if (!TAG.endsWith(FIX_RIGHT)) throw new Error(`TAG must end in "${FIX_RIGHT}" for the typo animation`);
 // Both spellings start at the same pen position and share every glyph up to the
 // stem, so swapping the layers mid-animation is invisible.
-const tagTypoPath = lato.getPath(TAG_TYPO, tagX, tagBaseline, tagSize).toPathData(2);
+const tagTypoPath = claimFont.getPath(TAG_TYPO, tagX, tagBaseline, tagSize).toPathData(2);
 
 // Timeline as [ms, revealed width]. Widths rather than character counts, because
-// Lato is proportional: an "i" and a "w" are not one step.
+// Bree Light is proportional: an "i" and a "w" are not one step.
 const TYPE_MS = 82, DEL_MS = 62, PAUSE_TYPO = 620, PAUSE_FIX = 240;
-const runW = (s) => lato.getAdvanceWidth(s, tagSize);
+const runW = (s) => claimFont.getAdvanceWidth(s, tagSize);
 // An even beat looks mechanical, so punctuation and spaces get a pause and every key
 // a small wobble. The wobble comes from the index rather than a random number, so
 // regenerating gives byte-identical output.
@@ -253,10 +264,10 @@ const visKeys = (k) => {
 
 // The scene texts, each drawn at the pen position the claim ends on, so the added
 // words continue the line rather than sitting beside it.
-const scMostlyPath = lato.getPath(SC_MOSTLY, tagX + claimW, tagBaseline, tagSize).toPathData(2);
-const scForgingPath = lato.getPath(SC_FORGING, tagX + claimW, tagBaseline, tagSize).toPathData(2);
+const scMostlyPath = claimFont.getPath(SC_MOSTLY, tagX + claimW, tagBaseline, tagSize).toPathData(2);
+const scForgingPath = claimFont.getPath(SC_FORGING, tagX + claimW, tagBaseline, tagSize).toPathData(2);
 const dotX = tagX + claimW + relDotless;
-const scBangPath = lato.getPath("!", dotX, tagBaseline, tagSize).toPathData(2);
+const scBangPath = claimFont.getPath("!", dotX, tagBaseline, tagSize).toPathData(2);
 const dotCoverW = Math.ceil(runW(".")) + 3;
 
 // GitHub serves an <img>-embedded SVG through camo as image/svg+xml, so the animation
@@ -401,10 +412,10 @@ const penFor = (fnt, text, y, size) => TITLE_X - fnt.getPath(text, 0, y, size).g
 // depends on the size, so both are picked together.
 let titleSize, sAsc, sDesc, sBaseline;
 for (let size = 60; size > 10; size--) {
-  sAsc = bree.ascender * sc(bree, size);
-  sDesc = -bree.descender * sc(bree, size);
+  sAsc = sectionFont.ascender * sc(sectionFont, size);
+  sDesc = -sectionFont.descender * sc(sectionFont, size);
   sBaseline = Math.round(SH / 2 - (sAsc + sDesc) / 2 + sAsc);
-  if (SECTIONS.every((s) => !bree.getPath(s.title, penFor(bree, s.title, sBaseline, size), sBaseline, size).toPathData(2).includes("NaN"))) {
+  if (SECTIONS.every((s) => !sectionFont.getPath(s.title, penFor(sectionFont, s.title, sBaseline, size), sBaseline, size).toPathData(2).includes("NaN"))) {
     titleSize = size;
     break;
   }
@@ -414,7 +425,7 @@ const barTop = Math.round(SH / 2 - (sAsc + sDesc) / 2);
 const barH = Math.round(sAsc + sDesc);
 
 for (const s of SECTIONS) {
-  const titlePath = bree.getPath(s.title, penFor(bree, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
+  const titlePath = sectionFont.getPath(s.title, penFor(sectionFont, s.title, sBaseline, titleSize), sBaseline, titleSize).toPathData(2);
   for (const t of THEMES) {
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SW} ${SH}" width="${SW}" height="${SH}" role="img" aria-label="${esc(s.title)}">
