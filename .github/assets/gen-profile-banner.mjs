@@ -107,18 +107,19 @@ const ornWidth = 520, ornScale = ornWidth / ornVW, ornHeight = ornVH * ornScale;
 const ornX = (HW - ornWidth) / 2;
 const gapNameRule = 30, gapRuleTag = 30;
 const nameAsc = bree.ascender * sc(bree, nameSize);
+const nameCap = bree.tables.os2.sCapHeight * sc(bree, nameSize);
 const nameDesc = -bree.descender * sc(bree, nameSize);
 const tagAsc = claimFont.ascender * sc(claimFont, tagSize);
 const tagDesc = -claimFont.descender * sc(claimFont, tagSize);
-const heroBlockH = nameAsc + gapNameRule + ornHeight + gapRuleTag + tagAsc + tagDesc;
-// Anchored at a fixed top rather than centred by its metrics: the ascent of a large
-// Bree Serif is mostly empty space above the caps, so a metrically centred block looks
-// low.
-const heroTop = 34;
+const heroBlockH = nameCap + gapNameRule + ornHeight + gapRuleTag + tagAsc + tagDesc;
+// Anchored at the top of the capitals rather than centred by the font's metrics: the ascent
+// of a large Bree Serif is mostly empty space above the caps, so a metrically centred block
+// looks low.
+const capTop = 106;
 // The height follows the text block, with a little more room below than above, so
 // the banner stays balanced when the claim changes length.
-const HH = Math.round(heroTop + heroBlockH + 52);
-const nameBaseline = Math.round(heroTop + nameAsc);
+const HH = Math.round(capTop + heroBlockH + 52);
+const nameBaseline = Math.round(capTop + nameCap);
 const ornY = Math.round(nameBaseline + gapNameRule);
 const tagBaseline = Math.round(ornY + ornHeight + gapRuleTag + tagAsc);
 const nameX = (HW - bree.getAdvanceWidth(NAME, nameSize)) / 2;
