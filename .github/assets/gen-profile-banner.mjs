@@ -8,7 +8,7 @@
  * The README's <picture> elements point at the SVGs, because the hero is animated;
  * the PNGs are a still fallback. Text is converted to paths with opentype.js, so the
  * SVGs need no font. Deps (global): opentype.js, @resvg/resvg-js.
- * The name and the section titles are set in Bree Serif Light and every other hero
+ * The name and the section titles are set in Bree Serif Regular and every other hero
  * line in Bree Light, read as TTF from HOUSE_FONTS (default
  * %LOCALAPPDATA%\halleluja-fonts).
  * Run: node .github/assets/gen-profile-banner.mjs
@@ -57,7 +57,7 @@ function houseFont(file) {
   const b = readFileSync(join(fonts, file));
   return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength));
 }
-const bree = houseFont("bree-serif-light.ttf");
+const bree = houseFont("bree-serif-regular.ttf");
 const claimFont = houseFont("bree-light.ttf");
 
 // Largest size up to cap that fits maxW. opentype.js emits NaN for some glyphs
@@ -398,7 +398,7 @@ const TITLE_X = 64;
 const penFor = (fnt, text, y, size) => TITLE_X - fnt.getPath(text, 0, y, size).getBoundingBox().x1;
 // The bar reaches from above the ascenders to below the descenders. The title is
 // anchored at the top of its capitals, like the name in the hero, because the tall
-// ascent of Bree Serif Light would push a metrically centred title low.
+// ascent of Bree Serif would push a metrically centred title low.
 const barTop = 15, barH = 81, sCapTop = 40;
 // Largest size up to 60 at which every title renders without NaN at its real pen
 // position. opentype.js can emit NaN there even when (0,0) is clean, and the baseline
