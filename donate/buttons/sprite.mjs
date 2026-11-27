@@ -29,6 +29,14 @@
 const UNPREFIXED = /id="(?!b\d+-)|url\(#(?!b\d+-)|href="#(?!b\d+-)|class="(?!b\d+-)|@keyframes (?!b\d+-)|animation: (?!b\d+-|none)/;
 
 /**
+ * Room between two buttons. A README gives each button clear space on both sides
+ * inside its own view, 23.08 units like gen_download_buttons.py, so a wrapped row
+ * stays centred, and the neighbour has to start 24 units further out still, or a
+ * cut-out scaled by a fraction samples its edge.
+ */
+const GAP = 72;
+
+/**
  * parts: [{ svg, width, height }], in the order they are laid out.
  * Returns the sprite and, per part, the viewBox a README points at.
  */
@@ -50,13 +58,13 @@ export function sprite(parts) {
     const left = inner.match(UNPREFIXED);
     if (left) throw new Error(`button ${i} still has an unprefixed name near ${JSON.stringify(inner.slice(left.index, left.index + 40))}`);
     views.push({ x, width, height });
-    x = Math.round((x + width) * 1000) / 1000;
+    x = Math.round((x + width + GAP) * 1000) / 1000;
     return inner.trim();
   });
   const height = Math.max(...parts.map((p) => p.height));
   const svg =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${x} ${height}">\n` +
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${x - GAP} ${height}">\n` +
     body.join("\n") +
     `\n</svg>\n`;
   return { svg, views };
