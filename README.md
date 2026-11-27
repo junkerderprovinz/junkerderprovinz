@@ -103,6 +103,7 @@ I got tired of waiting for someone else to build the tools I wanted, so I fired 
 - **[mos-apps](https://github.com/junkerderprovinz/mos-apps)** - my containers for MOS, ich777's modular server OS, as a MOS Hub repository rebuilt every night from unraid-apps.
 - **[zimaos-apps](https://github.com/junkerderprovinz/zimaos-apps)** - my containers for ZimaOS, IceWhale's NAS OS, as a community app store rebuilt every night from unraid-apps.
 - **[umbrel-apps](https://github.com/junkerderprovinz/umbrel-apps)** - my containers for umbrelOS, Umbrel's home server OS, as a community store rebuilt nightly from unraid-apps.
+- **[proxmox-apps](https://github.com/junkerderprovinz/proxmox-apps)** - my apps on Proxmox VE, each with one line on the host shell: installed directly, from its image or with Docker.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/junkerderprovinz/junkerderprovinz/main/.github/assets/section-support-dark.png">
